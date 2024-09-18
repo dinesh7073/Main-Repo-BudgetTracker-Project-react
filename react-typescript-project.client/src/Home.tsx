@@ -1,7 +1,7 @@
 function Home() {
     return (
         <div>
-        <h2>Hello World </h2>
+        <h2>Hello World Created my new repo</h2>
         </div>
     )
 }
