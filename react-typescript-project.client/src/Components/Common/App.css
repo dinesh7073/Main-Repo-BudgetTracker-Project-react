@@ -1,0 +1,162 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+:where(.css-dev-only-do-not-override-d2lrxs).ant-card .ant-card-body {
+  padding: 16px;
+  border-radius: 0 0 8px 8px;
+}
+
+.top-three-cards {
+  text-decoration: none !important;
+}
+
+.three-cards {}
+
+.three-cards:hover {
+  box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+}
+.signup-text:hover {
+  text-decoration: none !important;
+}
+:where(.css-dev-only-do-not-override-d2lrxs).ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-title {
+  margin: 0 0 4px 0;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 14px;
+}
+:where(.css-dev-only-do-not-override-d2lrxs).ant-list .ant-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  color: rgba(0, 0, 0, 0.88);
+}
+:where(.css-dev-only-do-not-override-d2lrxs).ant-layout .ant-layout-sider-trigger {
+  color: black;
+  background-color: white;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.container {
+  width: 15%;
+}
+
+
+.icon {
+  margin: 5px 20px 5px 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px 0px 20px;
+  background-color: #4e7ca7;
+  height: 64px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+}
+
+.logo-text {
+  color: #fff;
+  font-size: 20px;
+}
+
+.nav-menu {
+  margin: 0;
+  display: none;
+  /* Will be shown for desktop view */
+}
+
+.right-menu {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-menu-btn {
+  display: none;
+  /* Will be shown for mobile view */
+}
+
+.user-menu-btn {
+  color: #fff;
+}
+
+@media screen and (min-width: 768px) {
+  .nav-menu {
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+  }
+}
+
+.Attendance {
+  margin-top: 0;
+}
+
+.custom-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+}

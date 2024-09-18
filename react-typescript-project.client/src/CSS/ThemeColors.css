@@ -1,0 +1,32 @@
+.main-buttons {
+    /* background-color: #33B9F3; */
+}
+
+.main-buttons:hover {}
+
+.sub1-buttons {
+    /* background-color: #55C8FF; */
+}
+
+
+.main-background {
+    /* background-color: rgb(230, 230, 230); */
+}
+
+.total-cards-background {
+    /* background-color: #CCD7ED; */
+}
+
+.total-subcards-background {
+    /* background-color: #BDC8DC; */
+}
+
+
+.headernav-background {
+    background-color: white;
+}
+
+.main-leftbar-background {
+
+    /* background-color: #cfcfcf; */
+}

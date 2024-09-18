@@ -1,0 +1,103 @@
+.container {
+    padding: 0%;
+     margin: auto;
+     width: 80%;
+   }
+    
+   .top-n {
+     display: flex;
+     justify-content: space-between;
+     width: 100%;
+     margin: 0%;
+     padding: 20px;
+    
+   }
+    
+   .IMG {
+     height: 59px;
+     width: 60px;
+   }
+    
+   .Nav {
+     /* list-style: none; */
+    
+     color: #37B7C3;
+   }
+   .Nav:hover{
+     background-color: #088395;
+     border-radius: 11px;
+     color: #071952;
+   }
+    
+   .bt {
+    
+     color: #071952;
+     background-color: #37B7C3;
+   }
+    
+   .bt:hover {
+     background-color: #088395;
+   }
+   .H1{
+     text-align: center;
+     padding: 90px;
+     font-family: sans-serif;
+   }
+    
+   .bt2{
+    
+     color: #071952;
+     background-color: #37B7C3;
+   }
+    
+   .bt2:hover {
+     background-color: #088395;
+   }
+    
+   .CR1{
+     display: flex;
+     justify-content: space-between;
+     width: 100%;
+     padding: 60px;
+    
+   }
+    
+   .CR2{
+     display: flex;
+     justify-content: space-between;
+     width: 100%;
+     padding: 60px;
+    
+   }
+    
+   .CR3{
+     display: flex;
+     justify-content: space-between;
+     width: 100%;
+     padding: 60px;
+    
+   }
+   .Title1{
+     display: flex;
+     justify-content: space-between;
+     width: 98%;
+     padding: 70px;
+   }
+    
+   .Title2{
+     display: flex;
+     justify-content: space-between;
+     width: 98%;
+     padding: 70px;
+   }
+    
+   .PT{
+     justify-content: space-between;
+     display: flex;
+     width: 74%;
+     padding: 30px;
+   }
+   .Svd{
+     background-color: white;
+   }
+    

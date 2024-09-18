@@ -1,0 +1,131 @@
+.flex-row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+:where(.css-dev-only-do-not-override-d2lrxs).ant-card .ant-card-body {
+    padding: 12px;
+}
+
+.top-main-container {
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.three-cards-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+
+}
+
+.five-cards {
+    box-shadow: rgba(102, 102, 102, 0.16) 0px 1px 3px;
+    /* background-color: hsl(var(--nextui-background) / .7);
+    --tw-backdrop-blur: blur(16px);
+    --tw-backdrop-saturate: saturate(1.5);
+    backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia); */
+}
+
+.main-graph-container {
+
+    width: 100%;
+    padding: 16px;
+}
+
+
+
+.card-spacing {
+    margin-right: 0px;
+    width: 100%;
+}
+
+.top-three-cards {
+
+    display: flex;
+    flex-direction: row;
+
+}
+
+.top-three-cards:hover {
+    cursor: pointer;
+}
+
+.top-one-cards {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    margin: 0px 0px 0px 11px;
+}
+
+.total-income {
+    color: #2f70f2;
+}
+
+.total-expense {
+    color: #876afe;
+}
+
+.set-goal {
+    color: #ffc011;
+}
+
+.card-icon {
+
+    margin: 8px 10px 8px 5px;
+}
+
+.statistic-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.statistic-value {
+    font-weight: 500;
+    margin-right: 40px;
+}
+
+
+
+.recent-transactions-card {
+    width: 100%;
+
+    padding: 0;
+}
+
+.recent-transactions-title {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #121212;
+    margin: 0;
+}
+
+.recent-transactions-icon {
+    margin: 0 10px 0 0;
+}
+
+.transactions-list-container {}
+
+.view-all-transactions-button {
+    width: 100%;
+}
+
+
+.active-charts-card {
+    width: 100%;
+    height: 300px;
+    padding: 0;
+}

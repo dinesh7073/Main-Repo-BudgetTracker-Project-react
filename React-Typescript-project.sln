@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "React-Typescript-project.Server", "React-Typescript-project.Server\React-Typescript-project.Server.csproj", "{262161D3-B5AE-495A-9DE8-B6343D332F8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "React-BudgetTracker-project.Server", "React-Typescript-project.Server\React-BudgetTracker-project.Server.csproj", "{262161D3-B5AE-495A-9DE8-B6343D332F8A}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "react-typescript-project.client", "react-typescript-project.client\react-typescript-project.client.esproj", "{CAD761A1-D2D8-4A72-91D5-709ED41821E1}"
 EndProject

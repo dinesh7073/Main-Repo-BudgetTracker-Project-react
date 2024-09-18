@@ -1,0 +1,25 @@
+.login-signup-main-container {
+    background-color: #B1D9DB;
+    display: flex;
+    flex-direction: row;
+
+
+}
+
+/* .signupforminputs Input{
+    border: 'none';
+    border-bottom: '1px solid #B8B8B8';
+    border-radius: '0px';
+    outline: 'none';
+    box-shadow: 'none';
+} */
+
+.formbackgroundimage {
+
+    /* background-image: url('../images/mens.jpeg') ;
+    background-position: center;
+    opacity: 11% !important;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%; */
+}
