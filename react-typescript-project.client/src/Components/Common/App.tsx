@@ -28,7 +28,7 @@ function App() {
   // const [userdata, setUserdata] = useState({});
   const[userDetails,setUserDetails]=useState<any>({});
   // const [UserWallet, setUserWallet] = useState<number>();
-  const [transactionData, setTransactionData] = useState<TransactionType[]>([]);
+  const [transactionData, setTransactionData] = useState<TransactionType[]>([]); //
 
   useEffect(() => {
     const storedUser = localStorage.getItem('isUser');
