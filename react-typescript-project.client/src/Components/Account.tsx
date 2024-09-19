@@ -17,7 +17,7 @@ interface ISignUp {
 
 const Account = () => {
 
-  const { UserId} = useContext<any>(UserContext)
+  const { UserId, baseUrl } = useContext<any>(UserContext)
   const [profiledata, setProfiledata] = useState<ISignUp>({
     id: '',
     firstName: '',
@@ -31,7 +31,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`https://localhost:7007/BudgetTracker/${UserId}GetUserById`)
+    axios.get(`${baseUrl}BudgetTracker/${UserId}GetUserById`)
       .then((res) => {
         setProfiledata(res.data);
         console.log(res.data);
@@ -79,14 +79,14 @@ const Account = () => {
     setIsModalVisible(true);
   }
 
- // const handleLogout = () => {
- //   window.location.reload();
- //   localStorage.removeItem('isUser');
- //   navigate('/login');
- //   setUserId('')
- //   setIsSignUp(false);
- //   setIsLogin(false);
- // }
+  // const handleLogout = () => {
+  //   window.location.reload();
+  //   localStorage.removeItem('isUser');
+  //   navigate('/login');
+  //   setUserId('')
+  //   setIsSignUp(false);
+  //   setIsLogin(false);
+  // }
 
   return (
     <div >
@@ -107,7 +107,7 @@ const Account = () => {
           <h4 className='text-center' >User Profile</h4>
           <span className='text-secondary float-end pe-5' onClick={() => handleEdit(profiledata)}><Edit /></span>
         </div>
-              <div className='d-flex flex-row p-4'>
+        <div className='d-flex flex-row p-4'>
 
           <img alt='' src={profile1} width={120} height={120} className='mx-4 mt-4' />
           <div className='ms-5 mt-4'>

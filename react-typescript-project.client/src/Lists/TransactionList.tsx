@@ -56,7 +56,7 @@ const transformData = (records: FormData[]): FormData[] => {
 };
 
 const TransactionList: React.FC = () => {
-    const { setTransactionData, userDetails } = useContext<TransactionType[]>(UserContext);
+    const { setTransactionData, userDetails, baseUrl } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -73,7 +73,7 @@ const TransactionList: React.FC = () => {
 
     useEffect(() => {
 
-        axios.get(`https://localhost:7054/TransactionsController/66d80221687308a6498e5854GetTransactionsByUserId`)
+        axios.get(`${baseUrl}TransactionsController/${UserId}GetTransactionsByUserId`)
             .then((res) => {
                 if (res.status === 200) {
                     const transformedRecords = transformData(res.data);
@@ -241,7 +241,7 @@ const TransactionList: React.FC = () => {
     const handleSubmit = (values: FormData) => {
         const amount = Number(values.amount);
         const userId = UserId;
-        const apiUrl = `https://localhost:7007/BudgetTracker/${userId}CreateTransactionsAndUpdate`;
+        const apiUrl = `${baseUrl}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
 
         const transactionData = { ...values, amount, userId };
         if (editingTransaction) {
@@ -273,7 +273,7 @@ const TransactionList: React.FC = () => {
     };
 
     const handleDelete = (id: string) => {
-        axios.post(`https://localhost:7007/BudgetTracker/${id}DeleteTransaction`)
+        axios.post(`${baseUrl}TransactionsController/${id}DeleteTransaction`)
             .then((response) => {
                 const updatedRecords = records.filter(record => record.id !== id);
                 setRecords(updatedRecords);

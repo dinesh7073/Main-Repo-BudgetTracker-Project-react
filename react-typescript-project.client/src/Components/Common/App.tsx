@@ -23,10 +23,13 @@ export interface TransactionType {  // the final fileds for frontend and backend
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
+
+  const [baseUrl, setBaseUrl] = useState<string>('https://localhost:7054/');
+
   // const [UserId, setUserId] = useState<string>('');
   const navigate = useNavigate();
   // const [userdata, setUserdata] = useState({});
-  const[userDetails,setUserDetails]=useState<any>({});
+  const [userDetails, setUserDetails] = useState<any>({});
   // const [UserWallet, setUserWallet] = useState<number>();
   const [transactionData, setTransactionData] = useState<TransactionType[]>([]); //
 
@@ -42,27 +45,27 @@ function App() {
           setUserDetails(parsedUser);
           navigate('/');
           setIsLogin(true);
-        
+
 
         } else {
-          
+
           ShowError('failed to retrieve info')
         }
       } catch (error) {
-        console.log(error,"somethiing")
+        console.log(error, "somethiing")
         alert("Failed to retrieve user information.");
       }
     } else {
-      setIsLogin(true); 
-      navigate('/');
+      setIsLogin(false);
+      navigate('/login');
     }
   }, [isLogin]);
 
-  const ShowError=(message:string)=>{
-       notification.error({
-        message:'error',
-        description:message
-       })
+  const ShowError = (message: string) => {
+    notification.error({
+      message: 'error',
+      description: message
+    })
   }
   // useEffect((() => {
   //   const userString = localStorage.getItem('isUser');
@@ -86,7 +89,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, baseUrl, setBaseUrl }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>

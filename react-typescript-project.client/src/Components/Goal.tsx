@@ -24,7 +24,7 @@ const Goal = () => {
   const [goals, setGoals] = useState<GoalData[]>([]);
   const [editGoal, setEditGoal] = useState<GoalData | null>(null);
   const [form] = Form.useForm();
-  const { userDetails } = useContext<any>(UserContext);
+  const { userDetails, baseUrl } = useContext<any>(UserContext);
 
   const UserId = userDetails.UserId;
 
@@ -40,12 +40,12 @@ const Goal = () => {
     }));
   };
 
-  
+
   useEffect(() => {
 
-    axios.get(`https://localhost:7007/BudgetTracker/${UserId}GetSavingsByUserId`)
+    axios.get(`${baseUrl}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
-        
+
         if (res.status === 200) {
           const transformedGoal = transformData(res.data);
           setGoalExists(res.data.length > 0);
@@ -76,7 +76,7 @@ const Goal = () => {
   const handleSubmit = (values: GoalData) => {
 
     const userId = UserId;
-    const apiUrl = `https://localhost:7007/BudgetTracker/${UserId}CreateSavingsandUpdate`;
+    const apiUrl = `${baseUrl}SavingsController/${userId}CreateSavingsandUpdate`;
     const formattedDate = values.targetDate ? dayjs(values.targetDate).format('YYYY-MM-DD') : null;
     const GoalData = { ...values, userId, date: formattedDate };
 
@@ -109,7 +109,7 @@ const Goal = () => {
   };
 
   const handleDelete = (id: string) => {
-    axios.post(`https://localhost:7007/BudgetTracker/${id}DeleteSavings`)
+    axios.post(`${baseUrl}SavingsController/${id}DeleteSavings`)
       .then((response) => {
         const updatedGoal = goals.filter(goal => goal.id !== id);
         setGoals(updatedGoal);
