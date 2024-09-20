@@ -11,6 +11,7 @@ import { BarChart, LineChart, PieChart } from '@mui/x-charts';
 import axios from 'axios';
 import UserContext from '../UserContext';
 import '../CSS/ThemeColors.css'
+import { REACT_APP_BASE_URL } from './Common/Url';
 const formatter: StatisticProps['formatter'] = (value) => (
   <CountUp end={value as number} separator="," />
 );
@@ -54,7 +55,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData, baseUrl } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -68,7 +69,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`${baseUrl}TransactionsController/${UserId}GetTransactionsByUserId`)
+    axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -85,7 +86,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`${baseUrl}BudgetsController/${UserId}GetBudgetById`)
+    axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -277,7 +278,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`${baseUrl}SavingsController/${UserId}GetSavingsByUserId`)
+    axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
         if (res.status === 200) {
           const transformedGoal = transformData(res.data);

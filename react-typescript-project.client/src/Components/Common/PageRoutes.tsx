@@ -11,7 +11,7 @@ const PageRoutes = () => {
     return (
         <div>
             <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/goal" element={<Goal />} />
                 <Route path="/transaction" element={<Transactions />} />
                 <Route path="/budget" element={<Budget />} />

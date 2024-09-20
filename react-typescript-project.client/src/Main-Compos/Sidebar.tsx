@@ -91,10 +91,10 @@ const Sidebar: React.FC = () => {
 
   const siderMenuItems = [
     {
-      key: "/",
+      key: "/dashboard",
       icon: <LayoutDashboard className="fs-4" />,
       label: "Dashboard",
-      onClick: () => navigate("/"),
+      onClick: () => navigate("/dashboard"),
     },
     {
       key: "/budget",

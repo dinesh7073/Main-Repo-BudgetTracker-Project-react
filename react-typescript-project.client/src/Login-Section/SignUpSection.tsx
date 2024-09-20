@@ -7,6 +7,7 @@ import '../CSS/LoginSignUp.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../images/logo.png';
 import pic6 from '../images/pic6.png';
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 
 interface ISignUp {
@@ -24,7 +25,7 @@ interface ILogin {
 
 
 const SignUpSection = () => {
-    const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails, baseUrl } = useContext<any>(UserContext);
+    const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
     const [inputValue, setInputValue] = useState('');
 
@@ -62,7 +63,7 @@ const SignUpSection = () => {
 
         console.log(inputValue);
         axios.post(
-            `${baseUrl}UsersController/CreateUsersAndUpdate`,
+            `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
             {
                 firstName: updatedData.firstName,
                 lastName: updatedData.lastName,
@@ -99,7 +100,8 @@ const SignUpSection = () => {
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
-        axios.post(`${baseUrl}UsersController/Login`, {
+        debugger
+        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
             UserName: values.email,
             password: values.password
         })
@@ -118,7 +120,7 @@ const SignUpSection = () => {
 
                     setUserDetails({ ...userDetails, userData: response.data })
                     setIsLogin(true);
-                    navigate('/');
+                    navigate('/dashboard');
                     message.success('Login successful!');
                 } else {
                     message.error(response.request.error);

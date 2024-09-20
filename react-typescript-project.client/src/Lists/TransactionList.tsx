@@ -12,7 +12,7 @@ import { HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css'
 import CountUp from 'react-countup';
-import { TransactionType } from '../Components/Common/App';
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -56,7 +56,7 @@ const transformData = (records: FormData[]): FormData[] => {
 };
 
 const TransactionList: React.FC = () => {
-    const { setTransactionData, userDetails, baseUrl } = useContext<any>(UserContext);
+    const { setTransactionData, userDetails } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -73,7 +73,7 @@ const TransactionList: React.FC = () => {
 
     useEffect(() => {
 
-        axios.get(`${baseUrl}TransactionsController/${UserId}GetTransactionsByUserId`)
+        axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
             .then((res) => {
                 if (res.status === 200) {
                     const transformedRecords = transformData(res.data);
@@ -241,7 +241,7 @@ const TransactionList: React.FC = () => {
     const handleSubmit = (values: FormData) => {
         const amount = Number(values.amount);
         const userId = UserId;
-        const apiUrl = `${baseUrl}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
+        const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
 
         const transactionData = { ...values, amount, userId };
         if (editingTransaction) {
@@ -273,7 +273,7 @@ const TransactionList: React.FC = () => {
     };
 
     const handleDelete = (id: string) => {
-        axios.post(`${baseUrl}TransactionsController/${id}DeleteTransaction`)
+        axios.post(`${REACT_APP_BASE_URL}TransactionsController/${id}DeleteTransaction`)
             .then((response) => {
                 const updatedRecords = records.filter(record => record.id !== id);
                 setRecords(updatedRecords);
@@ -305,7 +305,7 @@ const TransactionList: React.FC = () => {
                 <Col >
                     <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='My Wallet  : ₹' value={UserWallet} formatter={formatter} />
                     <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Incomes  : ₹' value={totalIncome} formatter={formatter} />
-                    <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Incomes  : ₹' value={totalExpenses} formatter={formatter} />
+                    <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Expenses  : ₹' value={totalExpenses} formatter={formatter} />
                 </Col>
             </Row>
             <Row className='d-flex flex-wrap' gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]} justify="space-between" >
@@ -405,24 +405,25 @@ const TransactionList: React.FC = () => {
                 <Form
                     form={form}
                     layout="vertical"
-                    style={{ maxWidth: '650px', margin: 'auto', backgroundColor: '#E8F7FF', padding: '20px', borderRadius: '10px', }}
+                    className='p-3 rounded'
+                    style={{ maxWidth: '650px', backgroundColor: '#E8F7FF' }}
                     onFinish={handleSubmit}
                     initialValues={formData || { categoryType: '', amount: 0, transactionType: 2, accountType: 1, currency: 'INR' }}
                 >
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', paddingTop: '20px' }}>
+                    <div className='d-flex justify-content-center pt-3' style={{ width: '100%' }}>
                         <Form.Item
                             name="transactionType"
                             rules={[{ required: true, message: 'Please select a transactionType!' }]}
                             style={{ width: '75%' }}
                         >
                             <Radio.Group onChange={handleTypeChange} value={formData.transactionType} style={{ width: '100%' }}>
-                                <Radio.Button value={1} style={{ width: '50%', textAlign: 'center' }}>Income</Radio.Button>
-                                <Radio.Button value={2} style={{ width: '50%', textAlign: "center" }}>Expense</Radio.Button>
+                                <Radio.Button value={1} className='text-center w-50' >Income</Radio.Button>
+                                <Radio.Button value={2} className='text-center w-50'>Expense</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'center' }}>
-                        <div style={{ width: '49%', marginRight: '2%' }}>
+                    <div className='d-flex flex-row align-content-center'>
+                        <div className='mx-2 w-50'>
                             <Form.Item
                                 label="Account Type"
                                 name="accountType"
@@ -430,7 +431,7 @@ const TransactionList: React.FC = () => {
                             >
                                 <Select
                                     placeholder="Select account type"
-                                    style={{ width: '100%' }}
+                                    className='w-100'
                                     value={formData.accountType}
                                 >
                                     <Option value={1}>Cash</Option>
@@ -440,7 +441,7 @@ const TransactionList: React.FC = () => {
                                     <Option value={5}>Current Account</Option>
                                 </Select>
                             </Form.Item>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div className='d-flex justify-content-between'>
                                 <Form.Item
                                     label="Amount"
                                     name="amount"
@@ -467,7 +468,7 @@ const TransactionList: React.FC = () => {
                                     <Select
                                         placeholder="INR"
                                         value="INR"
-                                        style={{ width: '100%' }}
+                                        className='w-100'
                                     >
                                         <Option value="INR">INR</Option>
                                     </Select>
@@ -480,7 +481,7 @@ const TransactionList: React.FC = () => {
                             >
                                 <Select
                                     placeholder="Select categorytype"
-                                    style={{ width: '100%' }}
+                                    className='w-100'
                                 >
                                     {(formData.transactionType === 2 ? expenseCategories : incomeCategories).map((categoryType) => (
                                         <Option key={categoryType.value} value={categoryType.value}>
@@ -490,7 +491,7 @@ const TransactionList: React.FC = () => {
                                 </Select>
                             </Form.Item>
                         </div>
-                        <div style={{ width: '49%' }}>
+                        <div className='w-50'>
                             <Form.Item
                                 label="Label"
                                 name="label"
@@ -505,7 +506,7 @@ const TransactionList: React.FC = () => {
                                 rules={[{ required: true, message: 'Please select a date!' }]}
                             >
                                 <DatePicker
-                                    style={{ width: '100%' }}
+                                    className='w-100'
                                     picker='date'
                                     value={dayjs('2024-08-27', 'YYYY-MM-DD')}
 
@@ -515,11 +516,11 @@ const TransactionList: React.FC = () => {
                                 label="Time"
                                 name="time"
                                 rules={[{ required: true, message: 'Please select a time!' }]}
-                                style={{ marginBottom: '55px' }}
+                                className='mb-5'
                             >
                                 <DatePicker
 
-                                    style={{ width: '100%' }}
+                                    className='w-100'
                                     showTime={{ format: 'HH:mm' }}
                                     format="HH:mm"
                                     picker="time"
@@ -528,11 +529,11 @@ const TransactionList: React.FC = () => {
                         </div>
                     </div>
                     <div >
-                        <Button type="primary" htmlType="submit" onClick={() => form.submit()} style={{ width: '100%' }}>
+                        <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='w-100'>
                             {editingTransaction ? 'Update record' : 'Add record'}
                         </Button>
                         <Form.Item>
-                            <Button type="link" htmlType="button" onClick={() => form.resetFields()} style={{ width: '100%', textAlign: 'center' }}>
+                            <Button type="link" htmlType="button" onClick={() => form.resetFields()} className='w-100 text-center'>
                                 Reset Form
                             </Button>
                         </Form.Item>

@@ -7,6 +7,8 @@ import SignUpSection from "../../Login-Section/SignUpSection";
 import { Dayjs } from "dayjs";
 import '../../CSS/Dashboard.css'
 import { notification } from "antd";
+
+
 export interface TransactionType {  // the final fileds for frontend and backend 
   id: string;
   userId: string;
@@ -24,7 +26,11 @@ function App() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
-  const [baseUrl, setBaseUrl] = useState<string>('https://localhost:7054/');
+  // console.log(import.meta.env.VITE_SOME_KEY) // 123
+  // console.log(import.meta.env.VITE_REACT_APP_BASE_URL,'base url') // 123
+
+
+
 
   // const [UserId, setUserId] = useState<string>('');
   const navigate = useNavigate();
@@ -43,7 +49,7 @@ function App() {
           // setUserId(parsedUserId);
           // setUserdata(parsedUser);
           setUserDetails(parsedUser);
-          navigate('/');
+          navigate('/dashboard');
           setIsLogin(true);
 
 
@@ -89,7 +95,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, baseUrl, setBaseUrl }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>
