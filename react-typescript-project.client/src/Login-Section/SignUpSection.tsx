@@ -24,9 +24,8 @@ interface ILogin {
 
 
 const SignUpSection = () => {
-    const { isSignUp, setIsSignUp } = useContext<any>(UserContext);
+    const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails, baseUrl } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-    const { setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
     const [inputValue, setInputValue] = useState('');
 
     // const handleHomeNavigation = () => {
@@ -63,7 +62,7 @@ const SignUpSection = () => {
 
         console.log(inputValue);
         axios.post(
-            `https://localhost:7054/BudgetTracker/CreateUsersAndUpdate`,
+            `${baseUrl}UsersController/CreateUsersAndUpdate`,
             {
                 firstName: updatedData.firstName,
                 lastName: updatedData.lastName,
@@ -100,7 +99,7 @@ const SignUpSection = () => {
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
-        axios.post("https://localhost:7054/UsersController/Login", {
+        axios.post(`${baseUrl}UsersController/Login`, {
             UserName: values.email,
             password: values.password
         })

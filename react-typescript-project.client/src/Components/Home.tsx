@@ -8,7 +8,7 @@ import UserContext from "../UserContext";
 import '../CSS/ThemeColors.css'
 function Home() {
   const navigate = useNavigate();
-  const { setIsSignUp } = useContext(UserContext);
+  const { setIsSignUp } = useContext<any>(UserContext);
   const handleSignUp = () => {
     navigate("/signup");
     setIsSignUp(true);
@@ -26,7 +26,7 @@ function Home() {
             <img alt=""
               className="IMG"
               src="https://cdn.pixabay.com/photo/2016/04/15/18/05/computer-1331579_640.png "
-            
+
             />
           </div>
           <div>

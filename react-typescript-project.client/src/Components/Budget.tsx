@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, Select, Modal, Progress, notification, Card, Tooltip, Popconfirm, Breadcrumb, Empty,  } from "antd"
+import { Button, DatePicker, Form, Input, Select, Modal, Progress, notification, Card, Tooltip, Popconfirm, Breadcrumb, Empty, } from "antd"
 import dayjs, { Dayjs } from "dayjs";
 import { Car, DollarSign, Edit, HelpCircle, Home, Laptop, Plus, ShoppingBag, Trash2, Zap } from "lucide-react"
 import { useContext, useEffect, useState } from "react";
@@ -65,8 +65,8 @@ const Budget = () => {
   const [transactionData, setTransactionData] = useState<TransactionType[]>([]);
   const [budgetExists, setBudgetExists] = useState<boolean>(false);
   const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
-  const { userDetails } = useContext<any>(UserContext);
-  
+  const { userDetails, baseUrl } = useContext<any>(UserContext);
+
 
   const UserId = userDetails.UserId;
   console.log(UserId)
@@ -100,7 +100,7 @@ const Budget = () => {
   };
 
   useEffect(() => {
-    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetTransactionsByUserId`)
+    axios.get(`${baseUrl}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
           setTransactionData(res.data);
@@ -114,7 +114,7 @@ const Budget = () => {
   // const ExceedsBudget = Boolean(budget.amountSpent > budget.amount);
 
   useEffect(() => {
-    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetBudgetById`)
+    axios.get(`${baseUrl}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -248,7 +248,7 @@ const Budget = () => {
 
   const handleFormSubmit = (values: any) => {
     const userId = UserId;
-    const apiUrl = `https://localhost:7054/BudgetTracker/${userId}CreateBudgetAndUpdate`;
+    const apiUrl = `${baseUrl}BudgetsController/${userId}CreateBudgetAndUpdate`;
 
     const [startDate, endDate] = values.dateRange || [null, null];
     const formattedStartingDate = dayjs(startDate).format('YYYY-MM-DD');
@@ -324,7 +324,7 @@ const Budget = () => {
   }
 
   const handleDelete = (id: string) => {
-    axios.post(`https://localhost:7054/BudgetTracker/${id}DeleteBudget`)
+    axios.post(`${baseUrl}BudgetsController/${id}DeleteBudget`)
       .then((response) => {
         const updatedBudget = budgets.filter(budget => budget.id !== id);
         setBudgets(updatedBudget);
@@ -406,7 +406,7 @@ const Budget = () => {
   return (
     <>
       <div>
-        <div  style={{
+        <div style={{
           display: "flex",
           justifyContent: "space-between",
           padding: " 16px"
@@ -425,7 +425,7 @@ const Budget = () => {
         </div>
       </div>
 
-      {budgetExists ? <div> <Carousel  indicators={true} interval={null} style={{ width: '100%', backgroundColor: '' }} >
+      {budgetExists ? <div> <Carousel indicators={true} interval={null} style={{ width: '100%', backgroundColor: '' }} >
 
         {groupedBudgets.length > 0 ? (
 
@@ -506,7 +506,7 @@ const Budget = () => {
           )) : ""}
       </Carousel>
 
-        <div className="d-flex flex-row mt-2 " style={{height:'350px'}}>
+        <div className="d-flex flex-row mt-2 " style={{ height: '350px' }}>
           <Card className="ps-2 m-e-2 ">
             <BarChart
               width={700}

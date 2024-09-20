@@ -54,7 +54,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData, baseUrl } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -68,7 +68,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetTransactionsByUserId`)
+    axios.get(`${baseUrl}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -85,7 +85,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetBudgetById`)
+    axios.get(`${baseUrl}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -277,7 +277,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetSavingsByUserId`)
+    axios.get(`${baseUrl}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
         if (res.status === 200) {
           const transformedGoal = transformData(res.data);
@@ -486,7 +486,7 @@ const Dashboard = () => {
                   <hr style={{ marginBottom: '0px' }} />
                   <div className="transactions-list-container">
                     <div style={{ height: '200px' }}>
-                      
+
 
                       <List
                         itemLayout="horizontal"
