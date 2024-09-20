@@ -63,7 +63,7 @@ const SignUpSection = () => {
 
         console.log(inputValue);
         axios.post(
-            `https://localhost:7007/BudgetTracker/CreateUsersAndUpdate`,
+            `https://localhost:7054/BudgetTracker/CreateUsersAndUpdate`,
             {
                 firstName: updatedData.firstName,
                 lastName: updatedData.lastName,
@@ -100,7 +100,7 @@ const SignUpSection = () => {
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
-        axios.post("https://localhost:7061/UsersController/Login", {
+        axios.post("https://localhost:7054/UsersController/Login", {
             UserName: values.email,
             password: values.password
         })

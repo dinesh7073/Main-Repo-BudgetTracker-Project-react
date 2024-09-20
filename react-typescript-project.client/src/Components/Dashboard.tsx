@@ -68,7 +68,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`https://localhost:7007/BudgetTracker/${UserId}GetTransactionsByUserId`)
+    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -85,7 +85,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`https://localhost:7007/BudgetTracker/${UserId}GetBudgetById`)
+    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -277,7 +277,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get(`https://localhost:7007/BudgetTracker/${UserId}GetSavingsByUserId`)
+    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetSavingsByUserId`)
       .then((res) => {
         if (res.status === 200) {
           const transformedGoal = transformData(res.data);

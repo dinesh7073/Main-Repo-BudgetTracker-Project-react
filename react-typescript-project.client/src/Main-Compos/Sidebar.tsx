@@ -30,7 +30,7 @@ import PageRoutes from "../Components/Common/PageRoutes";
 const { Header, Sider, Content } = Layout;
 
 const Sidebar: React.FC = () => {
-  const { setUserId, userDetails } = useContext(UserContext);
+  const { setUserId, userDetails } = useContext<any>(UserContext);
   const userEmail = userDetails.email;
   const userFirstName = userDetails.FirstName;
   const [collapsed, setCollapsed] = useState(false);

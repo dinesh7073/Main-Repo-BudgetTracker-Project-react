@@ -100,7 +100,7 @@ const Budget = () => {
   };
 
   useEffect(() => {
-    axios.get(`https://localhost:7061/BudgetTracker/${UserId}GetTransactionsByUserId`)
+    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
           setTransactionData(res.data);
@@ -114,7 +114,7 @@ const Budget = () => {
   // const ExceedsBudget = Boolean(budget.amountSpent > budget.amount);
 
   useEffect(() => {
-    axios.get(`https://localhost:7061/BudgetTracker/${UserId}GetBudgetById`)
+    axios.get(`https://localhost:7054/BudgetTracker/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -248,7 +248,7 @@ const Budget = () => {
 
   const handleFormSubmit = (values: any) => {
     const userId = UserId;
-    const apiUrl = `https://localhost:7007/BudgetTracker/${userId}CreateBudgetAndUpdate`;
+    const apiUrl = `https://localhost:7054/BudgetTracker/${userId}CreateBudgetAndUpdate`;
 
     const [startDate, endDate] = values.dateRange || [null, null];
     const formattedStartingDate = dayjs(startDate).format('YYYY-MM-DD');
@@ -324,7 +324,7 @@ const Budget = () => {
   }
 
   const handleDelete = (id: string) => {
-    axios.post(`https://localhost:7007/BudgetTracker/${id}DeleteBudget`)
+    axios.post(`https://localhost:7054/BudgetTracker/${id}DeleteBudget`)
       .then((response) => {
         const updatedBudget = budgets.filter(budget => budget.id !== id);
         setBudgets(updatedBudget);
