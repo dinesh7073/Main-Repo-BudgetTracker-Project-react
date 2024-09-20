@@ -1,6 +1,7 @@
 ﻿using Budget_Tracker_Bend.Modals;
 using Budget_Tracker_Bend.Services;
 using Microsoft.AspNetCore.Mvc;
+using React_Typescript_project.Server.Modals;
 
 namespace Budget_Tracker_Bend.Controllers
 {
@@ -45,7 +46,7 @@ namespace Budget_Tracker_Bend.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginDetails user)
+        public async Task<IActionResult> Login(UserLogin user)
         {
             try
             {

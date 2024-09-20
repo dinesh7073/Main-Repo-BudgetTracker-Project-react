@@ -46,7 +46,7 @@ const Account = () => {
     if (editProfile) {
       profileData.id = editProfile.id;
     }
-    axios.post(`https://localhost:7007/BudgetTracker/CreateUsersAndUpdate`, profileData)
+    axios.post(`https://localhost:7054/BudgetTracker/CreateUsersAndUpdate`, profileData)
       .then((response) => {
         const updatedProfile = editProfile ? profileData : response.data;
         setProfiledata(updatedProfile);
