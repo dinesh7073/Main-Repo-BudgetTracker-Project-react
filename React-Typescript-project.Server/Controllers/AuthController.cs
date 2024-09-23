@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using React_Typescript_project.Server.Modals;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using React_Typescript_project.Server.Modals;
 
 
 
@@ -23,16 +23,16 @@ namespace React_Typescript_project.Server.Controllers
         }
 
         [HttpPost("login")]
-
-
-        public IActionResult Login([FromBody] UserLogin login)
+        public IActionResult Login(UserLogin login)
         {
             // Validate user credentials (e.g., check from database)
             // Here, we're assuming a simple check with hardcoded values. In real apps, you'd query a database.
             if (IsValidUser(login.UserName, login.Password))
             {
                 var token = GenerateJwtToken(login.UserName);
-                return Ok(new { token });
+
+
+                return Ok( new { token });
             }
             return Unauthorized();
         }
@@ -44,7 +44,7 @@ namespace React_Typescript_project.Server.Controllers
             // For example: return _userService.ValidateUser(username, password);
 
             // Dummy validation: for now, consider username "user" and password "password123" as valid
-            if (username == "user" && password == "password123")
+            if (username == "user@gmail.com" && password == "password123")
             {
                 return true;
             }
