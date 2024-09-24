@@ -49,7 +49,6 @@ function App() {
           // setUserId(parsedUserId);
           // setUserdata(parsedUser);
           setUserDetails(parsedUser);
-          navigate('/dashboard');
           setIsLogin(true);
 
 
@@ -58,7 +57,7 @@ function App() {
           ShowError('failed to retrieve info')
         }
       } catch (error) {
-        console.log(error, "somethiing")
+        console.log(error, "something")
         alert("Failed to retrieve user information.");
       }
     } else {

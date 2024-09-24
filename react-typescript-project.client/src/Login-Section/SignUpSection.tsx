@@ -27,29 +27,7 @@ interface ILogin {
 const SignUpSection = () => {
     const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-    const [inputValue, setInputValue] = useState('');
 
-    // const handleHomeNavigation = () => {
-    //     navigate('/home')
-    // }
-
-    const handleInputValue = (e: any) => {
-
-        // const { name, value } = e.target;
-
-        // const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
-
-        // form.setFieldsValue({
-        //     [name]: capitalizedValue
-        // });
-
-        // setFormData(prevData => ({
-        //     ...prevData,
-        //     [name]: capitalizedValue,
-        // }));
-        const value = e.target.value;
-        return setInputValue(value.charAt(0).toUpperCase() + value.slice(1));
-    }
 
     const onSave = (values: ISignUp) => {
 
@@ -61,7 +39,7 @@ const SignUpSection = () => {
             contact: values.contact
         }
 
-        console.log(inputValue);
+       
         axios.post(
             `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
             {
@@ -74,7 +52,7 @@ const SignUpSection = () => {
                 (response: any) => {
                     setIsLogin(true);
                     navigate('/');
-                    setUserDetails({ UserId: response.data.id, userData: response.data })
+                    setUserDetails({ userData: response.data })
                     console.log("UserId", response.data.id, "userData", response.data);
                     localStorage.setItem(
                         'isUser',
@@ -179,9 +157,8 @@ const SignUpSection = () => {
                                                 style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
                                                 prefix={<UserOutlined />}
                                                 placeholder="FirstName"
-                                                value={inputValue}
                                                 onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
-                                                onChange={handleInputValue}
+                                                
                                             />
                                         </Form.Item>
 
@@ -196,8 +173,7 @@ const SignUpSection = () => {
                                                 prefix={<UserOutlined />}
                                                 placeholder='LastName'
                                                 onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
-                                            // value={inputValue}
-                                            //  onChange={()=>handleInputValue}
+                                            
                                             />
                                         </Form.Item>
                                     </div>
@@ -219,7 +195,7 @@ const SignUpSection = () => {
                                         label="Contact"
                                         name="contact"
                                         style={{ marginBottom: '18px' }}
-                                        rules={[{ required: true, message: 'Please input your contact!' },
+                                        rules={[{ required: true, message: 'Please input contact' },
                                         {
                                             pattern: RegExp("[1-9]{1}[0-9]{9}"),
                                             message: "Invalid Input"
@@ -227,7 +203,7 @@ const SignUpSection = () => {
 
                                         ]}
                                     >
-                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" max={10} />
+                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" maxLength={10} />
                                     </Form.Item>
                                     <Form.Item
                                         label="Password"
@@ -235,7 +211,7 @@ const SignUpSection = () => {
                                         style={{ marginBottom: '18px' }}
                                         rules={[{ required: true, message: 'Please input your Password!' }]}
                                     >
-                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
+                                        <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                     </Form.Item>
                                     <Form.Item
                                         label="Confirm Password"
@@ -299,7 +275,7 @@ const SignUpSection = () => {
                                                 name="password"
                                                 rules={[{ required: true, message: 'Please input your Password!' }]}
                                             >
-                                                <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
+                                                <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                             </Form.Item>
                                             <Form.Item>
                                                 <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px' }}>

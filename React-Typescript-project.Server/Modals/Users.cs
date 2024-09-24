@@ -22,6 +22,9 @@ namespace Budget_Tracker_Bend.Modals
         [BsonElement("password")]
         public string Password { get; set; }
 
+        [BsonElement("contact")]
+        public string Contact { get; set; }
+
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
