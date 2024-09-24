@@ -16,14 +16,14 @@ namespace Budget_Tracker_Bend.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Users>>> GetUsers()
         {
-            var users = await   _usersServices.GetUsersAsync();
+            var users = await _usersServices.GetUsersAsync();
             return Ok(users);
         }
 
         [HttpGet("{id:length(24)}GetUserById")]
         public async Task<ActionResult<Users>> GetUser(string id)
         {
-            var user = await   _usersServices.GetUserByIdAsync(id);
+            var user = await _usersServices.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -36,7 +36,7 @@ namespace Budget_Tracker_Bend.Controllers
         {
             try
             {
-                var savedUser = await   _usersServices.SaveUserAsync(user);
+                var savedUser = await _usersServices.SaveUserAsync(user);
                 return Ok(savedUser);
             }
             catch (Exception ex)
@@ -51,11 +51,17 @@ namespace Budget_Tracker_Bend.Controllers
             try
             {
                 Users newuser = new();
+
                 if (user.UserName != null)
-                    newuser = await   _usersServices.GetUserAsync(user.UserName);
+
+                    newuser = await _usersServices.GetUserAsync(user.UserName);
+
                 if (newuser != null && newuser.Password == user.Password)
+
                     return Ok(newuser);
-                else return StatusCode(404, "Un-Authrization access denied");
+
+                else return
+                        StatusCode(404, "Un-Authrization access denied");
 
             }
             catch (Exception ex)
@@ -68,12 +74,12 @@ namespace Budget_Tracker_Bend.Controllers
         [HttpPost("RemoveUser")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await   _usersServices.GetUserByIdAsync(id);
+            var user = await _usersServices.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            await   _usersServices.DeleteUserAsync(id);
+            await _usersServices.DeleteUserAsync(id);
             return NoContent();
         }
 
