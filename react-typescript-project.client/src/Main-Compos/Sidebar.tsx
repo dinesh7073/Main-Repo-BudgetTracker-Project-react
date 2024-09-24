@@ -126,15 +126,15 @@ const Sidebar: React.FC = () => {
       label: "Help",
       onClick: () => navigate("/help"),
     },
-    {
-      key: "/logout",
-      icon: (
-        <Popconfirm title="Are you sure?" onConfirm={handleLogout}>
-          <LogOut className="fs-4" />
-        </Popconfirm>
-      ),
-      label: "Logout",
-    },
+    // {
+    //   key: "/logout",
+    //   icon: (
+    //     <Popconfirm title="Are you sure?" onConfirm={handleLogout}>
+    //       <LogOut className="fs-4" />
+    //     </Popconfirm>
+    //   ),
+    //   label: "Logout",
+    // },
   ];
 
   const { isLogin, setIsLogin } = useContext<any>(UserContext);
