@@ -1,0 +1,39 @@
+
+.m-1 { margin: 1px; }
+.m-2 { margin: 2px; }
+.m-3 { margin: 3px; }
+.m-4 { margin: 4px; }
+.m-5 { margin: 5px; }
+
+.p-1 { padding: 1px; }
+.p-2 { padding: 2px; }
+.p-3 { padding: 3px; }
+.p-4 { padding: 4px; }
+.p-5 { padding: 5px; }
+
+.flex { display: flex; }
+.flex-row { flex-direction: row; }
+.flex-column { flex-direction: column; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+.fs-1 { font-size: 12px; }
+.fs-2 { font-size: 14px; }
+.fs-3 { font-size: 16px; }
+.fs-4 { font-size: 18px; }
+.fs-5 { font-size: 20px; }
+
+
+
+
+
+
