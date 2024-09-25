@@ -210,8 +210,13 @@ const SignUpSection = () => {
                                         style={{ height:'65px' }}
                                         rules={[{ required: true, message: 'Contact is required' },
                                         {
-                                            pattern: RegExp('^[1-9]{1}[0-9]{9}$'),
-                                            message: 'Contact number must be of 10 digits.',
+                                            pattern: RegExp("[1-9]{1}[0-9]{9}"),
+                                            message: 'Invalid input',
+                                            validateTrigger: 'onFinish'
+                                        },
+                                        {
+                                            max:10,
+                                            message:'Contact must be of 10 digits',
                                             validateTrigger: 'onFinish'
                                         }
                                         ]}
