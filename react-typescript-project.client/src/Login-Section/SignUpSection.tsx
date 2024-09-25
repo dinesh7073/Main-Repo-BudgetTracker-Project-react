@@ -85,7 +85,7 @@ const SignUpSection = () => {
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
-        debugger
+ 
         axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
             UserName: values.email,
             password: values.password

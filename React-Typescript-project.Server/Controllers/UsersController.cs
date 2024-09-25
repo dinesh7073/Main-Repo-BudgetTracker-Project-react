@@ -2,6 +2,10 @@
 using Budget_Tracker_Bend.Services;
 using Microsoft.AspNetCore.Mvc;
 using React_Typescript_project.Server.Modals;
+using System.Diagnostics;
+
+
+
 
 namespace Budget_Tracker_Bend.Controllers
 {
@@ -36,33 +40,13 @@ namespace Budget_Tracker_Bend.Controllers
         {
             try
             {
+
+
+                user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password, 13);
+
                 var savedUser = await _usersServices.SaveUserAsync(user);
+
                 return Ok(savedUser);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserLogin user)
-        {
-            try
-            {
-                Users newuser = new();
-
-                if (user.UserName != null)
-
-                    newuser = await _usersServices.GetUserAsync(user.UserName);
-
-                if (newuser != null && newuser.Password == user.Password)
-
-                    return Ok(newuser);
-
-                else return
-                        StatusCode(404, "Un-Authrization access denied");
-
             }
             catch (Exception ex)
             {
