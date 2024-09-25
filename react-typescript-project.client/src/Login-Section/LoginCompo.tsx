@@ -26,7 +26,7 @@ interface ILogin {
 const LoginCompo = () => {
 
 
-    const { isSignUp, setIsSignUp } = useContext<any>(UserContext);
+    const { setIsSignUp } = useContext<any>(UserContext);
 
     const [form] = Form.useForm();
     const { setIsLogin, setUserDetails } = useContext<any>(UserContext);
@@ -38,9 +38,6 @@ const LoginCompo = () => {
 
 
 
-    const handleHomeNavigation = () => {
-        navigate('/home')
-    }
 
     const handleInputValue = (e: any) => {
 
@@ -63,54 +60,6 @@ const LoginCompo = () => {
 
 
 
-
-    const onSave = (values: ISignUp) => {
-
-        const updatedData = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            password: values.password,
-            contact: values.contact
-        }
-
-        console.log(inputValue);
-
-        axios.post(
-            `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
-            {
-                firstName: updatedData.firstName,
-                lastName: updatedData.lastName,
-                email: updatedData.email,
-                password: updatedData.password,
-                contact: updatedData.contact
-            }).then(
-                (response: any) => {
-                    setIsLogin(true);
-                    navigate('/');
-                    setUserDetails({ UserId: response.data.id, userData: response.data })
-                    console.log("UserId", response.data.id, "userData", response.data);
-                    localStorage.setItem(
-                        'isUser',
-                        JSON.stringify(
-                            {
-                                email: response?.data?.email,
-                                password: response?.data?.password,
-                                UserId: response?.data?.id,
-                                FirstName: response?.data?.firstName,
-                                LastName: response?.data?.lastName,
-                                contact: response?.data?.contact
-                            })
-                    );
-                    form.resetFields();
-
-                }
-            ).catch(
-
-                (error) => console.log("error", error)
-            )
-        form.resetFields();
-    };
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
