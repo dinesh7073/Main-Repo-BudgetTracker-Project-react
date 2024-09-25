@@ -7,6 +7,8 @@ import SignUpSection from "../../Login-Section/SignUpSection";
 import { Dayjs } from "dayjs";
 import '../../CSS/Dashboard.css'
 import { notification } from "antd";
+import LoginCompo from "../../Login-Section/LoginCompo";
+import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
 
 
 export interface TransactionType {  // the final fileds for frontend and backend 
@@ -99,8 +101,9 @@ function App() {
         {isLogin && <Sidebar />}
         <Routes>
           {/* <Route path='/home' element={<Home />}/> */}
-          <Route path='/login' element={<SignUpSection />} />
+          <Route path='/login' element={<LoginCompo />} />
           <Route path='/signup' element={<SignUpSection />} />
+          <Route path='/forgotPassword' element={<ForgotpassCompo />} />
         </Routes>
       </div>
     </UserContext.Provider>
