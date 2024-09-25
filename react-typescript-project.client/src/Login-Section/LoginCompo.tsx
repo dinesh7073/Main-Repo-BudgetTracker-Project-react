@@ -68,17 +68,16 @@ const LoginCompo = () => {
             password: values.password
         })
             .then((response) => {
-                debugger;
                 if (response.data.id) {
 
-                    // localStorage.setItem('isUser', JSON.stringify(
-                    //     {
-                    //         email: response?.data?.email,
-                    //         password: response?.data?.password,
-                    //         UserId: response?.data?.id,
-                    //         FirstName: response?.data?.firstName,
-                    //         contact: response?.data?.contact
-                    //     }));
+                    localStorage.setItem('isUser', JSON.stringify(
+                        {
+                            email: response?.data?.email,
+                            password: response?.data?.password,
+                            UserId: response?.data?.id,
+                            FirstName: response?.data?.firstName,
+                            contact: response?.data?.contact
+                        }));
 
                     setUserDetails({ ...setUserDetails, userData: response.data })
                     setIsLogin(true);
