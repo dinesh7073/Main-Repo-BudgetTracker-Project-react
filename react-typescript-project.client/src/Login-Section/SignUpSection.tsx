@@ -209,17 +209,21 @@ const SignUpSection = () => {
                                         name="contact"
                                         style={{ height:'65px' }}
                                         rules={[{ required: true, message: 'Contact is required' },
-                                        {
-                                            pattern: RegExp("[1-9]{1}[0-9]{9}"),
-                                            message: 'Invalid input',
-                                            validateTrigger: 'onFinish'
-                                        },
-                                        {
-                                            max:10,
-                                            message:'Contact must be of 10 digits',
-                                            validateTrigger: 'onFinish'
-                                        }
+                                        () => ({
+                                            validator(_, value) {
+                                                if (value < 10 || value>10) {
+                                                    return Promise.reject('Contact must be of 10 digits');
+                                                }
+
+                                                if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
+                                                    return Promise.reject('Invalid input');
+                                                }
+                                                return Promise.resolve();
+                                            },
+                                            validateTrigger:'onFinish'
+                                        })
                                         ]}
+                                        
                                     >
                                         <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}} prefix="+91 " placeholder="Contact" maxLength={10} />
 
