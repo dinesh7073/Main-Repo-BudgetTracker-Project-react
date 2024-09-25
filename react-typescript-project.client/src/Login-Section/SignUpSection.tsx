@@ -212,7 +212,7 @@ const SignUpSection = () => {
                                         () => ({
                                             validator(_, value) {
                                                 if (value < 10 || value>10) {
-                                                    return Promise.reject('Contact must be of 10 digits');
+                                                    return Promise.reject('Contact number must be of 10 digits');
                                                 }
 
                                                 if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
