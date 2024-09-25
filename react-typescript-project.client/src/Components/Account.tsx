@@ -46,7 +46,7 @@ const Account = () => {
     if (editProfile) {
       profileData.id = editProfile.id;
     }
-    axios.post(`https://localhost:7007/BudgetTracker/CreateUsersAndUpdate`, profileData)
+    axios.post(`https://localhost:7054/UsersController/CreateUsersAndUpdate`, profileData)
       .then((response) => {
         const updatedProfile = editProfile ? profileData : response.data;
         setProfiledata(updatedProfile);
@@ -104,7 +104,7 @@ const Account = () => {
       </div>
       <Card className=' mx-5 shadow mt-5 pt-3' style={{ width: 900, height: '60vh' }}>
         <div className=' '>
-          <h4 className='text-center' >User Profile</h4>
+          <h4 className='text-center' >Profile</h4>
           <span className='text-secondary float-end pe-5' onClick={() => handleEdit(profiledata)}><Edit /></span>
         </div>
         <div className='d-flex flex-row p-4'>
