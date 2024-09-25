@@ -27,52 +27,59 @@ interface ILogin {
 const SignUpSection = () => {
     const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-
+    const [contactError, setContactError] = useState();
 
     const onSave = (values: ISignUp) => {
 
-        const updatedData = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            password: values.password,
-            contact: values.contact
-        }
+        // const validate = ()=>{
+        //     const contact = values.contact;
+        //     if(contact.test())
+        // }
+        form.validateFields({ validateOnly: true }).then(() => {
+            const updatedData = {
+                firstName: values.firstName,
+                lastName: values.lastName,
+                email: values.email,
+                password: values.password,
+                contact: values.contact
+            }
 
-       
-        axios.post(
-            `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
-            {
-                firstName: updatedData.firstName,
-                lastName: updatedData.lastName,
-                email: updatedData.email,
-                password: updatedData.password,
-                contact: updatedData.contact
-            }).then(
-                (response: any) => {
-                    setIsLogin(true);
-                    navigate('/');
-                    setUserDetails({ userData: response.data })
-                    console.log("UserId", response.data.id, "userData", response.data);
-                    localStorage.setItem(
-                        'isUser',
-                        JSON.stringify(
-                            {
-                                email: response?.data?.email,
-                                password: response?.data?.password,
-                                UserId: response?.data?.id,
-                                FirstName: response?.data?.firstName,
-                                LastName: response?.data?.lastName,
-                                contact: response?.data?.contact
-                            })
-                    );
-                    form.resetFields();
 
-                }
-            ).catch(
+            axios.post(
+                `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
+                {
+                    firstName: updatedData.firstName,
+                    lastName: updatedData.lastName,
+                    email: updatedData.email,
+                    password: updatedData.password,
+                    contact: updatedData.contact
+                }).then(
+                    (response: any) => {
+                        setIsLogin(true);
+                        navigate('/');
+                        setUserDetails({ userData: response.data })
+                        console.log("UserId", response.data.id, "userData", response.data);
+                        localStorage.setItem(
+                            'isUser',
+                            JSON.stringify(
+                                {
+                                    email: response?.data?.email,
+                                    password: response?.data?.password,
+                                    UserId: response?.data?.id,
+                                    FirstName: response?.data?.firstName,
+                                    LastName: response?.data?.lastName,
+                                    contact: response?.data?.contact
+                                })
+                        );
+                        form.resetFields();
 
-                (error) => console.log("error", error)
-            )
+                    }
+                ).catch(
+
+                    (error) => console.log("error", error)
+                )
+        }).catch()
+
         form.resetFields();
     };
 
@@ -111,6 +118,10 @@ const SignUpSection = () => {
             });
     };
 
+    const onFinishFailed = (errorInfo: any) => {
+        console.log('Validation failed:', errorInfo);
+    };
+
 
     return (
         <div style={{ backgroundColor: '#EBF4F6' }}>
@@ -133,47 +144,49 @@ const SignUpSection = () => {
                     </div>
                 </div>
                 <div style={{ width: '61%', backgroundColor: '#FFFFFF', borderTopLeftRadius: '55px', borderBottomLeftRadius: '55px' }}>
-                    <div style={{ width: '100%', minHeight: '100vh' }}>
+                    <div style={{ width: '100%', height: '100%' }}>
                         {isSignUp ? (
-                            <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '4% 18%' }}>
+                            <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '4% 18%', height: "100vh" }}>
                                 <Form
                                     layout="vertical"
                                     onFinish={onSave}
+                                    onFinishFailed={onFinishFailed}
                                     form={form}
-                                    className='mx-auto  rounded  px-5 py-2 mt-3'
-                                    style={{ width: "100%" }}
+                                    className='mx-auto  rounded  px-5  mt-3 '
+                                    style={{ width: "100%", height:'100%' }}
+                                    name='validateOnly'
                                 >
                                     <h4 className=' pt-3' style={{ fontWeight: '600' }}>Create Wallet Account</h4>
-                                    <p style={{ marginBottom: '40px' }}>Sign up below to create your Wallet account</p>
+                                    <p style={{ marginBottom: '35px', fontSize:'16px' }}>Sign up below to create your Wallet account</p>
                                     <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '30px' }}>
                                         <Form.Item
-                                            label="Firstname"
+                                            label="First name"
                                             name="firstName"
-                                            style={{ width: '49%', marginBottom: '18px' }}
-                                            rules={[{ required: true, message: 'Please input your firstname!' }
+                                            style={{ width: '49%', height:'65px' }}
+                                            rules={[{ required: true, message: 'First name is required' }
                                             ]}
                                         >
                                             <Input
-                                                style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
+                                                style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}}
                                                 prefix={<UserOutlined />}
-                                                placeholder="FirstName"
+                                                placeholder="First name"
                                                 onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
-                                                
+
                                             />
                                         </Form.Item>
 
                                         <Form.Item
                                             name="lastName"
-                                            label="Lastname"
-                                            style={{ width: '49%', marginBottom: '18px' }}
-                                            rules={[{ required: true, message: 'Please input your lastname!' }]}
+                                            label="Last name"
+                                            style={{ width: '49%',  height:'65px' }}
+                                            rules={[{ required: true, message: 'Last name is required' }]}
                                         >
                                             <Input
                                                 style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
                                                 prefix={<UserOutlined />}
-                                                placeholder='LastName'
+                                                placeholder='Last name'
                                                 onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
-                                            
+
                                             />
                                         </Form.Item>
                                     </div>
@@ -181,8 +194,8 @@ const SignUpSection = () => {
                                         label="E-mail"
                                         name="email"
 
-                                        style={{ marginBottom: '18px' }}
-                                        rules={[{ required: true, message: 'Please input your email!' },
+                                        style={{  height:'65px' }}
+                                        rules={[{ required: true, message: 'Email is required' },
                                         {
                                             type: "email",
                                             message: 'Enter a valid email'
@@ -194,22 +207,23 @@ const SignUpSection = () => {
                                     <Form.Item
                                         label="Contact"
                                         name="contact"
-                                        style={{ marginBottom: '18px' }}
-                                        rules={[{ required: true, message: 'Please input contact' },
+                                        style={{ height:'65px' }}
+                                        rules={[{ required: true, message: 'Contact is required' },
                                         {
-                                            pattern: RegExp("[1-9]{1}[0-9]{9}"),
-                                            message: "Invalid Input"
+                                            pattern: RegExp('^[1-9]{1}[0-9]{9}$'),
+                                            message: 'Contact number must be of 10 digits.',
+                                            validateTrigger: 'onFinish'
                                         }
-
                                         ]}
                                     >
-                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" maxLength={10} />
+                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}} prefix="+91 " placeholder="Contact" maxLength={10} />
+
                                     </Form.Item>
                                     <Form.Item
                                         label="Password"
                                         name="password"
-                                        style={{ marginBottom: '18px' }}
-                                        rules={[{ required: true, message: 'Please input your Password!' }]}
+                                        style={{ height:'65px' }}
+                                        rules={[{ required: true, message: 'Password is required' }]}
                                     >
                                         <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                     </Form.Item>
@@ -220,6 +234,7 @@ const SignUpSection = () => {
                                         rules={[
                                             {
                                                 required: true,
+                                                message: 'Confirm password is required'
                                             },
                                             ({ getFieldValue }) => ({
                                                 validator(_, value) {
@@ -230,6 +245,7 @@ const SignUpSection = () => {
                                                 },
                                             }),
                                         ]}
+                                        style={{ height:'65px'}}
                                     >
                                         <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' />
                                     </Form.Item>
@@ -260,7 +276,7 @@ const SignUpSection = () => {
                                                 label="E-mail"
                                                 name="email"
 
-                                                rules={[{ required: true, message: 'Please input your email!' },
+                                                rules={[{ required: true, message: 'Email is required' },
                                                 {
                                                     type: 'email',
                                                     message: 'Enter a valid email'
@@ -273,12 +289,12 @@ const SignUpSection = () => {
                                             <Form.Item
                                                 label="Password"
                                                 name="password"
-                                                rules={[{ required: true, message: 'Please input your Password!' }]}
+                                                rules={[{ required: true, message: 'Password is required' }]}
                                             >
                                                 <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                             </Form.Item>
                                             <Form.Item>
-                                                <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px' }}>
+                                                <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px' , marginTop:'8px'}}>
                                                     Log in
                                                 </Button>
                                                 <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(true); navigate('/signup'); }}>Don't have account?<b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline' }} className='signup-text'> SignUp</b> </p>

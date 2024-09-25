@@ -114,6 +114,7 @@ const Budget = () => {
   // const ExceedsBudget = Boolean(budget.amountSpent > budget.amount);
 
   useEffect(() => {
+    
     axios.get(`${baseUrl}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {

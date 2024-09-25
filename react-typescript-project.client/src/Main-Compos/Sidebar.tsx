@@ -187,7 +187,7 @@ const Sidebar: React.FC = () => {
           overflow: "auto",
         }}
       >
-        {isLogin && (
+        
           <Header
             className='headernav-background'
             style={{
@@ -227,7 +227,7 @@ const Sidebar: React.FC = () => {
               </Dropdown>
             </div>
           </Header>
-        )}
+        
         <Content
           className="main-background"
           style={{
