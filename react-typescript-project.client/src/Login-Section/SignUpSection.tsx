@@ -18,16 +18,11 @@ interface ISignUp {
     password: string,
 
 }
-interface ILogin {
-    email: string,
-    password: string,
-}
-
 
 const SignUpSection = () => {
-    const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
+    const { setIsSignUp, setIsLogin, setUserDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-    const [contactError, setContactError] = useState();
+
 
     const onSave = (values: ISignUp) => {
 
@@ -84,39 +79,6 @@ const SignUpSection = () => {
     };
 
     const navigate = useNavigate();
-    const onLogin = (values: ILogin) => {
-
-        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
-            UserName: values.email,
-            password: values.password
-        })
-            .then((response) => {
-
-                if (response.data.id) {
-
-                    localStorage.setItem('isUser', JSON.stringify(
-                        {
-                            email: response?.data?.email,
-                            password: response?.data?.password,
-                            UserId: response?.data?.id,
-                            FirstName: response?.data?.firstName,
-                            contact: response?.data?.contact
-                        }));
-
-                    setUserDetails({ ...userDetails, userData: response.data })
-                    setIsLogin(true);
-                    navigate('/dashboard');
-                    message.success('Login successful!');
-                } else {
-                    message.error(response.request.error);
-                }
-                form.resetFields();
-            })
-            .catch((error) => {
-                message.error('password or mail is incorrect');
-                console.error('Error fetching data:', error);
-            });
-    };
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Validation failed:', errorInfo);
