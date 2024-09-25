@@ -30,7 +30,7 @@ const SignUpSection = () => {
         //     const contact = values.contact;
         //     if(contact.test())
         // }
-        form.validateFields({ validateOnly: true }).then(() => {
+        // form.validateFields({ validateOnly: true }).then(() => {
             const updatedData = {
                 firstName: values.firstName,
                 lastName: values.lastName,
@@ -73,7 +73,7 @@ const SignUpSection = () => {
 
                     (error) => console.log("error", error)
                 )
-        }).catch()
+        // }).catch()
 
         form.resetFields();
     };
@@ -156,38 +156,35 @@ const SignUpSection = () => {
                                     label="E-mail"
                                     name="email"
 
-                                    style={{ height: '65px' }}
-                                    rules={[{ required: true, message: 'Email is required' },
-                                    {
-                                        type: "email",
-                                        message: 'Enter a valid email'
-                                    }
-                                    ]}
-                                >
-                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
-                                </Form.Item>
-                                <Form.Item
-                                    label="Contact"
-                                    name="contact"
-                                    style={{ height: '65px' }}
-                                    rules={[{ required: true, message: 'Contact is required' },
-                                    () => ({
-                                        validator(_, value) {
-                                            if (value < 10 || value > 10) {
-                                                return Promise.reject('Contact must be of 10 digits');
-                                            }
-
-                                            if (RegExp("[1-9]{1}[0-9]{9}").test(value) == false) {
-                                                return Promise.reject('Invalid input');
-                                            }
-                                            return Promise.resolve();
-                                        },
-                                        validateTrigger: 'onFinish'
-                                    })
-                                    ]}
-
-                                >
-                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" maxLength={10} />
+                                        style={{  height:'65px' }}
+                                        rules={[{ required: true, message: 'Email is required' },
+                                        {
+                                            type: "email",
+                                            message: 'Enter a valid email'
+                                        }
+                                        ]}
+                                    >
+                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Contact"
+                                        name="contact"
+                                        style={{ height:'65px' }}
+                                        rules={[{ required: true, message: 'Contact is required' },
+                                        () => ({
+                                            validator(_, value) {
+                                                
+                                                if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
+                                                    return Promise.reject('Invalid input');
+                                                }
+                                                return Promise.resolve();
+                                            },
+                                            validateTrigger:'onFinish'
+                                        })
+                                        ]}
+                                        
+                                    >
+                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}} prefix="+91 " placeholder="Contact" maxLength={10} />
 
                                 </Form.Item>
                                 <Form.Item
