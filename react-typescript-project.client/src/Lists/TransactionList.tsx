@@ -289,7 +289,7 @@ const TransactionList: React.FC = () => {
     return (
         <div style={{ padding: '16px', backgroundColor: 'white' }}>
             <Breadcrumb
-                items={[
+                items={[ 
                     {
                         title: < HomeOutlined onClick={() => navigate('/')} />,
                     },

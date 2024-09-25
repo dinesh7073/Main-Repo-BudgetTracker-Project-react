@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Budget_Tracker_Bend.Modals;
+using Budget_Tracker_Bend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using React_Typescript_project.Server.Modals;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using React_Typescript_project.Server.Modals;
-using Budget_Tracker_Bend.Services;
 
 
 
@@ -20,46 +20,78 @@ namespace React_Typescript_project.Server.Controllers
         private readonly IConfiguration _configuration;
         private readonly UsersServices _usersServices;
 
-
         public AuthController(IConfiguration configuration, UsersServices services)
         {
             _configuration = configuration;
             _usersServices = services;
         }
 
-        [HttpPost("login")]
 
 
-        public async Task<IActionResult> Login([FromBody] UserLogin login)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(UserLogin user)
         {
-            // Validate user credentials (e.g., check from database)
-            // Here, we're assuming a simple check with hardcoded values. In real apps, you'd query a database.
-            //if (IsValidUser
-            //    (login.UserName, login.Password))
-            //{
-            //    var token = GenerateJwtToken(login.UserName);
-            //    return Ok(new { token });
-            //}
             try
             {
-                var user = await _usersServices.GetUserAsync(login.UserName);
+                Users newuser = new();
 
-                if (user != null)
+                if (user.UserName != null)
+
+                    newuser = await _usersServices.GetUserAsync(user.UserName);
+
+                var validPassword = BCrypt.Net.BCrypt.EnhancedVerify(user.Password, newuser.Password);
+
+                if (newuser != null && validPassword)
                 {
-                    if (login.Password == user.Password)
-                    {
-                        var token = GenerateJwtToken(login.UserName);
-                        return Ok(new { token });
-                    }
+                    var token = GenerateJwtToken(user.UserName);
+
+                    return Ok(new {token});
                 }
+                else return
+                        StatusCode(404, "Un-Authrization access denied");
             }
             catch (Exception ex)
             {
                 return Unauthorized();
             }
             return Unauthorized();
-
         }
+
+
+     //   [HttpPost("login")]
+     //   public async Task<IActionResult> Login([FromBody] UserLogin login)
+     //   {
+     //       // Validate user credentials (e.g., check from database)
+     //       // Here, we're assuming a simple check with hardcoded values. In real apps, you'd query a database.
+     //       //if (IsValidUser
+     //       //    (login.UserName, login.Password))
+     //       //{
+     //       //    var token = GenerateJwtToken(login.UserName);
+     //       //    return Ok(new { token });
+     //       //}
+     //       try
+     //       {
+     //           var user = await _usersServices.GetUserAsync(login.UserName);
+     //
+     //           if (user != null)
+     //           {
+     //               if (login.Password == user.Password)
+     //               {
+     //                   var token = GenerateJwtToken(login.UserName);
+     //                   return Ok(new { token });
+     //               }
+     //           }
+     //       }
+     //       catch (Exception ex)
+     //       {
+     //           return Unauthorized();
+     //       }
+     //       return Unauthorized();
+     //
+     //   }
+     //
+
+
 
         // Function to validate the username and password
         //private bool IsValidUser(string username, string password)
@@ -69,7 +101,7 @@ namespace React_Typescript_project.Server.Controllers
 
         //    // Dummy validation: for now, consider username "user" and password "password123" as valid
         //    var user = _usersServices.GetUserAsync(username);
-            
+
 
         //    if (user == null)
         //    {

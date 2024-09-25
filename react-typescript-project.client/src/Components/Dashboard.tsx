@@ -327,7 +327,7 @@ const Dashboard = () => {
                 </p>
                 <hr />
                 <div className="top-one-cards" >
-                  <Row gutter={16}>
+                  <Row gutter={20}>
                     <Col span={12}>
                       <PieChart
                         slotProps={{
@@ -344,16 +344,21 @@ const Dashboard = () => {
                         ]}
                       />
                     </Col>
-                    <div >
-                      <Card className='total-subcards-background' style={{ marginLeft: '25px', width: '130px' }}>
-                        <Title style={{ fontSize: '15px' }}>Total Expenses</Title>
+                    <Col span={8}>
+
+
+                      <Card className='total-subcards-background ' style={{ width: '145px' }} >
+                        <Title className='fs-6'>Total Expenses</Title>
                         <Statistic
+
                           value={totalExpenses}
+
                           prefix="₹"
-                          valueStyle={{ color: '#ff4d4f' }}
+                          valueStyle={{ color: '#ff4d4f', fontSize: '22px' }}
                         />
                       </Card>
-                    </div>
+
+                    </Col>
                   </Row>
                 </div>
               </div>
