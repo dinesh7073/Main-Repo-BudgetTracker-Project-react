@@ -7,6 +7,7 @@ import '../CSS/LoginSignUp.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../images/logo.png';
 import pic6 from '../images/pic6.png';
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 interface ISignUp {
     contact: any;
@@ -76,7 +77,7 @@ const LoginCompo = () => {
         console.log(inputValue);
 
         axios.post(
-            `https://localhost:7007/BudgetTracker/CreateUsersAndUpdate`,
+            `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
             {
                 firstName: updatedData.firstName,
                 lastName: updatedData.lastName,
@@ -113,7 +114,7 @@ const LoginCompo = () => {
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
-        axios.post("https://localhost:7007/BudgetTracker/Login", {
+        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
             UserName: values.email,
             password: values.password
         })
