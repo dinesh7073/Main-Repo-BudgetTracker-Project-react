@@ -35,7 +35,7 @@ const SignUpSection = () => {
         //     const contact = values.contact;
         //     if(contact.test())
         // }
-        form.validateFields({ validateOnly: true }).then(() => {
+        // form.validateFields({ validateOnly: true }).then(() => {
             const updatedData = {
                 firstName: values.firstName,
                 lastName: values.lastName,
@@ -78,7 +78,7 @@ const SignUpSection = () => {
 
                     (error) => console.log("error", error)
                 )
-        }).catch()
+        // }).catch()
 
         form.resetFields();
     };
