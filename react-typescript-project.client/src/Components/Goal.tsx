@@ -42,7 +42,7 @@ const Goal = () => {
 
 
   useEffect(() => {
-debugger
+
     axios.get(`${baseUrl}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
 

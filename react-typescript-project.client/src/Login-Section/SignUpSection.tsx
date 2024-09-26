@@ -18,16 +18,11 @@ interface ISignUp {
     password: string,
 
 }
-interface ILogin {
-    email: string,
-    password: string,
-}
-
 
 const SignUpSection = () => {
-    const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
+    const { setIsSignUp, setIsLogin, setUserDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-    const [contactError, setContactError] = useState();
+
 
     const onSave = (values: ISignUp) => {
 
@@ -35,7 +30,7 @@ const SignUpSection = () => {
         //     const contact = values.contact;
         //     if(contact.test())
         // }
-        form.validateFields({ validateOnly: true }).then(() => {
+        // form.validateFields({ validateOnly: true }).then(() => {
             const updatedData = {
                 firstName: values.firstName,
                 lastName: values.lastName,
@@ -78,45 +73,12 @@ const SignUpSection = () => {
 
                     (error) => console.log("error", error)
                 )
-        }).catch()
+        // }).catch()
 
         form.resetFields();
     };
 
     const navigate = useNavigate();
-    const onLogin = (values: ILogin) => {
- 
-        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
-            UserName: values.email,
-            password: values.password
-        })
-            .then((response) => {
-
-                if (response.data.id) {
-
-                    localStorage.setItem('isUser', JSON.stringify(
-                        {
-                            email: response?.data?.email,
-                            password: response?.data?.password,
-                            UserId: response?.data?.id,
-                            FirstName: response?.data?.firstName,
-                            contact: response?.data?.contact
-                        }));
-
-                    setUserDetails({ ...userDetails, userData: response.data })
-                    setIsLogin(true);
-                    navigate('/dashboard');
-                    message.success('Login successful!');
-                } else {
-                    message.error(response.request.error);
-                }
-                form.resetFields();
-            })
-            .catch((error) => {
-                message.error('password or mail is incorrect');
-                console.error('Error fetching data:', error);
-            });
-    };
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Validation failed:', errorInfo);
@@ -145,54 +107,54 @@ const SignUpSection = () => {
                 </div>
                 <div style={{ width: '61%', backgroundColor: '#FFFFFF', borderTopLeftRadius: '55px', borderBottomLeftRadius: '55px' }}>
                     <div style={{ width: '100%', height: '100%' }}>
-                        {isSignUp ? (
-                            <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '4% 18%', height: "100vh" }}>
-                                <Form
-                                    layout="vertical"
-                                    onFinish={onSave}
-                                    onFinishFailed={onFinishFailed}
-                                    form={form}
-                                    className='mx-auto  rounded  px-5  mt-3 '
-                                    style={{ width: "100%", height:'100%' }}
-                                    name='validateOnly'
-                                >
-                                    <h4 className=' pt-3' style={{ fontWeight: '600' }}>Create Wallet Account</h4>
-                                    <p style={{ marginBottom: '35px', fontSize:'16px' }}>Sign up below to create your Wallet account</p>
-                                    <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '30px' }}>
-                                        <Form.Item
-                                            label="First name"
-                                            name="firstName"
-                                            style={{ width: '49%', height:'65px' }}
-                                            rules={[{ required: true, message: 'First name is required' }
-                                            ]}
-                                        >
-                                            <Input
-                                                style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}}
-                                                prefix={<UserOutlined />}
-                                                placeholder="First name"
-                                                onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
 
-                                            />
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            name="lastName"
-                                            label="Last name"
-                                            style={{ width: '49%',  height:'65px' }}
-                                            rules={[{ required: true, message: 'Last name is required' }]}
-                                        >
-                                            <Input
-                                                style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
-                                                prefix={<UserOutlined />}
-                                                placeholder='Last name'
-                                                onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
-
-                                            />
-                                        </Form.Item>
-                                    </div>
+                        <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '4% 18%', height: "100vh" }}>
+                            <Form
+                                layout="vertical"
+                                onFinish={onSave}
+                                onFinishFailed={onFinishFailed}
+                                form={form}
+                                className='mx-auto  rounded  px-5  mt-3 '
+                                style={{ width: "100%", height: '100%' }}
+                                name='validateOnly'
+                            >
+                                <h4 className=' pt-3' style={{ fontWeight: '600' }}>Create Wallet Account</h4>
+                                <p style={{ marginBottom: '35px', fontSize: '16px' }}>Sign up below to create your Wallet account</p>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '30px' }}>
                                     <Form.Item
-                                        label="E-mail"
-                                        name="email"
+                                        label="First name"
+                                        name="firstName"
+                                        style={{ width: '49%', height: '65px' }}
+                                        rules={[{ required: true, message: 'First name is required' }
+                                        ]}
+                                    >
+                                        <Input
+                                            style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
+                                            prefix={<UserOutlined />}
+                                            placeholder="First name"
+                                            onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
+
+                                        />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="lastName"
+                                        label="Last name"
+                                        style={{ width: '49%', height: '65px' }}
+                                        rules={[{ required: true, message: 'Last name is required' }]}
+                                    >
+                                        <Input
+                                            style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
+                                            prefix={<UserOutlined />}
+                                            placeholder='Last name'
+                                            onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
+
+                                        />
+                                    </Form.Item>
+                                </div>
+                                <Form.Item
+                                    label="E-mail"
+                                    name="email"
 
                                         style={{  height:'65px' }}
                                         rules={[{ required: true, message: 'Email is required' },
@@ -211,10 +173,7 @@ const SignUpSection = () => {
                                         rules={[{ required: true, message: 'Contact is required' },
                                         () => ({
                                             validator(_, value) {
-                                                if (value < 10 || value>10) {
-                                                    return Promise.reject('Contact number must be of 10 digits');
-                                                }
-
+                                                
                                                 if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
                                                     return Promise.reject('Invalid input');
                                                 }
@@ -227,91 +186,49 @@ const SignUpSection = () => {
                                     >
                                         <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}} prefix="+91 " placeholder="Contact" maxLength={10} />
 
-                                    </Form.Item>
-                                    <Form.Item
-                                        label="Password"
-                                        name="password"
-                                        style={{ height:'65px' }}
-                                        rules={[{ required: true, message: 'Password is required' }]}
-                                    >
-                                        <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
-                                    </Form.Item>
-                                    <Form.Item
-                                        label="Confirm Password"
-                                        name="confirmPassword"
-                                        dependencies={['password']}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Confirm password is required'
-                                            },
-                                            ({ getFieldValue }) => ({
-                                                validator(_, value) {
-                                                    if (!value || getFieldValue('password') === value) {
-                                                        return Promise.resolve();
-                                                    }
-                                                    return Promise.reject(new Error('The new password that you entered do not match!'));
-                                                },
-                                            }),
-                                        ]}
-                                        style={{ height:'65px'}}
-                                    >
-                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' />
-                                    </Form.Item>
-
-                                    <Form.Item>
-                                        <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
-                                            Sign Up
-                                        </Button>
-                                        <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
-                                    </Form.Item>
-                                </Form>
-
-                            </div>
-                        ) :
-                            (
-                                <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '15% 18%' }}>
-                                    <div style={{ height: '100%', width: '100%' }}>
-                                        <Form
-                                            layout="vertical"
-                                            onFinish={onLogin}
-                                            form={form}
-                                            // initialValues={editingExpense || { date: '', category: '', amount: 0, type: 'Cash' }}
-                                            className='mx-auto  rounded  px-5 py-4  my-4'
-                                            style={{ width: "35vw", boxShadow: 'none' }}
-                                        >
-                                            <h4 className=' p-2 '>Login</h4>
-                                            <Form.Item
-                                                label="E-mail"
-                                                name="email"
-
-                                                rules={[{ required: true, message: 'Email is required' },
-                                                {
-                                                    type: 'email',
-                                                    message: 'Enter a valid email'
+                                </Form.Item>
+                                <Form.Item
+                                    label="Password"
+                                    name="password"
+                                    style={{ height: '65px' }}
+                                    rules={[{ required: true, message: 'Password is required' }]}
+                                >
+                                    <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
+                                </Form.Item>
+                                <Form.Item
+                                    label="Confirm Password"
+                                    name="confirmPassword"
+                                    dependencies={['password']}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Confirm password is required'
+                                        },
+                                        ({ getFieldValue }) => ({
+                                            validator(_, value) {
+                                                if (!value || getFieldValue('password') === value) {
+                                                    return Promise.resolve();
                                                 }
-                                                ]}
-                                            >
-                                                <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
-                                            </Form.Item>
+                                                return Promise.reject(new Error('The new password that you entered do not match!'));
+                                            },
+                                        }),
+                                    ]}
+                                    style={{ height: '65px' }}
+                                >
+                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' />
+                                </Form.Item>
 
-                                            <Form.Item
-                                                label="Password"
-                                                name="password"
-                                                rules={[{ required: true, message: 'Password is required' }]}
-                                            >
-                                                <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
-                                            </Form.Item>
-                                            <Form.Item>
-                                                <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px' , marginTop:'8px'}}>
-                                                    Log in
-                                                </Button>
-                                                <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(true); navigate('/signup'); }}>Don't have account?<b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline' }} className='signup-text'> SignUp</b> </p>
-                                            </Form.Item>
-                                        </Form>
-                                    </div>
-                                </div>
-                            )}
+                                <Form.Item>
+                                    <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
+                                        Sign Up
+                                    </Button>
+                                    <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
+                                </Form.Item>
+                            </Form>
+
+                        </div>
+
+
                     </div>
                 </div>
             </div>
