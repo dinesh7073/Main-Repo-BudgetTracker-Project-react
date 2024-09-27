@@ -8,6 +8,8 @@ import UserContext from '../UserContext';
 import { HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css';
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
+
 interface GoalData {
   id: string,
   userId: string,
@@ -43,7 +45,7 @@ const Goal = () => {
 
   useEffect(() => {
 
-    axios.get(`${baseUrl}SavingsController/${UserId}GetSavingsByUserId`)
+    axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
 
         if (res.status === 200) {
@@ -76,7 +78,7 @@ const Goal = () => {
   const handleSubmit = (values: GoalData) => {
 
     const userId = UserId;
-    const apiUrl = `${baseUrl}SavingsController/${userId}CreateSavingsandUpdate`;
+    const apiUrl = `${REACT_APP_BASE_URL}SavingsController/${userId}CreateSavingsandUpdate`;
     const formattedDate = values.targetDate ? dayjs(values.targetDate).format('YYYY-MM-DD') : null;
     const GoalData = { ...values, userId, date: formattedDate };
 
@@ -109,7 +111,7 @@ const Goal = () => {
   };
 
   const handleDelete = (id: string) => {
-    axios.post(`${baseUrl}SavingsController/${id}DeleteSavings`)
+    axios.post(`${REACT_APP_BASE_URL}SavingsController/${id}DeleteSavings`)
       .then((response) => {
         const updatedGoal = goals.filter(goal => goal.id !== id);
         setGoals(updatedGoal);

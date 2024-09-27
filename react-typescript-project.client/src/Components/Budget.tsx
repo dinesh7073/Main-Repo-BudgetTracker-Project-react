@@ -11,6 +11,7 @@ import '../CSS/Budget.css';
 import { HomeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 import { Carousel } from 'react-bootstrap';
 
@@ -70,7 +71,7 @@ const Budget = () => {
 
 
   const UserId = userDetails.UserId;
-  console.log(UserId)
+  
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 5: return 'Food,Drinks';
@@ -250,7 +251,7 @@ const Budget = () => {
 
   const handleFormSubmit = (values: any) => {
     const userId = UserId;
-    const apiUrl = `${baseUrl}BudgetsController/${userId}CreateBudgetAndUpdate`;
+    const apiUrl = `${REACT_APP_BASE_URL}BudgetsController/${userId}CreateBudgetAndUpdate`;
 
     const [startDate, endDate] = values.dateRange || [null, null];
     const formattedStartingDate = dayjs(startDate).format('YYYY-MM-DD');
