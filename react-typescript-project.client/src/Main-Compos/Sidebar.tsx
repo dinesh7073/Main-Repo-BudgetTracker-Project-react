@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BiCoin } from "react-icons/bi";
 import { GoGoal } from "react-icons/go";
-import { Dropdown, MenuProps, Popconfirm } from "antd";
+import { Avatar, Dropdown, MenuProps, Popconfirm } from "antd";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Layout, Menu, theme } from "antd";
 import {
@@ -26,12 +26,13 @@ import logo from "../images/logo.png";
 import "../CSS/Sidebar.css";
 import "../CSS/ThemeColors.css";
 import PageRoutes from "../Components/Common/PageRoutes";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Header, Sider, Content } = Layout;
 
 const Sidebar: React.FC = () => {
   const { setUserId, userDetails } = useContext<any>(UserContext);
-  const userEmail = userDetails.email;
+  const userLastName = userDetails.LastName;
   const userFirstName = userDetails.FirstName;
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -57,7 +58,7 @@ const Sidebar: React.FC = () => {
           to="/account"
           style={{ display: "flex", alignItems: "center" }}
         >
-          <UserRound style={{ marginRight: "8px" }} /> Account{" "}
+          <UserRound style={{ marginRight: "8px",fontWeight:100 }} /> Account{" "}
         </Link>
       ),
       key: "1",
@@ -69,7 +70,7 @@ const Sidebar: React.FC = () => {
           to="/settings"
           style={{ display: "flex", alignItems: "center" }}
         >
-          <Settings style={{ marginRight: "8px" }} /> Setting{" "}
+          <Settings style={{ marginRight: "8px" }} /> Settings{" "}
         </Link>
       ),
       key: "2",
@@ -116,13 +117,13 @@ const Sidebar: React.FC = () => {
     },
     {
       key: "/account",
-      icon: <UserRound className="fs-4" />,
+      icon: <UserRound className="fs-4 fw-light" />,
       label: "Account",
       onClick: () => navigate("/account"),
     },
     {
       key: "/help",
-      icon: <CircleHelp className="fs-4" />,
+      icon: <CircleHelp className="fs-4 fw-light" />,
       label: "Help",
       onClick: () => navigate("/help"),
     },
@@ -170,7 +171,7 @@ const Sidebar: React.FC = () => {
           src={logo}
           alt=""
         />
-        {collapsed ? "" : <hr style={{ color: "gray", margin: "0px" }} />}
+        {/* {collapsed ? "" : <hr style={{ color: "gray", margin: "0px" }} />} */}
         <Menu
           selectedKeys={[selectedKey]}
           mode="inline"
@@ -196,33 +197,34 @@ const Sidebar: React.FC = () => {
               //   backgroundColor: "#ffffff",
               display: "flex",
               justifyContent: "space-between",
-              height: "55px",
+              height: "7vh",
               position: "sticky",
               top: 0,
               zIndex: 10,
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <h5 className="align-self-center ps-4 my-1">
+            <h5 className="align-self-center ps-4 my-1" style={{fontSize:'14px', fontFamily:"Open Sans"}}>
               Hello, {userFirstName}{" "}
             </h5>
             <div style={{ cursor: 'pointer' }} className="d-flex flex-row justify-content-between  align-item-center">
               <div>
                 {/* <p style={{ margin: '0px' }}>My Wallet : {UserWallet}</p> */}
               </div>
-              <IoIosNotificationsOutline className="fs-2 align-self-center pe-2" />
-              <Dropdown menu={{ items }} placement="bottom" arrow>
+              {/* <IoIosNotificationsOutline className="fs-2 align-self-center pe-2" /> */}
+              <Avatar size={30} icon={<UserOutlined />} className="align-self-center me-2"/>
+              <Dropdown menu={{ items }} placement="bottom" arrow trigger={['click']}>
                 <div
                   className="d-flex flex-row pe-3"
                   style={{ alignItems: "center", marginRight: "10px" }}
                 >
-                  <CircleUserRound
+                  {/* <CircleUserRound
                     style={{
                       alignSelf: "center",
                       marginRight: "5px",
                     }}
-                  />
-                  <p style={{ margin: "0px" }}>{userEmail}</p>
+                  /> */}
+                  <p style={{ margin: "0px", fontSize:'14px',fontFamily:"Open Sans" }}>{userFirstName} {userLastName}</p>
                 </div>
               </Dropdown>
             </div>
@@ -231,12 +233,12 @@ const Sidebar: React.FC = () => {
         <Content
           className="main-background"
           style={{
-            margin: "10px 0px 0px 10px",
-            padding: 12,
-            background: colorBgContainer,
+         margin: "20px",
+            // padding: 12,
+            background: "#f5f5f5",
             borderRadius: borderRadiusLG,
             overflowY: "auto",
-            height: "calc(100vh - 55px)",
+            height: "calc(100vh - 9vh)",
           }}
         >
           <PageRoutes />

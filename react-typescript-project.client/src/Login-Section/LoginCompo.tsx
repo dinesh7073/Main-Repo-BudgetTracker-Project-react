@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { message, Form, Input, Button } from 'antd';
+import { message, Form, Input, Button, Spin } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
@@ -7,6 +7,7 @@ import '../CSS/LoginSignUp.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../images/logo.png';
 import pic6 from '../images/pic6.png';
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 interface ISignUp {
     contact: any;
@@ -25,21 +26,18 @@ interface ILogin {
 const LoginCompo = () => {
 
 
-    const { isSignUp, setIsSignUp } = useContext<any>(UserContext);
 
     const [form] = Form.useForm();
-    const { setIsLogin, setUserDetails } = useContext<any>(UserContext);
+    const { setIsLogin, setUserDetails, setIsSignUp } = useContext<any>(UserContext);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: ''
     })
     const [inputValue, setInputValue] = useState('');
+    const [loader, setLoader] = useState<boolean>(false);
 
 
 
-    const handleHomeNavigation = () => {
-        navigate('/home')
-    }
 
     const handleInputValue = (e: any) => {
 
@@ -63,83 +61,41 @@ const LoginCompo = () => {
 
 
 
-    const onSave = (values: ISignUp) => {
-
-        const updatedData = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            password: values.password,
-            contact: values.contact
-        }
-
-        console.log(inputValue);
-
-        axios.post(
-            `https://localhost:7007/BudgetTracker/CreateUsersAndUpdate`,
-            {
-                firstName: updatedData.firstName,
-                lastName: updatedData.lastName,
-                email: updatedData.email,
-                password: updatedData.password,
-                contact: updatedData.contact
-            }).then(
-                (response: any) => {
-                    setIsLogin(true);
-                    navigate('/');
-                    setUserDetails({ UserId: response.data.id, userData: response.data })
-                    console.log("UserId", response.data.id, "userData", response.data);
-                    localStorage.setItem(
-                        'isUser',
-                        JSON.stringify(
-                            {
-                                email: response?.data?.email,
-                                password: response?.data?.password,
-                                UserId: response?.data?.id,
-                                FirstName: response?.data?.firstName,
-                                LastName: response?.data?.lastName,
-                                contact: response?.data?.contact
-                            })
-                    );
-                    form.resetFields();
-
-                }
-            ).catch(
-
-                (error) => console.log("error", error)
-            )
-        form.resetFields();
-    };
-
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
-        axios.post("https://localhost:7007/BudgetTracker/Login", {
+        setLoader(true);
+
+        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
             UserName: values.email,
             password: values.password
         })
             .then((response) => {
-                debugger;
+
+
                 if (response.data.id) {
 
-                    // localStorage.setItem('isUser', JSON.stringify(
-                    //     {
-                    //         email: response?.data?.email,
-                    //         password: response?.data?.password,
-                    //         UserId: response?.data?.id,
-                    //         FirstName: response?.data?.firstName,
-                    //         contact: response?.data?.contact
-                    //     }));
+                    localStorage.setItem('isUser', JSON.stringify(
+                        {
+                            email: response?.data?.email,
+                            UserId: response?.data?.id,
+                            FirstName: response?.data?.firstName,
+
+                        }));
 
                     setUserDetails({ ...setUserDetails, userData: response.data })
+
                     setIsLogin(true);
-                    navigate('/');
+                    setLoader(false)
+                    navigate('/dashboard');
                     message.success('Login successful!');
                 } else {
+                    setLoader(false);
                     message.error(response.request.error);
                 }
                 form.resetFields();
             })
             .catch((error) => {
+                setLoader(false);
                 message.error('password or mail is incorrect');
                 console.error('Error fetching data:', error);
             });
@@ -174,6 +130,7 @@ const LoginCompo = () => {
 
                         <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '15% 18%' }}>
                             <div style={{ height: '100%', width: '100%' }}>
+                                <Spin spinning={loader} fullscreen />
                                 <Form
                                     layout="vertical"
                                     onFinish={onLogin}
@@ -200,7 +157,7 @@ const LoginCompo = () => {
                                     <Form.Item
                                         label="Password"
                                         name="password"
-                                        rules={[{ required: true, message: 'Please input your Password!' }]}
+                                        rules={[{ required: true, message: 'Please input your password!' }]}
                                     >
                                         <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                     </Form.Item>

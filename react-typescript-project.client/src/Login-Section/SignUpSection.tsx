@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { message, Form, Input, Button } from 'antd';
+import { message, Form, Input, Button, Spin } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
@@ -18,105 +18,74 @@ interface ISignUp {
     password: string,
 
 }
-interface ILogin {
-    email: string,
-    password: string,
-}
-
 
 const SignUpSection = () => {
-    const { isSignUp, setIsSignUp, setIsLogin, setUserDetails, userDetails } = useContext<any>(UserContext);
+    const { setIsSignUp, setIsLogin, setUserDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-    const [contactError, setContactError] = useState();
+    const [loader, setLoader] = useState<boolean>(false);
 
     const onSave = (values: ISignUp) => {
+        setLoader(true);
 
         // const validate = ()=>{
         //     const contact = values.contact;
         //     if(contact.test())
         // }
-        form.validateFields({ validateOnly: true }).then(() => {
-            const updatedData = {
-                firstName: values.firstName,
-                lastName: values.lastName,
-                email: values.email,
-                password: values.password,
-                contact: values.contact
-            }
+        // form.validateFields({ validateOnly: true }).then(() => {
+        const updatedData = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+            contact: values.contact
+        }
 
 
-            axios.post(
-                `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
-                {
-                    firstName: updatedData.firstName,
-                    lastName: updatedData.lastName,
-                    email: updatedData.email,
-                    password: updatedData.password,
-                    contact: updatedData.contact
-                }).then(
-                    (response: any) => {
-                        setIsLogin(true);
-                        navigate('/');
-                        setUserDetails({ userData: response.data })
-                        console.log("UserId", response.data.id, "userData", response.data);
-                        localStorage.setItem(
-                            'isUser',
-                            JSON.stringify(
-                                {
-                                    email: response?.data?.email,
-                                    password: response?.data?.password,
-                                    UserId: response?.data?.id,
-                                    FirstName: response?.data?.firstName,
-                                    LastName: response?.data?.lastName,
-                                    contact: response?.data?.contact
-                                })
-                        );
-                        form.resetFields();
+        axios.post(
+            `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
+            {
+                firstName: updatedData.firstName,
+                lastName: updatedData.lastName,
+                email: updatedData.email,
+                password: updatedData.password,
+                contact: updatedData.contact
+            }).then(
+                (response: any) => {
+                    setLoader(false);
+                    setIsLogin(true);
+                    navigate('/dashboard');
+                    setUserDetails({ userData: response.data })
+                    
+                    console.log("UserId", response.data.id, "userData", response.data);
+                    localStorage.setItem(
+                        'isUser',
+                        JSON.stringify(
+                            {
+                                email: response?.data?.email,
+                                password: response?.data?.password,
+                                UserId: response?.data?.id,
+                                FirstName: response?.data?.firstName,
+                                LastName: response?.data?.lastName,
+                                contact: response?.data?.contact
+                            })
+                    );
+                    form.resetFields();
 
-                    }
-                ).catch(
+                }
+            ).catch(
 
-                    (error) => console.log("error", error)
-                )
-        }).catch()
+                (error) => {
+                    console.log("error", error)
+                    setLoader(false);
+                }
+
+            )
+        // }).catch()
 
         form.resetFields();
     };
 
     const navigate = useNavigate();
-    const onLogin = (values: ILogin) => {
-
-        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
-            UserName: values.email,
-            password: values.password
-        })
-            .then((response) => {
-
-                if (response.data.id) {
-
-                    localStorage.setItem('isUser', JSON.stringify(
-                        {
-                            email: response?.data?.email,
-                            password: response?.data?.password,
-                            UserId: response?.data?.id,
-                            FirstName: response?.data?.firstName,
-                            contact: response?.data?.contact
-                        }));
-
-                    setUserDetails({ ...userDetails, userData: response.data })
-                    setIsLogin(true);
-                    navigate('/dashboard');
-                    message.success('Login successful!');
-                } else {
-                    message.error(response.request.error);
-                }
-                form.resetFields();
-            })
-            .catch((error) => {
-                message.error('password or mail is incorrect');
-                console.error('Error fetching data:', error);
-            });
-    };
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Validation failed:', errorInfo);
@@ -147,6 +116,7 @@ const SignUpSection = () => {
                     <div style={{ width: '100%', height: '100%' }}>
 
                         <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '4% 18%', height: "100vh" }}>
+                            <Spin spinning={loader} fullscreen />
                             <Form
                                 layout="vertical"
                                 onFinish={onSave}
@@ -211,9 +181,6 @@ const SignUpSection = () => {
                                     rules={[{ required: true, message: 'Contact is required' },
                                     () => ({
                                         validator(_, value) {
-                                            if (value < 10 || value > 10) {
-                                                return Promise.reject('Contact must be of 10 digits');
-                                            }
 
                                             if (RegExp("[1-9]{1}[0-9]{9}").test(value) == false) {
                                                 return Promise.reject('Invalid input');
@@ -263,7 +230,7 @@ const SignUpSection = () => {
                                     <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
                                         Sign Up
                                     </Button>
-                                    <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
+                                    <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
                                 </Form.Item>
                             </Form>
 

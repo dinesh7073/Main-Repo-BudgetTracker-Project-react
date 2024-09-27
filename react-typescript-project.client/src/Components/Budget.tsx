@@ -11,10 +11,12 @@ import '../CSS/Budget.css';
 import { HomeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
+import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 import { Carousel } from 'react-bootstrap';
 
 import '../CSS/ThemeColors.css'
+import { REACT_APP_BASE_URL } from "./Common/Url";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -69,7 +71,7 @@ const Budget = () => {
 
 
   const UserId = userDetails.UserId;
-  console.log(UserId)
+  
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 5: return 'Food,Drinks';
@@ -100,7 +102,7 @@ const Budget = () => {
   };
 
   useEffect(() => {
-    axios.get(`${baseUrl}TransactionsController/${UserId}GetTransactionsByUserId`)
+    axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
           setTransactionData(res.data);
@@ -114,8 +116,8 @@ const Budget = () => {
   // const ExceedsBudget = Boolean(budget.amountSpent > budget.amount);
 
   useEffect(() => {
-    
-    axios.get(`${baseUrl}BudgetsController/${UserId}GetBudgetById`)
+
+    axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -249,7 +251,7 @@ const Budget = () => {
 
   const handleFormSubmit = (values: any) => {
     const userId = UserId;
-    const apiUrl = `${baseUrl}BudgetsController/${userId}CreateBudgetAndUpdate`;
+    const apiUrl = `${REACT_APP_BASE_URL}BudgetsController/${userId}CreateBudgetAndUpdate`;
 
     const [startDate, endDate] = values.dateRange || [null, null];
     const formattedStartingDate = dayjs(startDate).format('YYYY-MM-DD');
