@@ -70,7 +70,7 @@ const Sidebar: React.FC = () => {
           to="/settings"
           style={{ display: "flex", alignItems: "center" }}
         >
-          <Settings style={{ marginRight: "8px" }} /> Settings{" "}
+          <Settings style={{ marginRight: "15px" }} /> Settings{" "}
         </Link>
       ),
       key: "2",
@@ -212,18 +212,14 @@ const Sidebar: React.FC = () => {
                 {/* <p style={{ margin: '0px' }}>My Wallet : {UserWallet}</p> */}
               </div>
               {/* <IoIosNotificationsOutline className="fs-2 align-self-center pe-2" /> */}
-              <Avatar size={30} icon={<UserOutlined />} className="align-self-center me-2"/>
+              
               <Dropdown menu={{ items }} placement="bottom" arrow trigger={['click']}>
+
                 <div
                   className="d-flex flex-row pe-3"
                   style={{ alignItems: "center", marginRight: "10px" }}
                 >
-                  {/* <CircleUserRound
-                    style={{
-                      alignSelf: "center",
-                      marginRight: "5px",
-                    }}
-                  /> */}
+                  <Avatar size={30} icon={<UserOutlined />} className="align-self-center me-2"/>
                   <p style={{ margin: "0px", fontSize:'14px',fontFamily:"Open Sans" }}>{userFirstName} {userLastName}</p>
                 </div>
               </Dropdown>

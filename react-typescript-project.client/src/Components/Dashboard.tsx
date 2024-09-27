@@ -70,6 +70,10 @@ const Dashboard = () => {
   const UserId = userDetails.UserId;
 
 
+  const formatter: StatisticProps['formatter'] = (value) => (
+    <CountUp end={value as number} separator="," />
+  );
+
   useEffect(() => {
     axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
@@ -195,7 +199,7 @@ const Dashboard = () => {
     }
   };
 
-   const { pData, uData, xLabels } = getDataForTimeRange(timeRange);
+  const { pData, uData, xLabels } = getDataForTimeRange(timeRange);
   const twoColors: ProgressProps['strokeColor'] = {
     '0%': '#ffffff',
     '100%': '#088395',
@@ -584,7 +588,7 @@ const Dashboard = () => {
         <Row>
           <Col xs={{ span: 5, offset: 1 }} lg={{ span: 5, offset: 0 }}>
             <Card style={{ width: "300px", height: "95%", padding: "5px" }}>
-              <p style={{ marginBottom: 5}}> Expenses Structure</p>
+              <p style={{ marginBottom: 5 }}> Expenses Structure</p>
               <div className="top-one-cards" >
                 <Row gutter={20}>
                   <Col span={12}>
@@ -606,8 +610,8 @@ const Dashboard = () => {
                   <Col span={2}>
 
 
-                    <Card style={{ width: '120px', height: '90px',padding:0 }}  className='expenseCard ant-card ant-card-body'>
-                      <p style={{marginBottom:4, fontSize:'13px'}}>Total Expenses</p>
+                    <Card style={{ width: '120px', height: '90px', padding: 0 }} className='expenseCard ant-card ant-card-body'>
+                      <p style={{ marginBottom: 4, fontSize: '13px' }}>Total Expenses</p>
                       <Statistic
 
                         value={totalExpenses}
@@ -623,7 +627,7 @@ const Dashboard = () => {
             </Card>
           </Col>
           <Col xs={{ span: 11, offset: 1 }} lg={{ span: 5 }}>
-            <Card style={{ width: "300px", height: "95%", padding:'0px 5px 10px 5px'}}>
+            <Card style={{ width: "300px", height: "95%", padding: '0px 5px 10px 5px' }}>
               <p>
                 <BiCoin className="recent-transactions-icon" color="#121212" size={20} />
                 Budget
@@ -638,48 +642,48 @@ const Dashboard = () => {
                       <p className="card-title total-income">
                         {categories.map((category) => category === "Income") ? "Income" : ""}
                       </p>
-                      <div className="statistic-container" style={{margin:0}}>
+                      <div className="statistic-container" style={{ margin: 0 }}>
                         <span style={{ fontSize: '18px', marginRight: '5px' }}> ₹ </span>
-                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize:'16px' }}>
-                          <Statistic className="statistic-value" value={totalIncome} formatter={formatter} valueStyle={{  fontSize: '18px' }} />
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize: '16px' }}>
+                          <Statistic className="statistic-value" value={totalIncome.toLocaleString()}  valueStyle={{ fontSize: '18px' }} />
                         </div>
                       </div>
                     </div>
                   </div>
-                  <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Spent <span style={{ fontWeight: 500 }}> ₹{`${totalExpenses}`}</span></p>
+                  <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Spent <span style={{ fontWeight: 500 }}> ₹{`${totalExpenses.toLocaleString()}`}</span></p>
                   <Flex vertical gap="middle">
                     <Progress percent={Incomepercent} format={(percent: any) => `${Math.round(percent).toLocaleString()}%`} strokeColor={twoColors} />
                   </Flex>
                 </div>
               </div>
-              <div className=" card-spacing" style={{margin:0, paddingTop:8 }}>
-                      <div className="top-three-cards" onClick={() => navigate("/budget")}>
-                        <CircleArrowUp className="card-icon" color="#876AFE" size={28} />
+              <div className=" card-spacing" style={{ margin: 0, paddingTop: 8 }}>
+                <div className="top-three-cards" onClick={() => navigate("/budget")}>
+                  <CircleArrowUp className="card-icon" color="#876AFE" size={28} />
 
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <p className="card-title total-expense">
-                            Expense
-                          </p>
-                          <div className="statistic-container">
-                            <span style={{ fontSize: '18px', marginRight: '4px' }}> ₹ </span>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <p className="card-title total-expense">
+                      Expense
+                    </p>
+                    <div className="statistic-container">
+                      <span style={{ fontSize: '18px', marginRight: '4px' }}> ₹ </span>
 
-                            <div style={{ display: 'flex', flexDirection: 'row' ,fontSize: '16px'}}>
-                              <Statistic  value={totalExpenses} formatter={formatter} valueStyle={{fontSize: '18px'}}/>
-                            </div>
-                          </div>
-                        </div>
+                      <div style={{ display: 'flex', flexDirection: 'row', fontSize: '16px' }}>
+                        <Statistic value={totalExpenses.toLocaleString()} formatter={formatter} valueStyle={{ fontSize: '18px' }} />
                       </div>
-                      <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 'bold' }}>₹{`${Number()}`}</span></p>
-                      <Flex vertical gap="middle">
-                        <Progress percent={69.9} strokeColor={oneColors} />
-                      </Flex>
                     </div>
-                  
-              
+                  </div>
+                </div>
+                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 'bold' }}>₹{`${Number().toLocaleString()}`}</span></p>
+                <Flex vertical gap="middle">
+                  <Progress percent={69.9} strokeColor={oneColors} />
+                </Flex>
+              </div>
+
+
             </Card>
           </Col>
           <Col xs={{ span: 5, offset: 1 }} lg={{ span: 5 }}>
-            <Card style={{ width: "300px", height: "95%", padding:'0px 5px' }}>
+            <Card style={{ width: "300px", height: "95%", padding: '0px 5px' }}>
               <p >
                 <Goal className="recent-transactions-icon" color="#121212" size={18} />
                 Recent Goals
@@ -724,8 +728,8 @@ const Dashboard = () => {
                         }
                         description={
                           <div className='d-flex flex-column '>
-                            <small className='text-dark ' style={{ fontSize: '13px' }}>Target amount-{goal.targetAmount}</small>
-                            <small className='text-dark'>Saved amount-{goal.savedAmount}</small>
+                            <small className='text-dark ' style={{ fontSize: '13px' }}>Target amount-{goal.targetAmount.toLocaleString()}</small>
+                            <small className='text-dark'>Saved amount-{goal.savedAmount.toLocaleString()}</small>
                             <small className='text-dark'>Target date {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
                           </div>
                         }
@@ -738,36 +742,36 @@ const Dashboard = () => {
             </Card>
           </Col>
           <Col xs={{ span: 5, offset: 1 }} lg={{ span: 5 }}>
-            <Card style={{ width: "300px", height: "95%", padding:'0px 5px' }}>
-              <p style={{margin:0,paddingBottom:"6px"}} >
-                <ArrowLeftRight className="recent-transactions-icon "  color="#121212" size={20} />
+            <Card style={{ width: "300px", height: "95%", padding: '0px 5px' }}>
+              <p style={{ margin: 0, paddingBottom: "6px" }} >
+                <ArrowLeftRight className="recent-transactions-icon " color="#121212" size={20} />
                 Recent Transactions
               </p>
 
-             
-                <div>
+
+              <div>
 
 
-                  <List
-                    itemLayout="horizontal"
-                    dataSource={sortedTransactions}
-                    
-                    renderItem={(transaction) => (
-                      <List.Item>
-                        <List.Item.Meta
-                          title={<Text >{getCategoryLabel(transaction.categoryType)}</Text>}
-                          description={<p style={{fontSize:'13px'}}>{getAccountName(transaction.accountType)} - {dayjs(transaction.date).format('YYYY-MM-DD')}</p>}
-                        />
-                        <Text type={transaction.transactionType === 1 ? 'success' : 'danger'} style={{fontSize:'14px'}}>
-                          {transaction.transactionType === 1 ? '+' : '-'}₹{transaction.amount.toLocaleString()}
-                        </Text>
-                      </List.Item>
-                    )}
-                  />
-                </div>
-                <Button  className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{marginLeft:'50px'}}>
-                  View All Transaction
-                </Button>
+                <List
+                  itemLayout="horizontal"
+                  dataSource={sortedTransactions}
+
+                  renderItem={(transaction) => (
+                    <List.Item>
+                      <List.Item.Meta
+                        title={<Text >{getCategoryLabel(transaction.categoryType)}</Text>}
+                        description={<p style={{ fontSize: '13px' }}>{getAccountName(transaction.accountType)} - {dayjs(transaction.date).format('YYYY-MM-DD')}</p>}
+                      />
+                      <Text type={transaction.transactionType === 1 ? 'success' : 'danger'} style={{ fontSize: '14px' }}>
+                        {transaction.transactionType === 1 ? '+' : '-'}₹{transaction.amount.toLocaleString()}
+                      </Text>
+                    </List.Item>
+                  )}
+                />
+              </div>
+              <Button className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{ marginLeft: '50px' }}>
+                View All Transaction
+              </Button>
               {/* <Tag color="default"> View All Transaction</Tag> */}
             </Card>
 
@@ -775,71 +779,71 @@ const Dashboard = () => {
           </Col>
         </Row>
         <Row>
-    <Col xs={{ span: 5, offset: 0}} lg={{ span: 12 }}>
-    <Card style={{width:"100%", height:"100%"}}>
-    
-              {/* <Card className='five-cards total-cards-background' style={{ width: '57.5%', height: 340 }} > */}
-                <div style={{
-                  marginBottom: '-15px'
+          <Col xs={{ span: 5, offset: 0 }} lg={{ span: 11 }}>
+            <Card style={{ width: "630px", height: "100%", marginRight: '30px' }}>
 
-                }}>
-                  <Select
-                    value={timeRange}
-                    onChange={handleTimeRangeChange}
-                    style={{ width: 100 }}
-                  >
-                    <MenuItem value="weekly">Weekly</MenuItem>
-                    <MenuItem value="monthly">Monthly</MenuItem>
-                    <MenuItem value="yearly">Yearly</MenuItem>
-                  </Select>
-                </div>
-                <LineChart
-                  width={600}
-                  height={300}
-                  series={[
-                    { data: pData, label: 'Income', color: '#071952' },
-                    { data: uData, label: 'Expenses', color: '#088395' },
-                  ]}
-                  xAxis={[
-                    {
-                      scaleType: 'point',
-                      data: xLabels,
-                      label: '',
-                    }
-                  ]}
-                  yAxis={[
-                    {
-                      label: '',
-                    }
-                  ]}
-                />
+              {/* <Card className='five-cards total-cards-background' style={{ width: '57.5%', height: 340 }} > */}
+              <div style={{
+                marginBottom: '-15px'
+
+              }}>
+                <Select
+                  value={timeRange}
+                  onChange={handleTimeRangeChange}
+                  style={{ width: 100 }}
+                >
+                  <MenuItem value="weekly">Weekly</MenuItem>
+                  <MenuItem value="monthly">Monthly</MenuItem>
+                  <MenuItem value="yearly">Yearly</MenuItem>
+                </Select>
+              </div>
+              <LineChart
+                width={600}
+                height={300}
+                series={[
+                  { data: pData, label: 'Income', color: '#071952' },
+                  { data: uData, label: 'Expenses', color: '#088395' },
+                ]}
+                xAxis={[
+                  {
+                    scaleType: 'point',
+                    data: xLabels,
+                    label: '',
+                  }
+                ]}
+                yAxis={[
+                  {
+                    label: '',
+                  }
+                ]}
+              />
               {/* </Card> */}
-             
-            
-      </Card>
-      </Col>
-    <Col xs={{ span: 5, offset: 1 }} lg={{ span: 10 }}>
-    <Card className='total-cards-background' style={{ width: '100%', height: '100%' }}>
-                <div className="three-cards   five-cards" style={{ height: '100%', width: '100%', boxShadow: 'none' }}>
-                  <p className="recent-transactions-title">
-                    Budget v/s Expenses
-                  </p>
-                  <hr style={{ margin: '10px 0px 0px 0px' }} />
-                  <div className="top-one-cards" onClick={() => navigate("/goal")}>
-                    <BarChart
-                      width={530}
-                      height={295}
-                      series={[
-                        { data: seriesData.map(data => data.amount), label: 'Budget', color: '#2190A0' },
-                        { data: seriesData.map(data => data.amountSpent), label: 'Expenses', color: '#FF8485' },
-                      ]}
-                      xAxis={[{ data: categories, scaleType: 'band' }]}
-                    />
-                  </div>
+
+
+            </Card>
+          </Col>
+          <Col xs={{ span: 5, offset: 1 }} lg={{ span: 9 }}>
+            <Card className='total-cards-background' style={{ width: '600px', height: '100%' }}>
+              <div className="three-cards   five-cards" style={{ height: '100%', width: '100%', boxShadow: 'none' }}>
+                <p className="recent-transactions-title">
+                  Budget v/s Expenses
+                </p>
+                <hr style={{ margin: '10px 0px 0px 0px' }} />
+                <div className="top-one-cards" onClick={() => navigate("/goal")}>
+                  <BarChart
+                    width={580}
+                    height={295}
+                    series={[
+                      { data: seriesData.map(data => data.amount), label: 'Budget', color: '#2190A0' },
+                      { data: seriesData.map(data => data.amountSpent), label: 'Expenses', color: '#FF8485' },
+                    ]}
+                    xAxis={[{ data: categories, scaleType: 'band' }]}
+                  />
                 </div>
-              </Card>
-              </Col>
-  </Row>
+              </div>
+            </Card>
+          </Col>
+        </Row>
       </div>
 
     </>
