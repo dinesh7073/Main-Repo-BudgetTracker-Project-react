@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { message, Form, Input, Button } from 'antd';
+import { message, Form, Input, Button, Spin } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
@@ -26,15 +26,15 @@ interface ILogin {
 const LoginCompo = () => {
 
 
-    const { setIsSignUp } = useContext<any>(UserContext);
 
     const [form] = Form.useForm();
-    const { setIsLogin, setUserDetails } = useContext<any>(UserContext);
+    const { setIsLogin, setUserDetails, setIsSignUp } = useContext<any>(UserContext);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: ''
     })
     const [inputValue, setInputValue] = useState('');
+    const [loader, setLoader] = useState<boolean>(false);
 
 
 
@@ -63,32 +63,39 @@ const LoginCompo = () => {
 
     const navigate = useNavigate();
     const onLogin = (values: ILogin) => {
+        setLoader(true);
+
         axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
             UserName: values.email,
             password: values.password
         })
             .then((response) => {
+
+
                 if (response.data.id) {
 
                     localStorage.setItem('isUser', JSON.stringify(
                         {
                             email: response?.data?.email,
-                            password: response?.data?.password,
                             UserId: response?.data?.id,
                             FirstName: response?.data?.firstName,
-                            contact: response?.data?.contact
+
                         }));
 
                     setUserDetails({ ...setUserDetails, userData: response.data })
+
                     setIsLogin(true);
-                    navigate('/');
+                    setLoader(false)
+                    navigate('/dashboard');
                     message.success('Login successful!');
                 } else {
+                    setLoader(false);
                     message.error(response.request.error);
                 }
                 form.resetFields();
             })
             .catch((error) => {
+                setLoader(false);
                 message.error('password or mail is incorrect');
                 console.error('Error fetching data:', error);
             });
@@ -123,6 +130,7 @@ const LoginCompo = () => {
 
                         <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '15% 18%' }}>
                             <div style={{ height: '100%', width: '100%' }}>
+                                <Spin spinning={loader} fullscreen />
                                 <Form
                                     layout="vertical"
                                     onFinish={onLogin}
@@ -149,7 +157,7 @@ const LoginCompo = () => {
                                     <Form.Item
                                         label="Password"
                                         name="password"
-                                        rules={[{ required: true, message: 'Please input your Password!' }]}
+                                        rules={[{ required: true, message: 'Please input your password!' }]}
                                     >
                                         <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                     </Form.Item>

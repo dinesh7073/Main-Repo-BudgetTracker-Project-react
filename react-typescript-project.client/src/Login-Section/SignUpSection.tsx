@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { message, Form, Input, Button } from 'antd';
+import { message, Form, Input, Button, Spin } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
@@ -22,57 +22,64 @@ interface ISignUp {
 const SignUpSection = () => {
     const { setIsSignUp, setIsLogin, setUserDetails } = useContext<any>(UserContext);
     const [form] = Form.useForm();
-
+    const [loader, setLoader] = useState<boolean>(false);
 
     const onSave = (values: ISignUp) => {
+        setLoader(true);
 
         // const validate = ()=>{
         //     const contact = values.contact;
         //     if(contact.test())
         // }
         // form.validateFields({ validateOnly: true }).then(() => {
-            const updatedData = {
-                firstName: values.firstName,
-                lastName: values.lastName,
-                email: values.email,
-                password: values.password,
-                contact: values.contact
-            }
+        const updatedData = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+            contact: values.contact
+        }
 
 
-            axios.post(
-                `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
-                {
-                    firstName: updatedData.firstName,
-                    lastName: updatedData.lastName,
-                    email: updatedData.email,
-                    password: updatedData.password,
-                    contact: updatedData.contact
-                }).then(
-                    (response: any) => {
-                        setIsLogin(true);
-                        navigate('/');
-                        setUserDetails({ userData: response.data })
-                        console.log("UserId", response.data.id, "userData", response.data);
-                        localStorage.setItem(
-                            'isUser',
-                            JSON.stringify(
-                                {
-                                    email: response?.data?.email,
-                                    password: response?.data?.password,
-                                    UserId: response?.data?.id,
-                                    FirstName: response?.data?.firstName,
-                                    LastName: response?.data?.lastName,
-                                    contact: response?.data?.contact
-                                })
-                        );
-                        form.resetFields();
+        axios.post(
+            `${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`,
+            {
+                firstName: updatedData.firstName,
+                lastName: updatedData.lastName,
+                email: updatedData.email,
+                password: updatedData.password,
+                contact: updatedData.contact
+            }).then(
+                (response: any) => {
+                    setLoader(false);
+                    setIsLogin(true);
+                    navigate('/dashboard');
+                    setUserDetails({ userData: response.data })
+                    
+                    console.log("UserId", response.data.id, "userData", response.data);
+                    localStorage.setItem(
+                        'isUser',
+                        JSON.stringify(
+                            {
+                                email: response?.data?.email,
+                                password: response?.data?.password,
+                                UserId: response?.data?.id,
+                                FirstName: response?.data?.firstName,
+                                LastName: response?.data?.lastName,
+                                contact: response?.data?.contact
+                            })
+                    );
+                    form.resetFields();
 
-                    }
-                ).catch(
+                }
+            ).catch(
 
-                    (error) => console.log("error", error)
-                )
+                (error) => {
+                    console.log("error", error)
+                    setLoader(false);
+                }
+
+            )
         // }).catch()
 
         form.resetFields();
@@ -109,6 +116,7 @@ const SignUpSection = () => {
                     <div style={{ width: '100%', height: '100%' }}>
 
                         <div style={{ width: '100%', alignContent: 'center', alignItems: 'center', padding: '4% 18%', height: "100vh" }}>
+                            <Spin spinning={loader} fullscreen />
                             <Form
                                 layout="vertical"
                                 onFinish={onSave}
@@ -156,35 +164,35 @@ const SignUpSection = () => {
                                     label="E-mail"
                                     name="email"
 
-                                        style={{  height:'65px' }}
-                                        rules={[{ required: true, message: 'Email is required' },
-                                        {
-                                            type: "email",
-                                            message: 'Enter a valid email'
-                                        }
-                                        ]}
-                                    >
-                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
-                                    </Form.Item>
-                                    <Form.Item
-                                        label="Contact"
-                                        name="contact"
-                                        style={{ height:'65px' }}
-                                        rules={[{ required: true, message: 'Contact is required' },
-                                        () => ({
-                                            validator(_, value) {
-                                                
-                                                if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
-                                                    return Promise.reject('Invalid input');
-                                                }
-                                                return Promise.resolve();
-                                            },
-                                            validateTrigger:'onFinish'
-                                        })
-                                        ]}
-                                        
-                                    >
-                                        <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none'}} prefix="+91 " placeholder="Contact" maxLength={10} />
+                                    style={{ height: '65px' }}
+                                    rules={[{ required: true, message: 'Email is required' },
+                                    {
+                                        type: "email",
+                                        message: 'Enter a valid email'
+                                    }
+                                    ]}
+                                >
+                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
+                                </Form.Item>
+                                <Form.Item
+                                    label="Contact"
+                                    name="contact"
+                                    style={{ height: '65px' }}
+                                    rules={[{ required: true, message: 'Contact is required' },
+                                    () => ({
+                                        validator(_, value) {
+
+                                            if (RegExp("[1-9]{1}[0-9]{9}").test(value) == false) {
+                                                return Promise.reject('Invalid input');
+                                            }
+                                            return Promise.resolve();
+                                        },
+                                        validateTrigger: 'onFinish'
+                                    })
+                                    ]}
+
+                                >
+                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" maxLength={10} />
 
                                 </Form.Item>
                                 <Form.Item
@@ -222,7 +230,7 @@ const SignUpSection = () => {
                                     <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
                                         Sign Up
                                     </Button>
-                                    <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
+                                    <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
                                 </Form.Item>
                             </Form>
 

@@ -1,7 +1,10 @@
 .login-signup-main-container {
-    background-color: #B1D9DB;
+
+    /* padding: 40px; */
+    background-color: #EEEEFE;
     display: flex;
     flex-direction: row;
+    
 
 
 }

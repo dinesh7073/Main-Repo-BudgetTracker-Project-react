@@ -1,4 +1,13 @@
-.itemsLink{
-text-decoration: none;
+.itemsLink {
+    text-decoration: none;
 
+}
+
+.not-hover {
+    background-color: rgb(255, 255, 255);
+}
+
+.not-hover:hover {
+    background-color: white !important;
+    cursor: default;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col } from 'antd';
+import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop } from 'lucide-react';
+import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX } from 'lucide-react';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -198,6 +198,8 @@ const TransactionList: React.FC = () => {
         }
     };
 
+
+
     const getCategoryTypeIcon = (categoryType: number | null) => {
         switch (categoryType) {
             case 1: return <DollarSign />;
@@ -220,7 +222,11 @@ const TransactionList: React.FC = () => {
         if (transaction) {
             const myobj = {
                 ...transaction,
-                categoryType: getCategoryLabel(transaction.categoryType),
+                // categoryType: getCategoryLabel(transaction.categoryType),
+                categoryType: {
+                    label: getCategoryLabel(transaction.categoryType),
+                    value: transaction.categoryType
+                },
                 time: dayjs(transaction.time),
                 date: dayjs(transaction.date),
 
@@ -241,15 +247,19 @@ const TransactionList: React.FC = () => {
     const handleSubmit = (values: FormData) => {
         const amount = Number(values.amount);
         const userId = UserId;
+        const categoryType = values.categoryType.value;
         const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
 
-        const transactionData = { ...values, amount, userId };
+
+
+        const transactionData = { ...values, amount, userId, categoryType };
         if (editingTransaction) {
             transactionData.id = editingTransaction.id;
         }
+
+
         axios.post(apiUrl, transactionData)
             .then((response) => {
-                console.log("userId", UserId);
                 const updatedRecords = editingTransaction
                     ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
                     : [...records, response.data];
@@ -286,113 +296,183 @@ const TransactionList: React.FC = () => {
             });
     };
 
+
+
+    const columns = [
+
+        // {
+        //     title: 'Sr.No',
+        //     dataIndex: 'index',
+        //     key: 'id',
+        //     render: (id: any) => `${id+=1}`,
+
+        // },
+        {
+            title: 'Category',
+            dataIndex: 'categoryType',
+            key: 'categoryType',
+            render: (categoryType: number) => getCategoryLabel(categoryType), // Assuming you have this helper function
+        },
+        {
+            title: 'Label',
+            dataIndex: 'label',
+            key: 'label',
+        },
+        {
+            title: 'Account Type',
+            dataIndex: 'accountType',
+            key: 'accountType',
+            render: (accountType: number) => getAccountName(accountType), // Assuming you have this helper function
+        },
+        {
+            title: 'Date',
+            dataIndex: 'date',
+            key: 'date',
+            render: (date: string) => dayjs(date).format('DD-MM-YYYY'),
+        },
+        {
+            title: "Status",
+            dataIndex: 'transactionType',
+            key: 'transactionType',
+            render: (transactionType: number) => <><Tag style={{ width: '57px' }} color={transactionType == 1 ? 'green' : 'red'}>{transactionType == 1 ? " Income " : "Expense"}</Tag> </>,
+
+        },
+        {
+            title: 'Amount',
+            dataIndex: 'amount',
+            key: 'amount',
+            render: (amount: number, record: any) => (
+                <span style={{ color: record.transactionType === 1 ? 'green' : 'red' }} >
+                    {record.transactionType === 1 ? `₹ +${amount.toLocaleString()}` : `₹ -${amount.toLocaleString()}`}
+                </span>
+            ),
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            render: (text: string, record: any) => (
+                <>
+                    <Button className='mx-3 p-0' type='text' icon={<Edit size={21} />} onClick={() => showModal(record)} />
+                    <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}>
+                        <Button type='text' danger icon={<Trash2 size={18} />} />
+                    </Popconfirm>
+                </>
+            ),
+        },
+    ];
     return (
-        <div style={{ padding: '16px', backgroundColor: 'white' }}>
-            <Breadcrumb
-                items={[ 
-                    {
-                        title: < HomeOutlined onClick={() => navigate('/')} />,
-                    },
-                    {
-                        title: 'Transactions ',
-                    },
-                ]}
-            />
-            <Row className='d-flex justify-content-between mt-1 mb-2'  >
-                <Col>
-                    <Button className='main-buttons' type="primary" onClick={() => showModal()}>Add Record</Button>
-                </Col>
-                <Col >
-                    <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='My Wallet  : ₹' value={UserWallet} formatter={formatter} />
-                    <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Incomes  : ₹' value={totalIncome} formatter={formatter} />
-                    <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Expenses  : ₹' value={totalExpenses} formatter={formatter} />
-                </Col>
-            </Row>
-            <Row className='d-flex flex-wrap' gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]} justify="space-between" >
-                <Col span={4} className='d-flex' >
-                    <span style={{ width: '100px' }}> Sort by - </span>
+        <div style={{ padding: '8px 16px 16px 16px', backgroundColor: 'white' }}>
+            <Col span={24}>
+                <Row gutter={24} className='d-flex flex-row justify-content-between mb-3'>
+                    <Col span={16}>
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: < HomeOutlined onClick={() => navigate('/')} />,
+                                },
+                                {
+                                    title: 'Transactions ',
+                                },
+                            ]}
+                        />
+                    </Col>
+                    <Col span={8} className='d-flex flex-row justify-content-between'>
 
-                    <Select
-                        style={{ width: '100%' }}
-                        value={transactiontransactionType}
-                        onChange={value => setTransactiontransactionType(value as 'Income' | 'Expense' | 'All')}
-                    >
-                        <Option value="All">All</Option>
-                        <Option value="Income">Income</Option>
-                        <Option value="Expense">Expense</Option>
-                    </Select>
+                        <Statistic className='d-flex mx-2' valueStyle={{ fontSize: '14px' }} title='My Wallet  : ₹' value={UserWallet} formatter={formatter} />
+                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Incomes  : ₹' value={totalIncome} formatter={formatter} />
 
-                </Col>
-                <Col span={3}>
-                    <Select
-                        onChange={(e) => setSorttransactionType(e)}
-                        style={{ width: '100%' }}
-                        value={sorttransactionType}
-                    >
-                        <Option value="new">Newest</Option>
-                        <Option value="old">Oldest</Option>
-                        <Option value="high">Highest</Option>
-                        <Option value="low">Lowest</Option>
+                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Expenses  : ₹' value={totalExpenses} formatter={formatter} />
 
-                    </Select>
-                </Col>
-                <Col span={8}>
-                    <RangePicker
-                        onChange={handleDateRangeChange}
-                        value={selectedDateRange}
-                    />
-                </Col>
-                <Col span={6}>
-                    <Select
-                        mode="multiple"
-                        style={{ width: '100%' }}
-                        placeholder="Filter by categoryType"
-                        onChange={handlecategoryTypeChange}
-                        value={selectedCategories}
-                    >
-                        {
-                            (transactiontransactionType === 'All'
-                                ? [...incomeCategories, ...expenseCategories]
-                                : transactiontransactionType === 'Income'
-                                    ? incomeCategories
-                                    : expenseCategories
-                            ).map(categoryType => (
-                                <Option key={categoryType.value} value={categoryType.value}>{categoryType.label}</Option>
-                            ))
-                        }
-                    </Select>
-                </Col>
-            </Row>
+                    </Col>
+                </Row>
+                <Row gutter={24} className='d-flex flex-row'>
+
+
+                    <Col span={3}>
+                        <Button className='main-buttons' type="primary" onClick={() => showModal()}>Add Record</Button>
+                    </Col>
+
+                    <Col span={21} >
+
+                        <Row className='d-flex flex-row ' justify={'space-between'} gutter={24}  >
+
+                            <Col span={5} className='d-flex' >
+                                <span className='align-content-center mx-2' style={{ width: '150px' }}> Sort by type:</span>
+                                <Select
+                                    style={{ width: '100%' }}
+                                    value={transactiontransactionType}
+                                    onChange={value => setTransactiontransactionType(value as 'Income' | 'Expense' | 'All')}
+                                >
+                                    <Option value="All">All</Option>
+                                    <Option value="Income">Income</Option>
+                                    <Option value="Expense">Expense</Option>
+                                </Select>
+
+                            </Col>
+
+                            <Col span={5} className='d-flex'>
+                                <span className='align-content-center mx-2' style={{ width: '90px' }}> Sort by :</span>
+                                <Select
+                                    onChange={(e) => setSorttransactionType(e)}
+                                    style={{ width: '100%' }}
+                                    value={sorttransactionType}
+                                >
+                                    <Option value="new">Newest</Option>
+                                    <Option value="old">Oldest</Option>
+                                    <Option value="high">Highest</Option>
+                                    <Option value="low">Lowest</Option>
+
+                                </Select>
+                            </Col>
+                            <Col span={8} className='d-flex'>
+                                <span className='align-content-center' style={{ width: '100px' }}> Sort by date:</span>
+                                <RangePicker
+                                    onChange={handleDateRangeChange}
+                                    value={selectedDateRange}
+                                />
+                            </Col>
+                            <Col span={6}>
+                                <Select
+                                    mode="multiple"
+                                    style={{ width: '100%' }}
+                                    placeholder="Filter by categoryType"
+                                    onChange={handlecategoryTypeChange}
+                                    value={selectedCategories}
+                                >
+                                    {
+                                        (transactiontransactionType === 'All'
+                                            ? [...incomeCategories, ...expenseCategories]
+                                            : transactiontransactionType === 'Income'
+                                                ? incomeCategories
+                                                : expenseCategories
+                                        ).map(categoryType => (
+                                            <Option key={categoryType.value} value={categoryType.value}>{categoryType.label}</Option>
+                                        ))
+                                    }
+                                </Select>
+                            </Col>
+                        </Row>
+
+                    </Col>
+
+                </Row>
+            </Col>
+
 
             <hr className='mt-3' />
-            <List
-                style={{ overflowY: 'scroll', height: '435px', scrollbarWidth: 'thin' }}
-                itemLayout="horizontal"
+            <Table
+                size='middle'
+
                 dataSource={sortedTransactions}
-                renderItem={item => (
-                    <List.Item
-                        className="py-1.2 list-hover-style" style={{ lineHeight: '0' }}
-                        actions={[
-                            <Button icon={<Edit />} onClick={() => showModal(item)} />,
-                            <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(item.id)}>
-                                <Button danger icon={<Trash2 />} />
-                            </Popconfirm>
-                        ]}
-                    >
-                        <List.Item.Meta
-                            avatar={getCategoryTypeIcon(item.categoryType)}
-                            title={getCategoryLabel(item.categoryType)}
-                            description={
-                                <Row className="d-flex justify-content-between align-items-center" >
-                                    <Col>{item.label} | {getAccountName(item.accountType)} | {dayjs(item.date).format('DD/MM/YYYY')}</Col>
-                                    <Col style={{ fontWeight: '', color: item.transactionType === 1 ? 'green' : 'red' }}>
-                                        {item.transactionType === 1 ? `+${item.amount?.toLocaleString()}` : `-${item.amount?.toLocaleString()}`}
-                                    </Col>
-                                </Row>
-                            }
-                        />
-                    </List.Item>
-                )}
+                columns={columns}
+                rowKey="id"
+                scroll={{ y: 445 }}
+                pagination={false}
+
+            // footer={()=> [{
+            //     title:'gajf',
+
+            // }]}
             />
             <Modal
                 style={{ width: '650px' }}
@@ -406,14 +486,14 @@ const TransactionList: React.FC = () => {
                     form={form}
                     layout="vertical"
                     className='p-3 rounded'
-                    style={{ maxWidth: '650px', backgroundColor: '#E8F7FF' }}
+                    style={{ maxWidth: '670px', backgroundColor: '' }}
                     onFinish={handleSubmit}
                     initialValues={formData || { categoryType: '', amount: 0, transactionType: 2, accountType: 1, currency: 'INR' }}
                 >
                     <div className='d-flex justify-content-center pt-3' style={{ width: '100%' }}>
                         <Form.Item
                             name="transactionType"
-                            rules={[{ required: true, message: 'Please select a transactionType!' }]}
+                            rules={[{ required: true, message: 'Please select a transactiontype!' }]}
                             style={{ width: '75%' }}
                         >
                             <Radio.Group onChange={handleTypeChange} value={formData.transactionType} style={{ width: '100%' }}>
@@ -427,27 +507,28 @@ const TransactionList: React.FC = () => {
                             <Form.Item
                                 label="Account Type"
                                 name="accountType"
-                                rules={[{ required: true, message: 'Please select an account transactionType!' }]}
+                                rules={[{ required: true, message: 'Please select an account transactiontype!' }]}
                             >
                                 <Select
                                     placeholder="Select account type"
                                     className='w-100'
                                     value={formData.accountType}
                                 >
-                                    <Option value={1}>Cash</Option>
+                                    {/* <Option value={1}>Cash</Option> */}
                                     <Option value={2}>Saving Account</Option>
-                                    <Option value={3}>General</Option>
+                                    {/* <Option value={3}>General</Option> */}
                                     <Option value={4}>Credit Card</Option>
                                     <Option value={5}>Current Account</Option>
                                 </Select>
                             </Form.Item>
-                            <div className='d-flex justify-content-between'>
+                            <div className='d-flex flex-row justify-content-between'>
                                 <Form.Item
                                     label="Amount"
                                     name="amount"
                                     rules={[{ required: true, message: 'Please enter an amount!' }]}
                                 >
                                     <Input
+                                        className='w-100'
                                         type="number"
                                         placeholder="Enter amount"
                                         min={0}
@@ -463,12 +544,13 @@ const TransactionList: React.FC = () => {
                                 <Form.Item
                                     label="Currency"
                                     name="currency"
-                                    rules={[{ required: true, message: 'Please select a currency!' }]}
+                                    rules={[{ message: 'Please select a currency!' }]}
                                 >
                                     <Select
                                         placeholder="INR"
                                         value="INR"
-                                        className='w-100'
+                                        className='w-100 '
+                                        disabled={true}
                                     >
                                         <Option value="INR">INR</Option>
                                     </Select>
@@ -477,11 +559,12 @@ const TransactionList: React.FC = () => {
                             <Form.Item
                                 label="CategoryType"
                                 name="categoryType"
-                                rules={[{ required: true, message: 'Please select a categoryType!' }]}
+                                rules={[{ required: true, message: 'Please select a categorytype!' }]}
                             >
                                 <Select
                                     placeholder="Select categorytype"
                                     className='w-100'
+                                    labelInValue
                                 >
                                     {(formData.transactionType === 2 ? expenseCategories : incomeCategories).map((categoryType) => (
                                         <Option key={categoryType.value} value={categoryType.value}>
@@ -497,6 +580,7 @@ const TransactionList: React.FC = () => {
                                 name="label"
                             >
                                 <Input
+                                    onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
                                     placeholder="Enter label"
                                 />
                             </Form.Item>
@@ -530,11 +614,12 @@ const TransactionList: React.FC = () => {
                     </div>
                     <div >
                         <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='w-100'>
-                            {editingTransaction ? 'Update record' : 'Add record'}
+
+                            {editingTransaction ? <RotateCcw size={16} /> : <CirclePlus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
                         </Button>
                         <Form.Item>
                             <Button type="link" htmlType="button" onClick={() => form.resetFields()} className='w-100 text-center'>
-                                Reset Form
+                                <CircleX size={16} />   Reset Form
                             </Button>
                         </Form.Item>
                     </div>
