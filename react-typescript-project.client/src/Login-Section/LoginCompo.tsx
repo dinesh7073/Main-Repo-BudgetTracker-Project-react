@@ -34,28 +34,7 @@ const LoginCompo = () => {
         firstName: '',
         lastName: ''
     })
-    const [inputValue, setInputValue] = useState('');
-
-
-
-
-    const handleInputValue = (e: any) => {
-
-        // const { name, value } = e.target;
-
-        // const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
-
-        // form.setFieldsValue({
-        //     [name]: capitalizedValue
-        // });
-
-        // setFormData(prevData => ({
-        //     ...prevData,
-        //     [name]: capitalizedValue,
-        // }));
-        const value = e.target.value;
-        return setInputValue(value.charAt(0).toUpperCase() + value.slice(1));
-    }
+   
     // Frogot password ......................................................................................................
 
 
@@ -76,12 +55,13 @@ const LoginCompo = () => {
                             password: response?.data?.password,
                             UserId: response?.data?.id,
                             FirstName: response?.data?.firstName,
+                            LastName : response?.data?.lastName,
                             contact: response?.data?.contact
                         }));
 
                     setUserDetails({ ...setUserDetails, userData: response.data })
                     setIsLogin(true);
-                    navigate('/');
+                    navigate('/dashboard');
                     message.success('Login successful!');
                 } else {
                     message.error(response.request.error);

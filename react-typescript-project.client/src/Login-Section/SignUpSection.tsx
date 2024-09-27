@@ -26,11 +26,6 @@ const SignUpSection = () => {
 
     const onSave = (values: ISignUp) => {
 
-        // const validate = ()=>{
-        //     const contact = values.contact;
-        //     if(contact.test())
-        // }
-        // form.validateFields({ validateOnly: true }).then(() => {
             const updatedData = {
                 firstName: values.firstName,
                 lastName: values.lastName,
@@ -51,7 +46,7 @@ const SignUpSection = () => {
                 }).then(
                     (response: any) => {
                         setIsLogin(true);
-                        navigate('/');
+                        navigate('/dashboard');
                         setUserDetails({ userData: response.data })
                         console.log("UserId", response.data.id, "userData", response.data);
                         localStorage.setItem(
@@ -73,7 +68,7 @@ const SignUpSection = () => {
 
                     (error) => console.log("error", error)
                 )
-        // }).catch()
+        
 
         form.resetFields();
     };
@@ -171,16 +166,21 @@ const SignUpSection = () => {
                                         name="contact"
                                         style={{ height:'65px' }}
                                         rules={[{ required: true, message: 'Contact is required' },
-                                        () => ({
-                                            validator(_, value) {
+                                        // () => ({
+                                        //     validator(_, value) {
                                                 
-                                                if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
-                                                    return Promise.reject('Invalid input');
-                                                }
-                                                return Promise.resolve();
-                                            },
+                                        //         if( RegExp("[1-9]{1}[0-9]{9}").test(value)==false){
+                                        //             return Promise.reject('Invalid input');
+                                        //         }
+                                        //         return Promise.resolve();
+                                        //     },
+                                        //     validateTrigger:'onFinish'
+                                        // })
+                                        {
+                                            pattern:RegExp("[1-9]{1}[0-9]{9}"),
+                                            message:'Invalid input',
                                             validateTrigger:'onFinish'
-                                        })
+                                        }
                                         ]}
                                         
                                     >
