@@ -90,7 +90,7 @@ const Account = () => {
 
   return (
     <div >
-      <div className='p-3'>
+      {/* <div className='p-10'>
         <Breadcrumb
           items={[
             {
@@ -101,33 +101,90 @@ const Account = () => {
             },
           ]}
         />
-      </div>
-      <Card className=' mx-5 shadow mt-5 pt-3' style={{ width: 900, height: '60vh' }}>
+      </div> */}
+      <Card style={{ width: 700, height: '89vh', background: '#F5F7F8', color: '#343131', fontSize: '15px', fontFamily: 'sans-serif' }}>
+
+
+
+        <img alt='' src={profile1} width={140} height={140} style={{ marginLeft: '256px' }} />
+        <h4 className='text-center' >Roky Bhai </h4>
+        <div className='d-flex w-25 flex-row justify-content-between justify-content-between' style={{ marginLeft: '23%', }}>
+          {/* <h6 className='fs-4 text-center'> </h6> */}
+          {/* <p className='text-center' style={{ textAlign: "justify",  }}>{profiledata.firstName}Roky Bhai</p> */}
+        </div>
         <div className=' '>
-          <h4 className='text-center' >Profile</h4>
-          <span className='text-secondary float-end pe-5' onClick={() => handleEdit(profiledata)}><Edit /></span>
+
         </div>
         <div className='d-flex flex-row p-4'>
 
-          <img alt='' src={profile1} width={120} height={120} className='mx-4 mt-4' />
-          <div className='ms-5 mt-4'>
+
+          <div className='ms-5 mt-5 w-75 '>
             <div className='d-flex  flex-row justify-content-between justify-content-between'>
-              <h6 className='pt-1 '>First name :</h6>
-              <p className='border border-secondary rounded px-3 p-1 ms-5' style={{ width: 200, textAlign: "justify" }}>{profiledata.firstName}</p>
+              <h6 className='pt-1  '>First name : </h6>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.firstName}Roky</p>
             </div>
             <div className='d-flex  flex-row justify-content-between justify-content-between'>
-              <h6 className='pt-1 ' >Last name :</h6>
-              <p className='border border-secondary rounded px-3 p-1 ms-5' style={{ width: 200, textAlign: "justify" }}>{profiledata.lastName}</p>
+              <h6 className='pt-1  ' >Last name : </h6>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.lastName}Bhai</p>
             </div>
             <div className='d-flex  flex-row justify-content-between justify-content-between'>
-              <h6 className='pt-1 '>Email :</h6>
-              <p className='border border-secondary rounded px-3 p-1 ms-5' style={{ width: 200, textAlign: "justify" }}>{profiledata.email}</p>
+              <h6 className='pt-1 '>Contact : </h6>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.firstName}5363623346</p>
+            </div>
+            <div className='d-flex  flex-row justify-content-between justify-content-between'>
+              <h6 className='pt-1  '>Email : </h6>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.email}rokybhai@gmail.com</p>
             </div>
           </div>
         </div>
         {/* <button onClick={handleLogout} className='btn btn-danger text-white pb-1 py-1 px-5 border-light float-end me-5'>Logout</button> */}
       </Card>
-      <Modal
+
+
+      <div style={{ width: '400px', marginLeft: '60%', marginTop: '-45%', }}>
+
+        {/* <input type="password :" placeholder="Enter Password" name="psw" required/> */}
+        <span style={{ marginLeft: '93%' }} onClick={() => handleEdit(profiledata)}><Edit /></span>
+
+        <Form.Item label="FirstName " className='mt-5 ' name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
+          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="Firstname" />
+        </Form.Item>
+
+        <Form.Item label="LastName" className='mt-5' name="LastName"
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="lastname" />
+        </Form.Item>
+        
+        <Form.Item
+          label="Contact" className='mt-5'
+          name="contact  "
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="contact" />
+        </Form.Item>
+
+        <Form.Item
+          label="Password" className='mt-5'
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="Password" />
+        </Form.Item>
+
+        <Form.Item
+          label="Email" className='mt-5 '
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="email" />
+        </Form.Item>
+
+      </div>
+
+
+
+      {/* <Modal
         style={{ width: '650px' }}
         title={'Edit Profile'}
         visible={isModalVisible}
@@ -193,12 +250,12 @@ const Account = () => {
             <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} />
           </Form.Item>
           <Form.Item>
-            <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
+            <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: 'gray' }}>
               Save
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
 
     </div>
   )

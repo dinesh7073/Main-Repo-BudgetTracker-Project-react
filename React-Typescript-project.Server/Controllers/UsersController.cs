@@ -61,6 +61,8 @@ namespace Budget_Tracker_Bend.Controllers
 
                 if (newuser != null && validPassword)
 
+
+
                     return Ok(newuser);
 
                 else return

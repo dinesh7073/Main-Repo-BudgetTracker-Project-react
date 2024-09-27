@@ -16,6 +16,7 @@ import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 import { Carousel } from 'react-bootstrap';
 
 import '../CSS/ThemeColors.css'
+import { REACT_APP_BASE_URL } from "./Common/Url";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -115,7 +116,7 @@ const Budget = () => {
   // const ExceedsBudget = Boolean(budget.amountSpent > budget.amount);
 
   useEffect(() => {
-    
+
     axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
