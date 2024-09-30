@@ -36,7 +36,7 @@ namespace Budget_Tracker_Bend.Controllers
         {
             try
             {
-                user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password, 13);
+                //user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password, 13);
                 var savedUser = await _usersServices.SaveUserAsync(user);
                 return Ok(savedUser);
             }
@@ -57,9 +57,9 @@ namespace Budget_Tracker_Bend.Controllers
 
                     newuser = await _usersServices.GetUserAsync(user.UserName);
 
-                var validPassword = BCrypt.Net.BCrypt.EnhancedVerify(user.Password, newuser.Password);
+                //var validPassword = BCrypt.Net.BCrypt.EnhancedVerify(user.Password, newuser.Password);
 
-                if (newuser != null && validPassword)
+                if (newuser != null )
 
 
 
