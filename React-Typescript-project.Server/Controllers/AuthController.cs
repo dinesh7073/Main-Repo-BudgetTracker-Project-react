@@ -48,8 +48,8 @@ namespace React_Typescript_project.Server.Controllers
                 {
                     if (login.Password == user.Password)
                     {
-                        var token = GenerateJwtToken(login.UserName);
-                        return Ok(new { token });
+                       // var token = GenerateJwtToken(login.UserName);
+                      //  return Ok(new { token });
                     }
                 }
             }
@@ -85,27 +85,27 @@ namespace React_Typescript_project.Server.Controllers
         //}
 
         // JWT token generation logic
-        private string GenerateJwtToken(string username)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiresInMinutes"])),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
+    //    private string GenerateJwtToken(string username)
+    //    {
+    //        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+    //        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+    //
+    //        var claims = new[]
+    //        {
+    //        new Claim(JwtRegisteredClaimNames.Sub, username),
+    //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    //    };
+    //
+    //        var token = new JwtSecurityToken(
+    //            issuer: _configuration["Jwt:Issuer"],
+    //            audience: _configuration["Jwt:Audience"],
+    //            claims: claims,
+    //            expires: DateTime.Now.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiresInMinutes"])),
+    //            signingCredentials: credentials);
+    //
+    //        return new JwtSecurityTokenHandler().WriteToken(token);
+    //    }
+    //
         [Authorize]
         [HttpGet("protected")]
         public IActionResult Protected()

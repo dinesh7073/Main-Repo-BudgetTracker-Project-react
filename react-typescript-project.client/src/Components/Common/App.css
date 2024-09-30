@@ -16,19 +16,28 @@
   text-decoration: none !important;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .three-cards {}
 
 .three-cards:hover {
   box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
 }
+
 .signup-text:hover {
   text-decoration: none !important;
 }
+
 :where(.css-dev-only-do-not-override-d2lrxs).ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-title {
   margin: 0 0 4px 0;
   color: rgba(0, 0, 0, 0.88);
   font-size: 14px;
 }
+
 :where(.css-dev-only-do-not-override-d2lrxs).ant-list .ant-list-item {
   display: flex;
   align-items: center;
@@ -36,15 +45,18 @@
   padding: 10px 0;
   color: rgba(0, 0, 0, 0.88);
 }
+
 :where(.css-dev-only-do-not-override-d2lrxs).ant-layout .ant-layout-sider-trigger {
   color: black;
   background-color: white;
 }
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

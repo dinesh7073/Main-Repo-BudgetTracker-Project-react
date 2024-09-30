@@ -3,17 +3,24 @@
   background-color: 'black';
 }
 
-.carousel-indicators {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  padding: 1;
-  margin-right: 50%;
-  margin-bottom: 1rem;
-  /* /* margin-left: 15%; */
+.slick-prev {
+  border-radius: 50% !important;
+  padding: 15px !important;
+  color: rgb(0, 0, 0) !important;
+  inset-inline-start: 8px !important;
+  opacity: 1 !important;
+}
+
+.slick-next {
+  border-radius: 50% !important;
+  padding: 15px !important;
+  color: rgb(0, 0, 0) !important;
+  inset-inline-end: -8px !important;
+  opacity: 1 !important;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+  color: blue;
 }
 
