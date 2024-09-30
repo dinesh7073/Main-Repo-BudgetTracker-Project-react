@@ -9,6 +9,8 @@ import '../../CSS/Dashboard.css'
 import { notification } from "antd";
 import LoginCompo from "../../Login-Section/LoginCompo";
 import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
+import { REACT_APP_BASE_URL } from "./Url";
+import axios from "axios";
 
 
 export interface TransactionType {  // the final fileds for frontend and backend 
@@ -34,7 +36,7 @@ function App() {
 
 
 
-  // const [UserId, setUserId] = useState<string>('');
+ const [UserId, setUserId] = useState<string>('');
   const navigate = useNavigate();
   // const [userdata, setUserdata] = useState({});
   const [userDetails, setUserDetails] = useState<any>({});
@@ -45,14 +47,20 @@ function App() {
     const storedUser = localStorage.getItem('isUser');
     if (storedUser) {
       try {
+
         const parsedUser = JSON.parse(storedUser);
         // const parsedUserId = parsedUser.UserId;
         if (parsedUser.UserId) {
-          // setUserId(parsedUserId);
+           setUserId(parsedUser.UserId);
           // setUserdata(parsedUser);
-          setUserDetails(parsedUser);
-          setIsLogin(true);
 
+          axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res)=>{
+            setUserDetails(res.data);
+          setIsLogin(true);
+            
+        }).catch((err)=>{
+          console.log('error',err);
+        })
 
         } else {
 
@@ -96,7 +104,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails,UserId }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>

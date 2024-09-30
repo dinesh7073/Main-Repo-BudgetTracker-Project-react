@@ -26,9 +26,9 @@ const Goal = () => {
   const [goals, setGoals] = useState<GoalData[]>([]);
   const [editGoal, setEditGoal] = useState<GoalData | null>(null);
   const [form] = Form.useForm();
-  const { userDetails, baseUrl } = useContext<any>(UserContext);
+  const { userDetails, baseUrl, UserId } = useContext<any>(UserContext);
 
-  const UserId = userDetails.UserId;
+ 
 
   const cardStyle = {
     alignSelf: "center",
@@ -144,12 +144,13 @@ const Goal = () => {
               outline: 'dotted',
               outlineColor: 'grey',
               outlineWidth: 2,
+              background:'#ffffff'
             }}
           >
             <Button className='sub1-buttons'
               type="dashed"
               onClick={() => setIsModalVisible(true)}
-              style={{ lineHeight: 1, marginBottom: 8 }}
+              style={{ lineHeight: 1, marginBottom: 8, }}
             >
               CREATE GOAL
             </Button>
@@ -206,13 +207,18 @@ const Goal = () => {
                 }
                 description={
                   <div className='d-flex flex-column pt-1 px-3 '>
-                    <small className='text-dark'>Target Amount-{goal.targetAmount}</small>
-                    <small className='text-dark'>Saved Amount-{goal.savedAmount}</small>
-                    <small className='text-dark'>Target Date {dayjs(goal.targetDate).format('DD/MM/YYYY')}</small>
+                    <small className='text-dark'>Target amount-{goal.targetAmount.toLocaleString()}</small>
+                    <small className='text-dark'>Saved amount-{goal.savedAmount.toLocaleString()}</small>
+                    <small className='text-dark'>Target date {dayjs(goal.targetDate).format('DD/MM/YYYY')}</small>
                   </div>
                 }
               />
-              <Button className='sub1-buttons' style={{ width: '150px', fontSize: '10px', marginLeft: '50px', marginTop: "15px" }} color='blue' onClick={() => { handleEdit(goal) }}>ADD SAVED AMOUNT</Button>
+              <Button className='sub1-buttons'
+               style={{ width: '150px', fontSize: '10px', marginLeft: '50px', marginTop: "15px" }} 
+               color='blue' 
+               onClick={() => { handleEdit(goal) }}>
+                ADD SAVED AMOUNT
+                </Button>
             </Card>
           )
         }
@@ -257,29 +263,30 @@ const Goal = () => {
             }]}
 
           >
-            <Input placeholder='Enter your goal' />
+            <Input placeholder='Enter your goal' 
+            onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}/>
           </Form.Item>
           <Form.Item
-            label="Target Amount"
+            label="Target amount"
             name="targetAmount"
             rules={[{ required: true, message: 'Please enter an amount!' }]}
           >
             <Input
               type="number"
-              placeholder="Enter Amount"
+              placeholder="Enter amount"
               min={0}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value.startsWith('0') && value.length > 1) {
                   e.target.value = value.replace(/^0+/, '');
                 }
-                form.setFieldsValue({ amount: e.target.value });
+                form.setFieldsValue({ targetAmount: e.target.value });
               }}
             />
           </Form.Item>
 
           <Form.Item
-            label="Saved Amount"
+            label="Saved amount"
             name="savedAmount"
             rules={[{ required: true, message: 'Please enter an amount to save!' }]}
           >
@@ -292,13 +299,13 @@ const Goal = () => {
                 if (value.startsWith('0') && value.length > 1) {
                   e.target.value = value.replace(/^0+/, '');
                 }
-                form.setFieldsValue({ amount: e.target.value });
+                form.setFieldsValue({ savedAmount: e.target.value });
               }}
             />
           </Form.Item>
 
           <Form.Item
-            label="Desired Date"
+            label="Desired date"
             name="targetDate"
             rules={[{ required: true, message: 'Please select a date!' }]}
           >

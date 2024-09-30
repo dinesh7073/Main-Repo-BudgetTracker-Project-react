@@ -54,19 +54,19 @@ const SignUpSection = () => {
                     setLoader(false);
                     setIsLogin(true);
                     navigate('/dashboard');
-                    setUserDetails({ userData: response.data })
+                    setUserDetails(response.data)
                     
                     console.log("UserId", response.data.id, "userData", response.data);
                     localStorage.setItem(
                         'isUser',
                         JSON.stringify(
                             {
-                                email: response?.data?.email,
-                                password: response?.data?.password,
+                                // email: response?.data?.email,
+                                // password: response?.data?.password,
                                 UserId: response?.data?.id,
-                                FirstName: response?.data?.firstName,
-                                LastName: response?.data?.lastName,
-                                contact: response?.data?.contact
+                                // FirstName: response?.data?.firstName,
+                                // LastName: response?.data?.lastName,
+                                // contact: response?.data?.contact
                             })
                     );
                     form.resetFields();
@@ -179,16 +179,11 @@ const SignUpSection = () => {
                                     name="contact"
                                     style={{ height: '65px' }}
                                     rules={[{ required: true, message: 'Contact is required' },
-                                    () => ({
-                                        validator(_, value) {
-
-                                            if (RegExp("[1-9]{1}[0-9]{9}").test(value) == false) {
-                                                return Promise.reject('Invalid input');
-                                            }
-                                            return Promise.resolve();
-                                        },
-                                        validateTrigger: 'onFinish'
-                                    })
+                                        {
+                                            pattern:RegExp("[1-9]{1}[0-9]{9}"),
+                                            message:'Invalid input',
+                                            validateTrigger:'onFinish'
+                                        }
                                     ]}
 
                                 >
@@ -208,10 +203,7 @@ const SignUpSection = () => {
                                     name="confirmPassword"
                                     dependencies={['password']}
                                     rules={[
-                                        {
-                                            required: true,
-                                            message: 'Confirm password is required'
-                                        },
+                                       
                                         ({ getFieldValue }) => ({
                                             validator(_, value) {
                                                 if (!value || getFieldValue('password') === value) {

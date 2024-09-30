@@ -57,7 +57,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData,UserId } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -66,8 +66,7 @@ const Dashboard = () => {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [goalExists, setGoalExists] = useState(false);
   const [goals, setGoals] = useState<GoalData[]>([]);
-
-  const UserId = userDetails.UserId;
+  const [isExpanded, setIsExpanded] = useState(false);
 
 
   const formatter: StatisticProps['formatter'] = (value) => (
@@ -87,8 +86,8 @@ const Dashboard = () => {
           setTransactionData(transformedRecords)
         }
       })
-      .catch((err) => console.log("Error from server", err, 'userDetails', userDetails));
-  }, []);
+      .catch((err) => console.log("Error from server", err));
+  }, [UserId]);
 
 
   useEffect(() => {
@@ -299,7 +298,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => console.log("Error from server", err));
-  }, []);
+  }, [UserId]);
 
   let searchTerm: string = '';
 
@@ -584,10 +583,10 @@ const Dashboard = () => {
           </div> */}
       {/* </div> */}
 
-      <div style={{ width: "100%", height: "100%", backgroundColor: "#f5f5f5" }}>
-        <Row>
-          <Col xs={{ span: 5, offset: 1 }} lg={{ span: 5, offset: 0 }}>
-            <Card style={{ width: "300px", height: "95%", padding: "5px" }}>
+      <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow:'hidden' }}>
+        <Row gutter={[18, 24]}>
+          <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
+            <Card style={{ width: "100%", height: "95%", padding: "5px"}}>
               <p style={{ marginBottom: 5 }}> Expenses Structure</p>
               <div className="top-one-cards" >
                 <Row gutter={20}>
@@ -610,7 +609,7 @@ const Dashboard = () => {
                   <Col span={2}>
 
 
-                    <Card style={{ width: '120px', height: '90px', padding: 0 }} className='expenseCard ant-card ant-card-body'>
+                    <Card style={{ width: '130px', height: '90px', padding: 0 }} className='expenseCard ant-card ant-card-body'>
                       <p style={{ marginBottom: 4, fontSize: '13px' }}>Total Expenses</p>
                       <Statistic
 
@@ -626,8 +625,8 @@ const Dashboard = () => {
               </div>
             </Card>
           </Col>
-          <Col xs={{ span: 11, offset: 1 }} lg={{ span: 5 }}>
-            <Card style={{ width: "300px", height: "95%", padding: '0px 5px 10px 5px' }}>
+          <Col xs={{ span: 10, offset: 0 }} lg={{ span: 6 }}>
+            <Card style={{ width: "100%", height: "95%", padding: '0px 5px 10px 5px', }}>
               <p>
                 <BiCoin className="recent-transactions-icon" color="#121212" size={20} />
                 Budget
@@ -682,8 +681,8 @@ const Dashboard = () => {
 
             </Card>
           </Col>
-          <Col xs={{ span: 5, offset: 1 }} lg={{ span: 5 }}>
-            <Card style={{ width: "300px", height: "95%", padding: '0px 5px' }}>
+          <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
+            <Card style={{ width: "100%", height: "95%", padding: '0px 5px', }}>
               <p >
                 <Goal className="recent-transactions-icon" color="#121212" size={18} />
                 Recent Goals
@@ -741,8 +740,8 @@ const Dashboard = () => {
 
             </Card>
           </Col>
-          <Col xs={{ span: 5, offset: 1 }} lg={{ span: 5 }}>
-            <Card style={{ width: "300px", height: "95%", padding: '0px 5px' }}>
+          <Col xs={{ span: 5 }} lg={{ span: 6 }}>
+            <Card style={{ width: "100%", height: "95%", padding: '0px 5px',  }}>
               <p style={{ margin: 0, paddingBottom: "6px" }} >
                 <ArrowLeftRight className="recent-transactions-icon " color="#121212" size={20} />
                 Recent Transactions
@@ -770,7 +769,7 @@ const Dashboard = () => {
                 />
               </div>
               <Button className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{ marginLeft: '50px' }}>
-                View All Transaction
+                View All Transactions
               </Button>
               {/* <Tag color="default"> View All Transaction</Tag> */}
             </Card>
@@ -778,9 +777,9 @@ const Dashboard = () => {
 
           </Col>
         </Row>
-        <Row>
-          <Col xs={{ span: 5, offset: 0 }} lg={{ span: 11 }}>
-            <Card style={{ width: "630px", height: "100%", marginRight: '30px' }}>
+        <Row gutter={[16, 24]}>
+          <Col xs={{ span: 5, offset: 0 }} lg={{ span: 12 }}>
+            <Card style={{ width: "100%", height: "100%", }}>
 
               {/* <Card className='five-cards total-cards-background' style={{ width: '57.5%', height: 340 }} > */}
               <div style={{
@@ -798,8 +797,8 @@ const Dashboard = () => {
                 </Select>
               </div>
               <LineChart
-                width={600}
-                height={300}
+                width={640}
+                height={315}
                 series={[
                   { data: pData, label: 'Income', color: '#071952' },
                   { data: uData, label: 'Expenses', color: '#088395' },
@@ -822,8 +821,8 @@ const Dashboard = () => {
 
             </Card>
           </Col>
-          <Col xs={{ span: 5, offset: 1 }} lg={{ span: 9 }}>
-            <Card className='total-cards-background' style={{ width: '600px', height: '100%' }}>
+          <Col xs={{ span: 5,  }} lg={{ span: 12 }}>
+            <Card className='total-cards-background' style={{ width: '100%', height: '100%' }}>
               <div className="three-cards   five-cards" style={{ height: '100%', width: '100%', boxShadow: 'none' }}>
                 <p className="recent-transactions-title">
                   Budget v/s Expenses
@@ -831,8 +830,8 @@ const Dashboard = () => {
                 <hr style={{ margin: '10px 0px 0px 0px' }} />
                 <div className="top-one-cards" onClick={() => navigate("/goal")}>
                   <BarChart
-                    width={580}
-                    height={295}
+                    width={650}
+                    height={298}
                     series={[
                       { data: seriesData.map(data => data.amount), label: 'Budget', color: '#2190A0' },
                       { data: seriesData.map(data => data.amountSpent), label: 'Expenses', color: '#FF8485' },

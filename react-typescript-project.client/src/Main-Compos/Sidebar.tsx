@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BiCoin } from "react-icons/bi";
 import { GoGoal } from "react-icons/go";
@@ -27,10 +27,13 @@ import "../CSS/Sidebar.css";
 import "../CSS/ThemeColors.css";
 import PageRoutes from "../Components/Common/PageRoutes";
 import { UserOutlined } from "@ant-design/icons";
+import axios from "axios";
+import { REACT_APP_BASE_URL } from "../Components/Common/Url";
 
 const { Header, Sider, Content } = Layout;
 
 const Sidebar: React.FC = () => {
+
   const { setUserId, userDetails } = useContext<any>(UserContext);
   const userLastName = userDetails.LastName;
   const userFirstName = userDetails.FirstName;
@@ -42,6 +45,10 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
   const selectedKey = location.pathname;
   const navigate = useNavigate();
+  
+
+
+
   const handleLogout = () => {
     window.location.reload();
     localStorage.removeItem("isUser");
@@ -93,31 +100,31 @@ const Sidebar: React.FC = () => {
   const siderMenuItems = [
     {
       key: "/dashboard",
-      icon: <LayoutDashboard className="fs-4" />,
+      icon: <LayoutDashboard className="fs-4"  style={{ color:'#373737'}}/>,
       label: "Dashboard",
       onClick: () => navigate("/dashboard"),
     },
     {
       key: "/budget",
-      icon: <BiCoin className="fs-4" />,
+      icon: <BiCoin className="fs-4" style={{ color:'#373737'}} />,
       label: "Budget",
       onClick: () => navigate("/budget"),
     },
     {
       key: "/goal",
-      icon: <GoGoal className="fs-4" />,
-      label: "Goal",
+      icon: <GoGoal className="fs-4" style={{ color:'#373737'}} />,
+      label: "Goals",
       onClick: () => navigate("/goal"),
     },
     {
       key: "/transaction",
-      icon: <ArrowRightLeft className="fs-4" />,
+      icon: <ArrowRightLeft  style={{ color:'#373737'}}/>,
       label: "Transactions",
       onClick: () => navigate("/transaction"),
     },
     {
       key: "/account",
-      icon: <UserRound className="fs-4 fw-light" />,
+      icon: <UserRound style={{ color:'#373737'}} />,
       label: "Account",
       onClick: () => navigate("/account"),
     },
@@ -186,6 +193,7 @@ const Sidebar: React.FC = () => {
           marginLeft: collapsed ? 80 : 200,
           height: "100vh",
           overflow: "auto",
+         background:'#f3f4fa'
         }}
       >
         
@@ -193,7 +201,7 @@ const Sidebar: React.FC = () => {
             className='headernav-background'
             style={{
               padding: 0,
-              //   background: colorBgContainer,
+                //  background: colorBgContainer,
               //   backgroundColor: "#ffffff",
               display: "flex",
               justifyContent: "space-between",
@@ -205,7 +213,7 @@ const Sidebar: React.FC = () => {
             }}
           >
             <h5 className="align-self-center ps-4 my-1" style={{fontSize:'14px', fontFamily:"Open Sans"}}>
-              Hello, {userFirstName}{" "}
+              Hello, {userDetails.firstName}{" "}
             </h5>
             <div style={{ cursor: 'pointer' }} className="d-flex flex-row justify-content-between  align-item-center">
               <div>
@@ -213,14 +221,14 @@ const Sidebar: React.FC = () => {
               </div>
               {/* <IoIosNotificationsOutline className="fs-2 align-self-center pe-2" /> */}
               
-              <Dropdown menu={{ items }} placement="bottom" arrow trigger={['click']}>
-
+              <Dropdown menu={{ items }} placement="bottom" arrow trigger={['click']} overlayStyle={{width:'180px', alignItems:'center',textAlign:'center'}}>
+        
                 <div
                   className="d-flex flex-row pe-3"
-                  style={{ alignItems: "center", marginRight: "10px" }}
+                  style={{ alignItems: "center", marginRight: "10px" , textAlign:'center'}}
                 >
                   <Avatar size={30} icon={<UserOutlined />} className="align-self-center me-2"/>
-                  <p style={{ margin: "0px", fontSize:'14px',fontFamily:"Open Sans" }}>{userFirstName} {userLastName}</p>
+                  <p style={{ margin: "0px", fontSize:'14px',fontFamily:"Open Sans" }}>{userDetails.firstName} {userDetails.lastName}</p>
                 </div>
               </Dropdown>
             </div>
@@ -231,10 +239,10 @@ const Sidebar: React.FC = () => {
           style={{
          margin: "20px",
             // padding: 12,
-            background: "#f5f5f5",
+            backgroundColor: "#f3f4fa",
             borderRadius: borderRadiusLG,
             overflowY: "auto",
-            height: "calc(100vh - 9vh)",
+            height: "calc(100vh - 10vh)",
           }}
         >
           <PageRoutes />

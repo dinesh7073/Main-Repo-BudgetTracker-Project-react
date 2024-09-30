@@ -7,49 +7,54 @@ import axios from 'axios';
 import { HomeOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css'
+import { REACT_APP_BASE_URL } from './Common/Url';
+
 interface ISignUp {
   id: string,
   firstName: string,
   lastName: string,
   email: string,
   password: string,
+  contact: number
 }
 
 const Account = () => {
 
-  const { UserId, baseUrl } = useContext<any>(UserContext)
+  const { UserId, userDetails, setUserDetails } = useContext<any>(UserContext)
   const [profiledata, setProfiledata] = useState<ISignUp>({
     id: '',
     firstName: '',
     lastName: '',
     email: '',
     password: '',
+    contact: 0
   });
   const [editProfile, setEditProfile] = useState<ISignUp | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.get(`${baseUrl}BudgetTracker/${UserId}GetUserById`)
-      .then((res) => {
-        setProfiledata(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log('Error fetching user data:', err);
-      });
-  });
+  // useEffect(() => {
+  //   axios.get(`${REACT_APP_BASE_URL }BudgetTracker/${UserId}GetUserById`)
+  //     .then((res) => {
+  //       setProfiledata(res.data);
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log('Error fetching user data:', err);
+  //     });
+  // });
 
   const onSave = (values: ISignUp) => {
+    debugger
     const profileData = { ...values, UserId };
     if (editProfile) {
       profileData.id = editProfile.id;
     }
-    axios.post(`https://localhost:7054/UsersController/CreateUsersAndUpdate`, profileData)
+    axios.post(`${REACT_APP_BASE_URL}UsersController/CreateUsersAndUpdate`, profileData)
       .then((response) => {
         const updatedProfile = editProfile ? profileData : response.data;
-        setProfiledata(updatedProfile);
+        setUserDetails(updatedProfile);
         notification.success({
           message: editProfile ? 'Profile updated successfully' : 'Profile created successfully',
         });
@@ -60,7 +65,7 @@ const Account = () => {
           description: error.message,
         });
       });
-    setIsModalVisible(false);
+
     setEditProfile(null);
   };
 
@@ -71,11 +76,13 @@ const Account = () => {
   const handleEdit = (profile: ISignUp) => {
     form.setFieldsValue({
       id: UserId,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      email: profile.email,
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
+      email: userDetails.email,
+      contact: userDetails.contact,
+      // password: userDetails.password,
     });
-    setEditProfile(profile);
+    setEditProfile(userDetails);
     setIsModalVisible(true);
   }
 
@@ -107,7 +114,7 @@ const Account = () => {
 
 
         <img alt='' src={profile1} width={140} height={140} style={{ marginLeft: '256px' }} />
-        <h4 className='text-center' >Roky Bhai </h4>
+        <h4 className='text-center' >{userDetails.firstName} {userDetails.lastName} </h4>
         <div className='d-flex w-25 flex-row justify-content-between justify-content-between' style={{ marginLeft: '23%', }}>
           {/* <h6 className='fs-4 text-center'> </h6> */}
           {/* <p className='text-center' style={{ textAlign: "justify",  }}>{profiledata.firstName}Roky Bhai</p> */}
@@ -121,19 +128,19 @@ const Account = () => {
           <div className='ms-5 mt-5 w-75 '>
             <div className='d-flex  flex-row justify-content-between justify-content-between'>
               <h6 className='pt-1  '>First name : </h6>
-              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.firstName}Roky</p>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{userDetails.firstName}</p>
             </div>
             <div className='d-flex  flex-row justify-content-between justify-content-between'>
               <h6 className='pt-1  ' >Last name : </h6>
-              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.lastName}Bhai</p>
-            </div>
-            <div className='d-flex  flex-row justify-content-between justify-content-between'>
-              <h6 className='pt-1 '>Contact : </h6>
-              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.firstName}5363623346</p>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{userDetails.lastName}</p>
             </div>
             <div className='d-flex  flex-row justify-content-between justify-content-between'>
               <h6 className='pt-1  '>Email : </h6>
-              <p className='' style={{ width: 200, textAlign: "justify" }}>{profiledata.email}rokybhai@gmail.com</p>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{userDetails.email}</p>
+            </div>
+            <div className='d-flex  flex-row justify-content-between justify-content-between'>
+              <h6 className='pt-1 '>Contact : </h6>
+              <p className='' style={{ width: 200, textAlign: "justify" }}>{userDetails.contact}</p>
             </div>
           </div>
         </div>
@@ -142,44 +149,77 @@ const Account = () => {
 
 
       <div style={{ width: '400px', marginLeft: '60%', marginTop: '-45%', }}>
-
-        {/* <input type="password :" placeholder="Enter Password" name="psw" required/> */}
-        <span style={{ marginLeft: '93%' }} onClick={() => handleEdit(profiledata)}><Edit /></span>
-
-        <Form.Item label="FirstName " className='mt-5 ' name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
-          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="Firstname" />
-        </Form.Item>
-
-        <Form.Item label="LastName" className='mt-5' name="LastName"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
+        <span style={{ marginLeft: '93%' }} onClick={() => handleEdit(userDetails)}><Edit /></span>
+        <Form
+          layout="horizontal"
+          onFinish={onSave}
+          form={form}
+          className='mx-auto  rounded  px-5 '
+          style={{ width: "100%" }}
+          
+          initialValues={{ firstName: userDetails.firstName, lastName: userDetails.lastName, email: userDetails.email, contact: userDetails.contact}}
         >
-          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="lastname" />
-        </Form.Item>
+          {/* <input type="password :" placeholder="Enter Password" name="psw" required/> */}
+
+
+          <Form.Item label="First name " className='mt-5 ' name="firstName" rules={[{ required: true, message: 'Please input your first name!' }]}>
+            <Input
+            onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
+             style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} placeholder="First name" />
+          </Form.Item>
+
+          <Form.Item label="Last name" className='mt-5' name="lastName" 
+            rules={[{ required: true, message: 'Please input your last name!' }]}
+          >
+            <Input 
+            style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} 
+            placeholder="Last name" 
+            onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}/>
+          </Form.Item>
+
+          <Form.Item
+            label="Email" className='mt-5 '
+            name="email"
+            rules={[{ required: true, message: 'Please input your email!' },
+              {
+                type: "email",
+                message: 'Enter a valid email'
+            }
+            ]}
+          >
+            <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} placeholder="Email" />
+          </Form.Item>
+
+          <Form.Item
+            label="Contact" className='mt-5'
+            name="contact"
+            rules={[{ required: true, message: 'Contact is required' },
+              {
+                  pattern:RegExp("[1-9]{1}[0-9]{9}"),
+                  message:'Invalid input',
+                  validateTrigger:'onFinish'
+              }
+          ]}
+          >
+            <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} placeholder="Contact" />
+          </Form.Item>
+          {editProfile ?
+          <div>
         
-        <Form.Item
-          label="Contact" className='mt-5'
-          name="contact  "
-          rules={[{ required: true, message: 'Please input your Password!' }]}
-        >
-          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="contact" />
-        </Form.Item>
-
-        <Form.Item
-          label="Password" className='mt-5'
-          name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
-        >
-          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="Password" />
-        </Form.Item>
-
-        <Form.Item
-          label="Email" className='mt-5 '
-          name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
-        >
-          <Input style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="email" />
-        </Form.Item>
-
+          {/* <Form.Item
+            label="Password" 
+            name="password"
+            
+          >
+            <Input.Password style={{ borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type="password" placeholder="Password" />
+          </Form.Item> */}
+            <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
+              Save
+            </Button>
+            </div>
+            : ''
+          }
+        </Form>
       </div>
 
 
