@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX } from 'lucide-react';
+import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX, Plus } from 'lucide-react';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -21,7 +21,7 @@ const { RangePicker } = DatePicker;
 interface FormData {
     id: string;
     userId: string;
-    transactionType: number;
+    transactionType: number | null;
     accountType: number | null;
     categoryType: number | null;
     label: string;
@@ -35,7 +35,7 @@ interface FormData {
 const initialFormValues: FormData = {
     id: '',
     userId: '',
-    transactionType: 1,
+    transactionType: null,
     accountType: null,
     categoryType: null,
     currency: 'INR',
@@ -56,7 +56,8 @@ const transformData = (records: FormData[]): FormData[] => {
 };
 
 const TransactionList: React.FC = () => {
-    const { setTransactionData, userDetails } = useContext<any>(UserContext);
+
+    const { setTransactionData, userDetails, userWallet, setUserWallet, expensesLimit, UserId } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -66,10 +67,9 @@ const TransactionList: React.FC = () => {
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
     const [transactiontransactionType, setTransactiontransactionType] = useState<'Income' | 'Expense' | 'All'>('All');
-    const [UserWallet, setUserWallet] = useState<number>();
+
     const navigate = useNavigate();
 
-    const UserId = userDetails.UserId;
 
     useEffect(() => {
 
@@ -123,12 +123,13 @@ const TransactionList: React.FC = () => {
         .reduce((total, record) => total + (record.amount as number), 0);
 
     const handleTypeChange = (e: any) => {
-        const newtransactionType = e.target.value;
+
         setFormData((prevData) => ({
             ...prevData,
-            transactionType: newtransactionType,
+            transactionType: e.target.value,
             categoryType: null,
         }));
+
         form.setFieldsValue({ categoryType: null });
     };
 
@@ -219,13 +220,17 @@ const TransactionList: React.FC = () => {
     };
 
     const showModal = (transaction?: FormData) => {
+
+
         if (transaction) {
             const myobj = {
                 ...transaction,
+                transactionType: transaction.transactionType,
                 // categoryType: getCategoryLabel(transaction.categoryType),
                 categoryType: {
                     label: getCategoryLabel(transaction.categoryType),
                     value: transaction.categoryType
+
                 },
                 time: dayjs(transaction.time),
                 date: dayjs(transaction.date),
@@ -245,37 +250,73 @@ const TransactionList: React.FC = () => {
     };
 
     const handleSubmit = (values: FormData) => {
-        const amount = Number(values.amount);
-        const userId = UserId;
-        const categoryType = values.categoryType.value;
-        const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
+
+        if (expensesLimit < totalExpenses) {
+
+            alert("You have reached the expenses limit!!")
+            const amount = Number(values.amount);
+            const userId = UserId;
+            const categoryType = values.categoryType.value;
+            const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
 
 
 
-        const transactionData = { ...values, amount, userId, categoryType };
-        if (editingTransaction) {
-            transactionData.id = editingTransaction.id;
+            const transactionData = { ...values, amount, userId, categoryType };
+            if (editingTransaction) {
+                transactionData.id = editingTransaction.id;
+            }
+            axios.post(apiUrl, transactionData)
+                .then((response) => {
+                    const updatedRecords = editingTransaction
+                        ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
+                        : [...records, response.data];
+
+                    setRecords(updatedRecords);
+                    updateUserWallet(updatedRecords);
+                    notification.success({
+                        message: editingTransaction ? 'Transaction updated successfully' : 'Record added successfully',
+                    });
+                })
+                .catch(err => notification.error({
+                    message: editingTransaction ? 'Failed to update transaction' : 'Failed to add record',
+                    description: err.message,
+                }));
+            form.resetFields();
+            setIsModalVisible(false);
+
+
+        } else {
+            const amount = Number(values.amount);
+            const userId = UserId;
+            const categoryType = values.categoryType.value;
+            const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
+
+
+
+            const transactionData = { ...values, amount, userId, categoryType };
+            if (editingTransaction) {
+                transactionData.id = editingTransaction.id;
+            }
+            axios.post(apiUrl, transactionData)
+                .then((response) => {
+                    const updatedRecords = editingTransaction
+                        ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
+                        : [...records, response.data];
+
+                    setRecords(updatedRecords);
+                    updateUserWallet(updatedRecords);
+                    notification.success({
+                        message: editingTransaction ? 'Transaction updated successfully' : 'Record added successfully',
+                    });
+                })
+                .catch(err => notification.error({
+                    message: editingTransaction ? 'Failed to update transaction' : 'Failed to add record',
+                    description: err.message,
+                }));
+            form.resetFields();
+            setIsModalVisible(false);
+
         }
-
-
-        axios.post(apiUrl, transactionData)
-            .then((response) => {
-                const updatedRecords = editingTransaction
-                    ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
-                    : [...records, response.data];
-
-                setRecords(updatedRecords);
-                updateUserWallet(updatedRecords);
-                notification.success({
-                    message: editingTransaction ? 'Transaction updated successfully' : 'Record added successfully',
-                });
-            })
-            .catch(err => notification.error({
-                message: editingTransaction ? 'Failed to update transaction' : 'Failed to add record',
-                description: err.message,
-            }));
-        form.resetFields();
-        setIsModalVisible(false);
     };
 
     const handleCancel = () => {
@@ -342,7 +383,7 @@ const TransactionList: React.FC = () => {
             dataIndex: 'amount',
             key: 'amount',
             render: (amount: number, record: any) => (
-                <span style={{ color: record.transactionType === 1 ? 'green' : 'red' }} >
+                <span style={{ color: record.transactionType === 1 ? 'green' : 'red', }} >
                     {record.transactionType === 1 ? `₹ +${amount.toLocaleString()}` : `₹ -${amount.toLocaleString()}`}
                 </span>
             ),
@@ -352,7 +393,8 @@ const TransactionList: React.FC = () => {
             key: 'actions',
             render: (text: string, record: any) => (
                 <>
-                    <Button className='mx-3 p-0' type='text' icon={<Edit size={21} />} onClick={() => showModal(record)} />
+
+                    <Button className='mx-0 p-0' type='text' icon={<Edit size={21} />} onClick={() => showModal(record)} />
                     <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}>
                         <Button type='text' danger icon={<Trash2 size={18} />} />
                     </Popconfirm>
@@ -361,27 +403,27 @@ const TransactionList: React.FC = () => {
         },
     ];
     return (
-        <div style={{ padding: '8px 16px 16px 16px', backgroundColor: 'white' }}>
+        <div style={{ padding: '10px 16px 16px 16px', backgroundColor: 'white' }}>
             <Col span={24}>
                 <Row gutter={24} className='d-flex flex-row justify-content-between mb-3'>
-                    <Col span={16}>
+                    <Col span={15}>
                         <Breadcrumb
                             items={[
                                 {
-                                    title: < HomeOutlined onClick={() => navigate('/')} />,
+                                    title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
                                 },
                                 {
-                                    title: 'Transactions ',
+                                    title: 'transactions ',
                                 },
                             ]}
                         />
                     </Col>
-                    <Col span={8} className='d-flex flex-row justify-content-between'>
+                    <Col span={9} className='d-flex flex-row justify-content-between'>
 
-                        <Statistic className='d-flex mx-2' valueStyle={{ fontSize: '14px' }} title='My Wallet  : ₹' value={UserWallet} formatter={formatter} />
-                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Incomes  : ₹' value={totalIncome} formatter={formatter} />
+                        <Statistic className='d-flex mx-2' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'goldenrod', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>} value={userWallet} formatter={formatter} />
+                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'green', marginRight: '5px', fontWeight: '500' }}>Incomes  : ₹</span>} value={totalIncome} formatter={formatter} />
 
-                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px' }} title='Expenses  : ₹' value={totalExpenses} formatter={formatter} />
+                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'red', marginRight: '5px', fontWeight: '500' }}>Expenses  : ₹ </span>} value={totalExpenses} formatter={formatter} />
 
                     </Col>
                 </Row>
@@ -389,7 +431,7 @@ const TransactionList: React.FC = () => {
 
 
                     <Col span={3}>
-                        <Button className='main-buttons' type="primary" onClick={() => showModal()}>Add Record</Button>
+                        <Button className='main-buttons p-2' type="primary" onClick={() => showModal()}><Plus size={19} />Add Record</Button>
                     </Col>
 
                     <Col span={21} >
@@ -435,7 +477,7 @@ const TransactionList: React.FC = () => {
                                 <Select
                                     mode="multiple"
                                     style={{ width: '100%' }}
-                                    placeholder="Filter by categoryType"
+                                    placeholder="Filter by category"
                                     onChange={handlecategoryTypeChange}
                                     value={selectedCategories}
                                 >
@@ -459,15 +501,39 @@ const TransactionList: React.FC = () => {
             </Col>
 
 
-            <hr className='mt-3' />
+            <hr className='mt-2' />
             <Table
                 size='middle'
 
                 dataSource={sortedTransactions}
                 columns={columns}
                 rowKey="id"
-                scroll={{ y: 445 }}
+                scroll={{ y: 420 }}
                 pagination={false}
+
+                summary={(data: any) => {
+                    let totalAmount = 0;
+
+
+                    data.forEach(({ amount }: any) => {
+                        totalAmount += amount;
+                    });
+                    return (
+                        <Table.Summary fixed>
+                            <Table.Summary.Row>
+                                <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
+                                <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                                <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                                <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                                <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                                <Table.Summary.Cell index={5}>
+                                    <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={totalAmount} formatter={formatter} />
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                            </Table.Summary.Row>
+                        </Table.Summary>
+                    )
+                }}
 
             // footer={()=> [{
             //     title:'gajf',
@@ -488,7 +554,7 @@ const TransactionList: React.FC = () => {
                     className='p-3 rounded'
                     style={{ maxWidth: '670px', backgroundColor: '' }}
                     onFinish={handleSubmit}
-                    initialValues={formData || { categoryType: '', amount: 0, transactionType: 2, accountType: 1, currency: 'INR' }}
+                    initialValues={formData || { categoryType: '', amount: 0, transactionType: null, accountType: 1, currency: 'INR' }}
                 >
                     <div className='d-flex justify-content-center pt-3' style={{ width: '100%' }}>
                         <Form.Item
@@ -497,6 +563,7 @@ const TransactionList: React.FC = () => {
                             style={{ width: '75%' }}
                         >
                             <Radio.Group onChange={handleTypeChange} value={formData.transactionType} style={{ width: '100%' }}>
+
                                 <Radio.Button value={1} className='text-center w-50' >Income</Radio.Button>
                                 <Radio.Button value={2} className='text-center w-50'>Expense</Radio.Button>
                             </Radio.Group>
@@ -510,7 +577,7 @@ const TransactionList: React.FC = () => {
                                 rules={[{ required: true, message: 'Please select an account transactiontype!' }]}
                             >
                                 <Select
-                                    placeholder="Select account type"
+                                    placeholder="Select accounttype"
                                     className='w-100'
                                     value={formData.accountType}
                                 >
@@ -528,7 +595,8 @@ const TransactionList: React.FC = () => {
                                     rules={[{ required: true, message: 'Please enter an amount!' }]}
                                 >
                                     <Input
-                                        className='w-100'
+
+                                        style={{ width: '95%' }}
                                         type="number"
                                         placeholder="Enter amount"
                                         min={0}
@@ -557,12 +625,12 @@ const TransactionList: React.FC = () => {
                                 </Form.Item>
                             </div>
                             <Form.Item
-                                label="CategoryType"
+                                label="Category"
                                 name="categoryType"
-                                rules={[{ required: true, message: 'Please select a categorytype!' }]}
+                                rules={[{ required: true, message: 'Please select a category!' }]}
                             >
                                 <Select
-                                    placeholder="Select categorytype"
+                                    placeholder="Select category"
                                     className='w-100'
                                     labelInValue
                                 >
@@ -615,7 +683,7 @@ const TransactionList: React.FC = () => {
                     <div >
                         <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='w-100'>
 
-                            {editingTransaction ? <RotateCcw size={16} /> : <CirclePlus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
+                            {editingTransaction ? <RotateCcw size={16} /> : <Plus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
                         </Button>
                         <Form.Item>
                             <Button type="link" htmlType="button" onClick={() => form.resetFields()} className='w-100 text-center'>

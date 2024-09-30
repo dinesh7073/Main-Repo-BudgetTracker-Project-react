@@ -1,6 +1,6 @@
-import { Button, DatePicker, Form, Input, Select, Modal, Progress, notification, Card, Tooltip, Popconfirm, Breadcrumb, Empty, } from "antd"
+import { Button, DatePicker, Form, Input, Select, Modal, Progress, notification, Card, Tooltip, Popconfirm, Breadcrumb, Empty, Carousel, Col, Row, Statistic, StatisticProps, Tag, Alert, Space, } from "antd"
 import dayjs, { Dayjs } from "dayjs";
-import { Car, DollarSign, Edit, HelpCircle, Home, Laptop, Plus, ShoppingBag, Trash2, Zap } from "lucide-react"
+import { Car, DollarSign, Edit, HelpCircle, Home, IndianRupee, Laptop, Plus, ShoppingBag, Trash2, Zap } from "lucide-react"
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../UserContext";
 import { IoFastFoodOutline } from "react-icons/io5";
@@ -8,16 +8,19 @@ import axios from "axios";
 import { BarChart } from "@mui/x-charts";
 import { PieChart } from '@mui/x-charts/PieChart'
 import '../CSS/Budget.css';
-import { HomeOutlined } from "@ant-design/icons";
+import { EditOutlined, HomeOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
-import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
-import { Carousel } from 'react-bootstrap';
+
 
 import '../CSS/ThemeColors.css'
-import { REACT_APP_BASE_URL } from "./Common/Url";
 
+import CountUp from "react-countup";
+
+const formatter: StatisticProps['formatter'] = (value) => (
+  <CountUp end={value as number} separator="," />
+);
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 interface Budget {
@@ -29,7 +32,7 @@ interface Budget {
   amount: number;
   amountSpent: number;
 }
-interface TransactionType {
+interface FormData {
   id: string;
   userId: string;
   transactionType: number;
@@ -42,10 +45,16 @@ interface TransactionType {
   currency?: string;
 }
 
+
 type PieDataType = {
   id: number;
   value: number;
   label: string;
+};
+const transformData = (records: FormData[]): FormData[] => {
+  return records.map((transactions) => ({
+    ...transactions,
+  }));
 };
 const Budget = () => {
   const BudgetData: Budget = {
@@ -64,14 +73,19 @@ const Budget = () => {
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
   const [budget, setBudget] = useState<Budget>(BudgetData);
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [transactionData, setTransactionData] = useState<TransactionType[]>([]);
+  const [transactionData, setTransactionData] = useState<FormData[]>([]);
   const [budgetExists, setBudgetExists] = useState<boolean>(false);
   const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
-  const { userDetails, baseUrl } = useContext<any>(UserContext);
 
 
-  const UserId = userDetails.UserId;
-  
+  const [isEditing, setIsEditing] = useState<boolean>(true);
+
+  // debugger
+  const { userDetails, userWallet, setUserWallet, expensesLimit, setexpensesLimit,UserId } = useContext<any>(UserContext);
+
+
+
+
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 5: return 'Food,Drinks';
@@ -88,16 +102,16 @@ const Budget = () => {
 
   const getCategoryTypeIcon = (categoryType: number | null) => {
     switch (categoryType) {
-      case 5: return <IoFastFoodOutline className="fs-3" />;
-      case 6: return <ShoppingBag />;
-      case 7: return <Home />;
-      case 8: return <Car />;
-      case 9: return <Car />;
-      case 10: return <MdOutlineHealthAndSafety />;
-      case 11: return <Laptop />;
-      case 12: return <Zap />;
-      case 13: return <DollarSign />;
-      default: return <HelpCircle />;
+      case 5: return <IoFastFoodOutline size={20} />;
+      case 6: return <ShoppingBag size={20} />;
+      case 7: return <Home size={20} />;
+      case 8: return <Car size={20} />;
+      case 9: return <Car size={20} />;
+      case 10: return <MdOutlineHealthAndSafety size={20} />;
+      case 11: return <Laptop size={20} />;
+      case 12: return <Zap size={20} />;
+      case 13: return <IndianRupee size={20} />;
+      default: return <HelpCircle size={20} />;
     }
   };
 
@@ -106,6 +120,8 @@ const Budget = () => {
       .then((res) => {
         if (res.status === 200) {
           setTransactionData(res.data);
+          const transformedRecords = transformData(res.data);
+          updateUserWallet(transformedRecords)
         }
       })
       .catch((err) => console.log("Error fetching transactions", err));
@@ -113,9 +129,8 @@ const Budget = () => {
 
 
 
-  // const ExceedsBudget = Boolean(budget.amountSpent > budget.amount);
-
   useEffect(() => {
+
 
     axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
@@ -126,8 +141,8 @@ const Budget = () => {
 
           const transformedBudgets = res.data.map((budget: Budget) => {
             const amountSpent = transactionData
-              .filter((transactionObj: TransactionType) => transactionObj.categoryType === budget.category)
-              .reduce((total: number, transactionObj: TransactionType) => total + transactionObj.amount, 0);
+              .filter((transactionObj: FormData) => transactionObj.categoryType === budget.category)
+              .reduce((total: number, transactionObj: FormData) => total + transactionObj.amount, 0);
 
             if (budget.category !== 13) {
               totalAmountSpent += budget.amountSpent
@@ -149,7 +164,6 @@ const Budget = () => {
               startDate: budget.startDate,
               endDate: budget.endDate,
             };
-
           });
 
           const updatedBudget = transformedBudgets.map((budget: Budget) => {
@@ -159,18 +173,12 @@ const Budget = () => {
                 amountSpent: totalAmountSpent
               }
             }
-
-
             return budget;
           })
 
           setBudgets(updatedBudget);
 
-
-
-
           budgets.map((budget: Budget) => {
-
             if (budget.amountSpent > budget.amount) {
               notification.warning({
                 message: 'Budget Exceeded',
@@ -179,8 +187,6 @@ const Budget = () => {
               });
             }
           })
-
-
 
           // transformedBudgets.map((budget: Budget) => {
           //   if (budget.amountSpent > budget.amount) {
@@ -239,6 +245,18 @@ const Budget = () => {
 
       .catch((err) => console.log("Error from server", err));
   }, [UserId, transactionData]);
+
+  const updateUserWallet = (records: FormData[]) => {
+    const totalIncome = records
+      .filter(record => record.transactionType === 1 && record.amount !== null)
+      .reduce((total, record) => total + (record.amount as number), 0);
+    const totalExpenses = records
+      .filter(record => record.transactionType === 2)
+      .reduce((total, record) => total + (record.amount as number), 0);
+    setUserWallet(totalIncome - totalExpenses);
+  };
+  const totalexpense = transactionData.filter(record => record.transactionType === 2).reduce((total, record) => total + (record.amount as number), 0);
+
 
   const TotalSpentOfOtherCategories = () => {
     return budgets.reduce((total, budget) => {
@@ -327,7 +345,7 @@ const Budget = () => {
   }
 
   const handleDelete = (id: string) => {
-    axios.post(`${baseUrl}BudgetsController/${id}DeleteBudget`)
+    axios.post(`${REACT_APP_BASE_URL}BudgetsController/${id}DeleteBudget`)
       .then((response) => {
         const updatedBudget = budgets.filter(budget => budget.id !== id);
         setBudgets(updatedBudget);
@@ -358,7 +376,7 @@ const Budget = () => {
 
   const handlePie = (category: number | null) => {
     const transcategory = transactionData.filter(
-      (transactionObj: TransactionType) => transactionObj.categoryType === category
+      (transactionObj: FormData) => transactionObj.categoryType === category
     );
     if (category === 13) {
       const pieData = budgets
@@ -406,206 +424,315 @@ const Budget = () => {
     }
   }
 
+  const handleSetexpensesLimit = (values: { expensesLimit: number }) => {
+    setexpensesLimit(values.expensesLimit);
+    setIsEditing(false);
+    notification.success({
+      message: `expensesLimit set to ${values.expensesLimit}`,
+    });
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsEditing(true);
+  };
+
   return (
     <>
-      <div>
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: " 16px"
-        }} >
-          <Breadcrumb
-            items={[
-              {
-                title: < HomeOutlined onClick={() => navigate('/')} />,
-              },
-              {
-                title: 'Budget ',
-              },
-            ]}
-          />
-          <Button type="primary" className="py-1 text-center pe-3" onClick={() => setIsModalVisible(true)}><Plus />Add </Button>
-        </div>
-      </div>
+      <div style={{
+        padding: "10px 16px 16px 16px",
+        backgroundColor: 'white'
+      }}>
 
-      {budgetExists ? <div> <Carousel indicators={true} interval={null} style={{ width: '100%', backgroundColor: '' }} >
+        <Row gutter={24} className="d-flex flex-row justify-content-between mb-2" >
+          <Col span={10}>
+            <Breadcrumb
+              items={[
+                {
+                  title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
+                },
+                {
+                  title: 'budget ',
+                },
+              ]}
+            />
+          </Col>
 
-        {groupedBudgets.length > 0 ? (
 
-          groupedBudgets.map((budget: Budget[], index) => (
 
-            <Carousel.Item key={index} style={{ width: '100%' }}>
-              <div className="d-flex">
+          <Col span={6}>
+            <Form onFinish={handleSetexpensesLimit} className=" w-100  d-flex flex-row justify-content-between mx-2" variant="filled">
+              <Form.Item
+                name="expensesLimit"
+                initialValue={expensesLimit}
+                rules={[{ required: true, message: ' expenseslimit!', }]}
+                className="mb-0"
+                label="Total expenses Limit"
+
+              >
+
+                <Input
+                  size="small"
+                  type="number"
+                  placeholder="Amount"
+                  value={expensesLimit ? undefined : ''}
+                  disabled={!isEditing}
+                  onChange={(e) => setexpensesLimit(Number(e.target.value))}
+                  style={{ width: '115px' }}
+                />
+              </Form.Item>
+
+              {isEditing ? (
+                <Button type="link" htmlType="submit" className="w-25 rounded-5" >
+                  <PlusOutlined size={19} />
+                </Button>
+              ) : (
+                <Button type="link" className="w-25 rounded-5" onClick={handleEditClick}>
+                  <EditOutlined size={19} />
+                </Button>
+              )}
+            </Form>
+          </Col>
+
+          <Col span={4} >
+            {/* <Tag color="blue" className="w-100"> */}
+            <Statistic className='d-flex mx-2  py-1 ' style={{ backgroundColor: '', borderRadius: '5px' }} valueStyle={{ fontSize: '15px', fontWeight: '500' }}
+              title={
+                <span style={{ color: 'black', marginRight: '5px', fontWeight: '500' }}>Total Expenses : ₹ </span>
+              } value={totalexpense} formatter={formatter} />
+            {/* </Tag> */}
+          </Col>
+
+          <Col span={4}>
+            {/* <Tag color="gold" className="w-100"> */}
+            <Statistic className='d-flex mx-2  py-1 ' style={{ backgroundColor: '', borderRadius: '5px' }} valueStyle={{ fontSize: '15px', fontWeight: '500' }}
+              title={
+                <span style={{ color: 'black', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>
+              } value={userWallet} formatter={formatter} />
+            {/* </Tag> */}
+
+          </Col>
+
+
+
+        </Row>
+
+        <Row gutter={24} className='d-flex flex-row mb-1'>
+          <Col span={14}>
+            <Button type="primary" className="p-2 text-center " onClick={() => setIsModalVisible(true)}><Plus size={19} />Add Budget</Button>
+          </Col>
+          <Col span={10}>
+            {
+              parseInt(expensesLimit) < totalexpense ?
+                <Alert
+                  className="py-1 px-3"
+                  message="Warning You have reached the total expense limit!"
+                  type="warning"
+                  action={
+                    <Space>
+
+                    </Space>
+                  }
+                  closable
+                /> : ''
+            }
+          </Col>
+        </Row>
+
+
+        {budgetExists ? <div> <Carousel className="p-1" arrows infinite={true} style={{ width: '100%', backgroundColor: '#F5F5F5', borderRadius: '10px' }} >
+
+          {groupedBudgets.length > 0 ? (
+
+            groupedBudgets.map((budget: Budget[], index) => (
+
+              // <Carousel key={index} style={{ width: '100%' }} >
+
+              // <div className="d-flex justify-content-between">
+
+              <Row gutter={24} justify={"space-between"} className="d-flex ">
+
                 {budget.map((budget) => (
-                  <Card
-                    hoverable
-                    className="total-cards-background shadow"
-                    key={budget.id}
-                    onClick={() => handlePie(budget.category)}
-                    actions={[
-                      <text className='text-dark'>Budget :  ₹{budget.amount}</text>,
-                      <text className='text-danger'>Spent :  ₹{budget.category === 13 ? TotalSpentOfOtherCategories() : budget.amountSpent}</text>,
-                      <text
-                        className={budget.category === 13 ?
-                          ((budget.amount - TotalSpentOfOtherCategories() < 0) ? 'text-danger' : 'text-success')
-                          : (budget.amount - budget.amountSpent < 0 ? 'text-danger' : 'text-success')}>
-                        Remaining:  {remainingAmt(budget, budget.category, budget.amount)}
-                      </text>
-                    ]}
-                    extra={
-                      <div className='text-secondary'>
-                        <small className=' px-2 '>
-                          <Tooltip color='grey' title="Edit budget">
-                            <Edit
-                              key="edit"
-                              onClick={() => handleOpenModal(budget)}
-                              style={{ cursor: "pointer" }} />
+                  <Col span={8}>
 
-                          </Tooltip>
-                        </small>
-                        <small>
-                          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(budget.id)}>
 
-                            <Trash2
-                              key="delete"
-                              style={{ cursor: "pointer" }} />
+                    <Card
 
-                          </Popconfirm>
-                        </small>
-                      </div>
-                    }
-                    title={
-                      <div>
-                        <text>{getCategoryLabel(budget.category)}</text>
-                      </div>}
-                    style={{
-                      width: 400,
-                      height: 200,
-                      margin: 15,
-                      padding: 10,
-                      backgroundColor: "#F8F8F8"
-                    }}>
-                    <Card.Meta
-                      style={{
-                        padding: 10
-                      }}
-                      avatar={getCategoryTypeIcon(budget.category)}
-                      description={
-                        <div>
-                          <Progress
-                            percent={budget.category === 13 ? (TotalSpentOfOtherCategories() / budget.amount * 100) : (budget.amountSpent / budget.amount) * 100}
-                            format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
-                            strokeColor={progressColor(budget.amount, budget.amountSpent, budget.category)}
-                          />
+                      className="total-cards-background "
+                      key={budget.id}
+                      onClick={() => handlePie(budget.category)}
+                      actions={[
+                        <text className='text-dark'>Budget :  ₹{budget.amount}</text>,
+                        <text className='text-danger'>Spent :  ₹{budget.category === 13 ? TotalSpentOfOtherCategories() : budget.amountSpent}</text>,
+                        <text
+                          className={budget.category === 13 ?
+                            ((budget.amount - TotalSpentOfOtherCategories() < 0) ? 'text-danger' : 'text-success')
+                            : (budget.amount - budget.amountSpent < 0 ? 'text-danger' : 'text-success')}
+
+                        >
+                          Remaining:  {remainingAmt(budget, budget.category, budget.amount)}
+                        </text>
+                      ]}
+                      extra={
+                        <div className='text-secondary'>
+                          <small className=' px-2 '>
+                            <Tooltip color='grey' title="Edit budget">
+                              <Edit
+                                size={19}
+                                key="edit"
+                                onClick={() => handleOpenModal(budget)}
+                                style={{ cursor: "pointer" }} />
+
+                            </Tooltip>
+                          </small>
+                          <small>
+                            <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(budget.id)}>
+
+                              <Trash2
+                                size={19}
+                                key="delete"
+                                style={{ cursor: "pointer" }} />
+
+                            </Popconfirm>
+                          </small>
                         </div>
                       }
-                    />
-                  </Card>
+                      title={
+                        <div >
+                          <text>{getCategoryLabel(budget.category)} <span style={{ fontSize: '14px' }}> </span></text>
+                        </div>}
+                      style={{
+                        width: '100%',
+                        height: 190,
+                        margin: 5,
+                        padding: 10,
+                        backgroundColor: "white",
+                        boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px'
+                      }}>
+
+                      <Card.Meta
+                        style={{
+                          padding: 10
+                        }}
+                        avatar={getCategoryTypeIcon(budget.category)}
+                        description={
+                          <div>
+                            <Progress
+                              percent={budget.category === 13 ? (TotalSpentOfOtherCategories() / budget.amount * 100) : (budget.amountSpent / budget.amount) * 100}
+                              format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
+                              strokeColor={progressColor(budget.amount, budget.amountSpent, budget.category)}
+                            />
+                          </div>
+                        }
+                      />
+                    </Card>
+                  </Col>
+
                 ))}
-              </div>
+              </Row>
+              // </div>
 
-            </Carousel.Item>
-          )
-          )) : ""}
-      </Carousel>
+              // </Carousel>
+            )
+            )) : ""}
+        </Carousel>
 
-        <div className="d-flex flex-row mt-2 " style={{ height: '350px' }}>
-          <Card className="ps-2 m-e-2 ">
-            <BarChart
-              width={700}
-              height={350}
-              xAxis={[{ scaleType: 'band', data: categories }]}
-              series={[
-                { label: 'Budgeted Amount', data: seriesData.map(data => data.amount) },
-                { label: 'Spent Amount', data: seriesData.map(data => data.amountSpent) }
-              ]}
-            />
-          </Card>
 
-          <Card className="mx-2">
-            <h4>Expense Pie Chart</h4>
-            <PieChart
-              className="mt-5 "
-              width={500}
-              height={200}
-              series={[
-                {
-                  innerRadius: 50,
-                  data: pieChartData
-                }
-              ]}
-            />
-          </Card>
-        </div>
+          <div className="d-flex flex-row mt-2 justify-content-between " style={{ height: '100%', width: '100%' }}>
 
-      </div> : <Empty />}
-      <Modal
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFormSubmit}
+            <Card className="mx-">
+              <h4>Expense Pie Chart</h4>
+              <PieChart
+                className="mt-5  "
+                width={490}
+                height={170}
+                series={[
+                  {
+                    innerRadius: 50,
+                    data: pieChartData
+                  }
+                ]}
+              />
+            </Card>
+            <Card className=" ">
+              <BarChart
+                width={660}
+                height={290}
+                xAxis={[{ scaleType: 'band', data: categories }]}
+                series={[
+                  { label: 'Budgeted Amount', data: seriesData.map(data => data.amount), color: '#C4D7FF' },
+                  { label: 'Spent Amount', data: seriesData.map(data => data.amountSpent), color: '#87A2FF' }
+                ]}
+              />
+            </Card>
+          </div>
+
+        </div> : <Empty />}
+        <Modal
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          footer={null}
         >
-          <h5>{editingBudget ? 'Edit Budget' : 'Add Budget'}</h5>
-          <Form.Item
-            name="category"
-            label="Category"
-            rules={[{ required: true, message: 'Please select a category' }]}
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleFormSubmit}
           >
+            <h5>{editingBudget ? 'Edit Budget' : 'Add Budget'}</h5>
+            <Form.Item
+              name="category"
+              label="Category"
+              rules={[{ required: true, message: 'Please select a category' }]}
+            >
 
-            <Select placeholder="Select category">
-              <Option value={13}>Income</Option>
-              <Option value={5} >Food & Beverages</Option>
-              <Option value={6}>Clothes & Footwear</Option>
-              <Option value={7}>Housing</Option>
-              <Option value={8}>Vehicle & Transportation</Option>
-              <Option value={9}>Transportation</Option>
-              <Option value={10}>Health Care</Option>
-              <Option value={11}>Communication & PC</Option>
-              <Option value={12}>Life & Entertainment</Option>
-              <Option value="Other">Other</Option>
-            </Select>
-          </Form.Item>
+              <Select placeholder="Select category">
+                <Option value={13}>Income</Option>
+                <Option value={5} >Food & Beverages</Option>
+                <Option value={6}>Clothes & Footwear</Option>
+                <Option value={7}>Housing</Option>
+                <Option value={8}>Vehicle & Transportation</Option>
+                <Option value={9}>Transportation</Option>
+                <Option value={10}>Health Care</Option>
+                <Option value={11}>Communication & PC</Option>
+                <Option value={12}>Life & Entertainment</Option>
+                <Option value="Other">Other</Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            name="amount"
-            label="Amount"
-            rules={[{ required: true, message: 'Please enter the amount' }]}
-          >
-            <Input
-              type='number'
-              placeholder="Enter amount"
-              onChange={e => setBudget({ ...budget, amount: +e.target.value })}
-              min={0} />
-          </Form.Item>
+            <Form.Item
+              name="amount"
+              label="Amount"
+              rules={[{ required: true, message: 'Please enter the amount' }]}
+            >
+              <Input
+                type='number'
+                placeholder="Enter amount"
+                onChange={e => setBudget({ ...budget, amount: +e.target.value })}
+                min={0} />
+            </Form.Item>
 
-          <Form.Item
-            name="dateRange"
-            label="Date"
-            rules={[{ required: true, message: 'Please enter the date' }]}
-          >
-            <RangePicker
-              format="YYYY-MM-DD"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{ float: "right" }}>
-              {editingBudget ? 'Update' : 'Add'}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item
+              className="w-100"
+              name="dateRange"
+              label="Date"
+              rules={[{ required: true, message: 'Please enter the date' }]}
+            >
+              <RangePicker
+                format="DD-MM-YYYY"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ float: "right" }}>
+                {editingBudget ? 'Update' : 'Add'}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
     </>
-
   )
 }
-
 export default Budget
-
-
