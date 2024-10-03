@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Sidebar from "../../Main-Compos/Sidebar";
 import UserContext from "../../UserContext";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import SignUpSection from "../../Login-Section/SignUpSection";
 import { Dayjs } from "dayjs";
 import '../../CSS/Dashboard.css'
@@ -11,6 +11,7 @@ import LoginCompo from "../../Login-Section/LoginCompo";
 import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
 import { REACT_APP_BASE_URL } from "./Url";
 import axios from "axios";
+import { useLocale } from "antd/es/locale";
 
 
 export interface TransactionType {  // the final fileds for frontend and backend 
@@ -34,10 +35,9 @@ function App() {
   // console.log(import.meta.env.VITE_REACT_APP_BASE_URL,'base url') // 123
 
 
-
-
  const [UserId, setUserId] = useState<string>('');
   const navigate = useNavigate();
+  const location = useLocation();
   // const [userdata, setUserdata] = useState({});
   const [userDetails, setUserDetails] = useState<any>({});
   // const [UserWallet, setUserWallet] = useState<number>();
@@ -57,7 +57,7 @@ function App() {
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res)=>{
             setUserDetails(res.data);
           setIsLogin(true);
-            
+           
         }).catch((err)=>{
           console.log('error',err);
         })
@@ -75,6 +75,16 @@ function App() {
       navigate('/login');
     }
   }, [isLogin]);
+
+  useEffect(()=>{
+
+    const locationName = location.pathname;
+
+    if(locationName){
+      navigate(locationName);
+    }
+
+  },[]);
 
   const ShowError = (message: string) => {
     notification.error({
