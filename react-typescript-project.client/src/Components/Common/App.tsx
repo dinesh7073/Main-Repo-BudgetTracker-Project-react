@@ -11,7 +11,6 @@ import LoginCompo from "../../Login-Section/LoginCompo";
 import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
 import { REACT_APP_BASE_URL } from "./Url";
 import axios from "axios";
-import { useLocale } from "antd/es/locale";
 
 
 export interface TransactionType {  // the final fileds for frontend and backend 
