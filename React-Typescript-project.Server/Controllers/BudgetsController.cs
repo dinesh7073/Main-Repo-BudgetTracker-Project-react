@@ -10,8 +10,15 @@ namespace Budget_Tracker_Bend.Controllers
     public class BudgetsController : Controller
     {
         private readonly BudgetsServices _budgetService;
-        public BudgetsController(BudgetsServices services) =>
+
+        public BudgetsController(BudgetsServices services)
+        {
+
             _budgetService = services;
+
+        }
+
+
 
 
         [HttpGet("{Id:length(24)}GetBudgetById")]
@@ -26,6 +33,7 @@ namespace Budget_Tracker_Bend.Controllers
         {
             try
             {
+
                 var savedBudget = await _budgetService.SaveBudgetAsync(budget);
                 return Ok(savedBudget);
             }
@@ -41,5 +49,31 @@ namespace Budget_Tracker_Bend.Controllers
             await _budgetService.DeleteBudgetAsync(id);
             return NoContent();
         }
+
+        [HttpGet("{UserId:length(24)}GetExpenseLimitById")]
+        public async Task<ActionResult<List<ExpenseLimit>>> GetExpenseLimitByUserId(string UserId)
+        {
+            var limits = await _budgetService.GetExpensesLimitByUserIdAsync(UserId);
+            return Ok(limits);
+        }
+
+        [HttpPost("{UserId:length(24)}CreateExpenseLimitAndUpdate")]
+        public async Task<IActionResult> SaveLimit(ExpenseLimit limit)
+        {
+            try
+            {
+                var savelimit = await _budgetService.SaveExpensesLimitAsync(limit);
+                return Ok(savelimit);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
+
+
     }
 }

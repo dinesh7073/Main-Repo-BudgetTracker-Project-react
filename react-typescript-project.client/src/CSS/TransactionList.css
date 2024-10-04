@@ -6,3 +6,8 @@
 .list-hover-style{
     padding: 10px;
 } */
+
+:where(.css-dev-only-do-not-override-qnu6hi).ant-table-wrapper .ant-table-thead>tr>th,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-table-wrapper .ant-table-thead>tr>td {
+    background-color: rgb(236, 236, 236);
+}

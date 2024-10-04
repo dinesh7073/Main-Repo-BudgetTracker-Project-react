@@ -18,6 +18,7 @@ import '../CSS/ThemeColors.css'
 
 import CountUp from "react-countup";
 import { REACT_APP_BASE_URL } from "./Common/Url";
+import { Utils } from "./Common/Utilities/Utils";
 
 const formatter: StatisticProps['formatter'] = (value) => (
   <CountUp end={value as number} separator="," />
@@ -44,6 +45,12 @@ interface FormData {
   date: Dayjs | null;
   time: Dayjs | null;
   currency?: string;
+}
+
+interface ExpenseLimitTypes {
+  id: string;
+  userId: string;
+  amount: number;
 }
 
 
@@ -79,10 +86,15 @@ const Budget = () => {
   const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
 
 
-  const [isEditing, setIsEditing] = useState<boolean>(true);
+  const [editingLimit, setEditingLimit] = useState(false);
+
+  const [EditingExpenseLimit, setEditingExpenseLimit] = useState<ExpenseLimitTypes | null>(null);
+
+
+
 
   // debugger
-  const { userDetails, userWallet, setUserWallet, expensesLimit, setexpensesLimit,UserId } = useContext<any>(UserContext);
+  const { userDetails, userWallet, setUserWallet, expensesLimit, setexpensesLimit, UserId } = useContext<any>(UserContext);
 
 
 
@@ -117,6 +129,7 @@ const Budget = () => {
   };
 
   useEffect(() => {
+
     axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
@@ -126,6 +139,7 @@ const Budget = () => {
         }
       })
       .catch((err) => console.log("Error fetching transactions", err));
+
   }, [UserId]);
 
 
@@ -283,10 +297,14 @@ const Budget = () => {
       endDate: formattedEndingDate,
       amountSpent: budget.amountSpent
     };
+
     if (editingBudget) {
       Budgetdata.id = editingBudget.id;
     }
+
     const existingBudget = budgets.find(budget => budget.category === values.category);
+
+
     if (existingBudget) {
       Budgetdata.id = existingBudget.id;
 
@@ -304,7 +322,9 @@ const Budget = () => {
           message: 'Failed to update budget',
           description: err.message,
         }));
+
     } else {
+
       axios.post(apiUrl, Budgetdata)
         .then((response) => {
           setBudgets([...budgets, response.data]);
@@ -364,40 +384,44 @@ const Budget = () => {
     const percent = (spent / amount) * 100;
     if (category === 13) {
       const percent = (TotalSpentOfOtherCategories() / amount) * 100;
-      return percent <= 20 ? '#52c41a' :
+      return percent <= 20 ? 'red' :
         percent <= 40 ? 'blue' :
           percent <= 70 ? '#ffa940' :
             '#ff4d4f';
     }
-    return percent <= 20 ? '#52c41a' :
+    return percent <= 20 ? 'red' :
       percent <= 40 ? 'blue' :
         percent <= 70 ? '#ffa940' :
           '#ff4d4f';
   }
 
   const handlePie = (category: number | null) => {
+
     const transcategory = transactionData.filter(
       (transactionObj: FormData) => transactionObj.categoryType === category
     );
-    if (category === 13) {
-      const pieData = budgets
-        .filter(budget => budget.category !== 13)
-        .map((budget: Budget, index) => ({
-          id: index,
-          value: budget.amountSpent,
-          label: getCategoryLabel(budget.category) || `Category ${budget.category}`,
-        }));
-      setPieChartData(pieData);
-    } else {
 
-      const pieData = transcategory.map((transactionObj, index) => ({
-        id: index,
-        value: transactionObj.amount,
-        label: transactionObj.label,
-      }));
-      setPieChartData(pieData);
+    const categoryBudget = budgets.find(budget => budget.category === category);
+    const pieData = [];
+    if (categoryBudget) {
+      pieData.push({
+        id: 1,
+        value: categoryBudget.amount,
+        label: "Budget",
+      });
     }
+
+    transcategory.forEach((transactionObj) => {
+      pieData.push({
+        id: 2,
+        value: transactionObj.amount,
+        label: "Expense",
+      });
+    });
+
+    setPieChartData(pieData);
   };
+
 
   const categories = budgets.map(budget => getCategoryLabel(budget.category));
   const seriesData = budgets.map((budget: Budget) =>
@@ -425,19 +449,41 @@ const Budget = () => {
     }
   }
 
-  const handleSetexpensesLimit = (values: { expensesLimit: number }) => {
-    setexpensesLimit(values.expensesLimit);
-    setIsEditing(false);
-    notification.success({
-      message: `expensesLimit set to ${values.expensesLimit}`,
-    });
-  };
+  // const handleSetexpensesLimit = (values: { expensesLimit: number }) => {
+
+
+  //   setEditingLimit(false);
+  //   notification.success({
+  //     message: `Expenses limit set to ${values.expensesLimit}`,
+  //   });
+  // };
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsEditing(true);
+    setEditingLimit(true);
   };
 
+  const handleSetexpensesLimit = (value: any) => {
+    setEditingExpenseLimit(value.amount);
+
+    const apiUrl = `${REACT_APP_BASE_URL}BudgetsController/${UserId}CreateExpenseLimitAndUpdate`;
+    const amount = Number(value.amount);
+
+    const ExpenseLimitData = { ...value, amount, UserId }
+    if (EditingExpenseLimit) {
+      ExpenseLimitData.id = EditingExpenseLimit.id;
+    }
+    axios.post(apiUrl, ExpenseLimitData).then((response) => {
+
+      setexpensesLimit(response.data.amount)
+      notification.success({
+        message: EditingExpenseLimit ? 'ExpenseLimit updated successfully' : 'ExpenseLimit added successfully',
+      });
+      setEditingLimit(false);
+    });
+
+
+  }
   return (
     <>
       <div style={{
@@ -454,7 +500,7 @@ const Budget = () => {
                   title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
                 },
                 {
-                  title: 'budget ',
+                  title: 'Budget ',
                 },
               ]}
             />
@@ -462,57 +508,66 @@ const Budget = () => {
 
 
 
-          <Col span={6}>
-            <Form onFinish={handleSetexpensesLimit} className=" w-100  d-flex flex-row justify-content-between mx-2" variant="filled">
-              <Form.Item
-                name="expensesLimit"
-                initialValue={expensesLimit}
-                rules={[{ required: true, message: ' expenseslimit!', }]}
-                className="mb-0"
-                label="Total expenses Limit"
+          <Col span={5.5}>
 
-              >
+            {/* Updated Segment */}
+            <Form
+              onFinish={handleSetexpensesLimit}
+              className="w-100"
+              variant="outlined"
+              requiredMark={false}
+            >
+              <Space.Compact style={{ width: '100%', alignItems: 'center' }}>
+                <Form.Item
 
-                <Input
-                  size="small"
-                  type="number"
-                  placeholder="Amount"
-                  value={expensesLimit ? undefined : ''}
-                  disabled={!isEditing}
-                  onChange={(e) => setexpensesLimit(Number(e.target.value))}
-                  style={{ width: '115px' }}
-                />
-              </Form.Item>
+                  name=""
+                  label="Set Expenses Limit"
+                  initialValue={expensesLimit}
+                  rules={[{ required: true }]}
+                  className="mb-0"
+                >
+                  <Input
 
-              {isEditing ? (
-                <Button type="link" htmlType="submit" className="w-25 rounded-5" >
-                  <PlusOutlined size={19} />
-                </Button>
-              ) : (
-                <Button type="link" className="w-25 rounded-5" onClick={handleEditClick}>
-                  <EditOutlined size={19} />
-                </Button>
-              )}
+                    type="number"
+                    placeholder="Limit amount"
+                    value={expensesLimit ? undefined : ''}
+                    disabled={!editingLimit}
+                    // onChange={(e) => handleSetLimit(Number({ amount: e.target.value }))}
+                    style={{ width: '130px' }}
+                  />
+                </Form.Item>
+
+                {editingLimit ? (
+                  <Button type="primary" htmlType="submit" className="m-0 px-2 border-0" >
+                    <PlusOutlined size={19} />
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={handleEditClick} className="m-0 px-2 py-0 border-0">
+                    <EditOutlined size={19} />
+                  </Button>
+                )}
+              </Space.Compact>
             </Form>
+
           </Col>
 
-          <Col span={4} >
-            {/* <Tag color="blue" className="w-100"> */}
+          <Col span={3.5} >
             <Statistic className='d-flex mx-2  py-1 ' style={{ backgroundColor: '', borderRadius: '5px' }} valueStyle={{ fontSize: '15px', fontWeight: '500' }}
               title={
-                <span style={{ color: 'black', marginRight: '5px', fontWeight: '500' }}>Total Expenses : ₹ </span>
-              } value={totalexpense} formatter={formatter} />
-            {/* </Tag> */}
+                <span style={{ color: '#69727A', marginRight: '5px', fontWeight: '500' }}>Total Expenses : ₹</span>
+              } value={
+                totalexpense
+              }
+            />
           </Col>
 
-          <Col span={4}>
-            {/* <Tag color="gold" className="w-100"> */}
+          <Col span={3.5}>
             <Statistic className='d-flex mx-2  py-1 ' style={{ backgroundColor: '', borderRadius: '5px' }} valueStyle={{ fontSize: '15px', fontWeight: '500' }}
               title={
-                <span style={{ color: 'black', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>
-              } value={userWallet} formatter={formatter} />
-            {/* </Tag> */}
-
+                <span style={{ color: '#69727A', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹</span>
+              }
+              value={userWallet}
+            />
           </Col>
 
 
@@ -542,7 +597,7 @@ const Budget = () => {
         </Row>
 
 
-        {budgetExists ? <div> <Carousel className="p-1" arrows infinite={true} style={{ width: '100%', backgroundColor: '#F5F5F5', borderRadius: '10px' }} >
+        {budgetExists ? <div> <Carousel className="p" arrows infinite={true} style={{ width: '100%', backgroundColor: '#F5F5F5', borderRadius: '10px' }} >
 
           {groupedBudgets.length > 0 ? (
 
@@ -552,10 +607,10 @@ const Budget = () => {
 
               // <div className="d-flex justify-content-between">
 
-              <Row gutter={24} justify={"space-between"} className="d-flex ">
+              <Row gutter={10} className="d-flex flex-row justify-content-between ">
 
                 {budget.map((budget) => (
-                  <Col span={8}>
+                  <Col span={8} className="">
 
 
                     <Card
@@ -564,12 +619,13 @@ const Budget = () => {
                       key={budget.id}
                       onClick={() => handlePie(budget.category)}
                       actions={[
-                        <text className='text-dark'>Budget :  ₹{budget.amount}</text>,
+                        <text className='text-dark'>Budget :  ₹{Utils.getFormattedNumber(budget.amount)}</text>,
                         <text className='text-danger'>Spent :  ₹{budget.category === 13 ? TotalSpentOfOtherCategories() : budget.amountSpent}</text>,
                         <text
                           className={budget.category === 13 ?
                             ((budget.amount - TotalSpentOfOtherCategories() < 0) ? 'text-danger' : 'text-success')
-                            : (budget.amount - budget.amountSpent < 0 ? 'text-danger' : 'text-success')}
+                            : (budget.amount - budget.amountSpent < 0 ? 'text-danger' : 'text-success')
+                          }
 
                         >
                           Remaining:  {remainingAmt(budget, budget.category, budget.amount)}
@@ -647,7 +703,7 @@ const Budget = () => {
               <PieChart
                 className="mt-5  "
                 width={490}
-                height={170}
+                height={180}
                 series={[
                   {
                     innerRadius: 50,
@@ -656,10 +712,10 @@ const Budget = () => {
                 ]}
               />
             </Card>
-            <Card className=" ">
+            <Card className="">
               <BarChart
-                width={660}
-                height={290}
+                width={680}
+                height={300}
                 xAxis={[{ scaleType: 'band', data: categories }]}
                 series={[
                   { label: 'Budgeted Amount', data: seriesData.map(data => data.amount), color: '#C4D7FF' },
@@ -676,6 +732,7 @@ const Budget = () => {
           footer={null}
         >
           <Form
+            requiredMark={false}
             form={form}
             layout="vertical"
             onFinish={handleFormSubmit}
@@ -688,7 +745,6 @@ const Budget = () => {
             >
 
               <Select placeholder="Select category">
-                <Option value={13}>Income</Option>
                 <Option value={5} >Food & Beverages</Option>
                 <Option value={6}>Clothes & Footwear</Option>
                 <Option value={7}>Housing</Option>
@@ -701,34 +757,45 @@ const Budget = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item
-              name="amount"
-              label="Amount"
-              rules={[{ required: true, message: 'Please enter the amount' }]}
-            >
-              <Input
-                type='number'
-                placeholder="Enter amount"
-                onChange={e => setBudget({ ...budget, amount: +e.target.value })}
-                min={0} />
-            </Form.Item>
 
-            <Form.Item
-              className="w-100"
-              name="dateRange"
-              label="Date"
-              rules={[{ required: true, message: 'Please enter the date' }]}
-            >
-              <RangePicker
-                format="DD-MM-YYYY"
-              />
-            </Form.Item>
+            <div className="d-flex flex-row justify-content-between ">
+
+              <Form.Item
+                style={{ width: '33%' }}
+                name="amount"
+                label="Amount"
+                rules={[{ required: true, message: 'Please enter the amount!' }]}
+              >
+                <Input
+                  className="w-100"
+                  type='number'
+                  placeholder="Enter amount"
+                  onChange={e => setBudget({ ...budget, amount: +e.target.value })}
+                  min={0} />
+              </Form.Item>
+
+              <Form.Item
+
+                style={{ width: '65%' }}
+
+                name="dateRange"
+                label="Date"
+                rules={[{ required: true, message: 'Please enter the date!' }]}
+              >
+                <RangePicker
+                  className="w-100"
+                  format="DD-MM-YYYY"
+                />
+              </Form.Item>
+
+            </div>
             <Form.Item>
               <Button
+                className="px-3"
                 type="primary"
                 htmlType="submit"
                 style={{ float: "right" }}>
-                {editingBudget ? 'Update' : 'Add'}
+                {editingBudget ? 'Update' : 'Save'}
               </Button>
             </Form.Item>
           </Form>

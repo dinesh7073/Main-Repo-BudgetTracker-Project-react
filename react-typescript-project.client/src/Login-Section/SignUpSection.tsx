@@ -135,7 +135,7 @@ const SignUpSection = () => {
                                         style={{ width: '49%', height: '65px' }}
                                         rules={[{ required: true, message: 'First name is required' }
                                         ]}
-                                    >
+                                    required={false}>
                                         <Input
                                             style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
                                             prefix={<UserOutlined />}
@@ -150,7 +150,7 @@ const SignUpSection = () => {
                                         label="Last name"
                                         style={{ width: '49%', height: '65px' }}
                                         rules={[{ required: true, message: 'Last name is required' }]}
-                                    >
+                                    required={false}>
                                         <Input
                                             style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
                                             prefix={<UserOutlined />}
@@ -161,7 +161,7 @@ const SignUpSection = () => {
                                     </Form.Item>
                                 </div>
                                 <Form.Item
-                                    label="E-mail"
+                                    label="Email"
                                     name="email"
 
                                     style={{ height: '65px' }}
@@ -171,7 +171,7 @@ const SignUpSection = () => {
                                         message: 'Enter a valid email'
                                     }
                                     ]}
-                                >
+                                required={false}>
                                     <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
                                 </Form.Item>
                                 <Form.Item
@@ -186,7 +186,7 @@ const SignUpSection = () => {
                                         }
                                     ]}
 
-                                >
+                                required={false}>
                                     <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" maxLength={10} />
 
                                 </Form.Item>
@@ -194,8 +194,8 @@ const SignUpSection = () => {
                                     label="Password"
                                     name="password"
                                     style={{ height: '65px' }}
-                                    rules={[{ required: true, message: 'Password is required' }]}
-                                >
+                                    rules={[{ required: true, message: 'Password is required' }, {  min: 8, validateTrigger:'onFinish', message:'Password must be at least 8 characters!'}]}
+                               required={false} >
                                     <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                 </Form.Item>
                                 <Form.Item
