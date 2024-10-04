@@ -24,3 +24,10 @@
   color: blue;
 }
 
+/* :where(.css-dev-only-do-not-override-qnu6hi).ant-form-item .ant-form-item-explain-error {
+  display: none !important;
+} */
+
+:where(.css-dev-only-do-not-override-qnu6hi).ant-progress.ant-progress-status-success .ant-progress-text {
+  color: #ff0000;
+}
