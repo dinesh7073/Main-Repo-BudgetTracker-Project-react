@@ -259,7 +259,7 @@ const Budget = () => {
 
 
       .catch((err) => console.log("Error from server", err));
-  }, [UserId, transactionData]);
+  }, [ transactionData]);
 
   const updateUserWallet = (records: FormData[]) => {
     const totalIncome = records
@@ -488,7 +488,8 @@ const Budget = () => {
     <>
       <div style={{
         padding: "10px 16px 16px 16px",
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+       
       }}>
 
         <Row gutter={24} className="d-flex flex-row justify-content-between mb-2" >
@@ -676,7 +677,7 @@ const Budget = () => {
                           <div>
                             <Progress
                               percent={budget.category === 13 ? (TotalSpentOfOtherCategories() / budget.amount * 100) : (budget.amountSpent / budget.amount) * 100}
-                              format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
+                              format={(percent: any) => `${percent.toLocaleString()}%`}
                               strokeColor={progressColor(budget.amount, budget.amountSpent, budget.category)}
                             />
                           </div>

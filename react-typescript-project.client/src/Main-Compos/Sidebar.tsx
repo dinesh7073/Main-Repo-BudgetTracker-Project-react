@@ -221,11 +221,11 @@ const Sidebar: React.FC = () => {
               </div>
               {/* <IoIosNotificationsOutline className="fs-2 align-self-center pe-2" /> */}
               
-              <Dropdown menu={{ items }} placement="bottom" arrow trigger={['click']} overlayStyle={{width:'180px', alignItems:'center',textAlign:'center'}}>
+              <Dropdown menu={{ items }} placement="bottom" arrow trigger={['click']} overlayStyle={{width:'130px', alignItems:'center',textAlign:'center', }}>
         
                 <div
-                  className="d-flex flex-row pe-3"
-                  style={{ alignItems: "center", marginRight: "10px" , textAlign:'center'}}
+                  className="d-flex pe-3"
+                  style={{ alignItems: "center", marginRight: 'auto',marginLeft:'auto' , textAlign:'center'}}
                 >
                   <Avatar size={30} icon={<UserOutlined />} className="align-self-center me-2"/>
                   <p style={{ margin: "0px", fontSize:'14px',fontFamily:"Open Sans" }}>{userDetails.firstName} {userDetails.lastName}</p>
@@ -242,7 +242,7 @@ const Sidebar: React.FC = () => {
             backgroundColor: "#f3f4fa",
             borderRadius: borderRadiusLG,
             overflowY: "auto",
-            height: "calc(100vh - 10vh)",
+            height: "calc(100vh - 11vh)",
           }}
         >
           <PageRoutes />

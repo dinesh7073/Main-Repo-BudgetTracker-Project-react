@@ -57,7 +57,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData,UserId } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData,UserId, expensesLimit, setexpensesLimit } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -584,13 +584,13 @@ const Dashboard = () => {
       {/* </div> */}
 
       <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow:'hidden' }}>
-        <Row gutter={[18, 24]}>
+        <Row gutter={[16, 24]}>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: "5px"}}>
               <p style={{ marginBottom: 5 }}> Expenses Structure</p>
               <div className="top-one-cards" >
                 <Row gutter={20}>
-                  <Col span={12}>
+                  <Col span={13}>
                     <PieChart
                       slotProps={{
                         legend: { hidden: true },
@@ -606,17 +606,17 @@ const Dashboard = () => {
                       ]}
                     />
                   </Col>
-                  <Col span={2}>
+                  <Col span={5}>
 
 
-                    <Card style={{ width: '130px', height: '90px', padding: 0 }} className='expenseCard ant-card ant-card-body'>
-                      <p style={{ marginBottom: 4, fontSize: '13px' }}>Total Expenses</p>
+                    <Card style={{ width: '120px', height: '80px', padding: 0, marginLeft:'6px' }} className='expenseCard ant-card ant-card-body'>
+                      <p style={{ marginBottom: 4, fontSize: '13px' , padding:0 }}>Total Expenses</p>
                       <Statistic
 
                         value={totalExpenses}
 
                         prefix="₹"
-                        valueStyle={{ color: '#ff4d4f', fontSize: '18px' }}
+                        valueStyle={{ color: '#ff4d4f', fontSize: '18px', margin:0 }}
                       />
                     </Card>
 
@@ -667,12 +667,13 @@ const Dashboard = () => {
                       <span style={{ fontSize: '18px', marginRight: '4px' }}> ₹ </span>
 
                       <div style={{ display: 'flex', flexDirection: 'row', fontSize: '16px' }}>
-                        <Statistic value={totalExpenses.toLocaleString()} formatter={formatter} valueStyle={{ fontSize: '18px' }} />
+                        <Statistic value={totalExpenses.toLocaleString()} valueStyle={{ fontSize: '18px' }} />
                       </div>
                     </div>
+                    
                   </div>
                 </div>
-                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 'bold' }}>₹{`${Number().toLocaleString()}`}</span></p>
+                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 'bold' }}>₹{expensesLimit}</span></p>
                 <Flex vertical gap="middle">
                   <Progress percent={69.9} strokeColor={oneColors} />
                 </Flex>
@@ -727,9 +728,9 @@ const Dashboard = () => {
                         }
                         description={
                           <div className='d-flex flex-column '>
-                            <small className='text-dark ' style={{ fontSize: '13px' }}>Target amount-{goal.targetAmount.toLocaleString()}</small>
-                            <small className='text-dark'>Saved amount-{goal.savedAmount.toLocaleString()}</small>
-                            <small className='text-dark'>Target date {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
+                            <small className='text-dark ' style={{ fontSize: '13px' }}>Target amount - ₹{goal.targetAmount.toLocaleString()}</small>
+                            <small className='text-dark'>Saved amount - ₹{goal.savedAmount.toLocaleString()}</small>
+                            <small className='text-dark'>Target date -  {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
                           </div>
                         }
                       />
@@ -759,7 +760,7 @@ const Dashboard = () => {
                     <List.Item>
                       <List.Item.Meta
                         title={<Text >{getCategoryLabel(transaction.categoryType)}</Text>}
-                        description={<p style={{ fontSize: '13px' }}>{getAccountName(transaction.accountType)} - {dayjs(transaction.date).format('YYYY-MM-DD')}</p>}
+                        description={<p style={{ fontSize: '13px' }}>{getAccountName(transaction.accountType)} - {dayjs(transaction.date).format('DD-MM-YYYY')}</p>}
                       />
                       <Text type={transaction.transactionType === 1 ? 'success' : 'danger'} style={{ fontSize: '14px' }}>
                         {transaction.transactionType === 1 ? '+' : '-'}₹{transaction.amount.toLocaleString()}
