@@ -141,7 +141,7 @@ const LoginCompo = () => {
                                 >
                                     <h4 className=' p-2 '>Login</h4>
                                     <Form.Item
-                                        label="E-mail"
+                                        label="Email"
                                         name="email"
 
                                         rules={[{ required: true, message: 'Please input your email!' },
@@ -150,29 +150,40 @@ const LoginCompo = () => {
                                             message: 'Enter a valid email'
                                         }
                                         ]}
-                                    >
+                                        required={false} >
                                         <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
                                     </Form.Item>
 
                                     <Form.Item
                                         label="Password"
                                         name="password"
-                                        rules={[{ required: true, message: 'Please input your password!' }]}
-                                    >
+                                       rules={[
+                                            { required: true, message: 'Please input your password!' },
+                                            
+                                           
+                                            //  {
+                                            //         pattern: /^(?=.*[!@#$%^&*])/,
+                                            //         message: 'Password must contain at least one special character!',
+                                            //     },
+                                        ]}    required={false}>
+
                                         <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                     </Form.Item>
+
                                     <Form.Item>
+                                        
                                         <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px' }}>
+                                          
                                             Log in
                                         </Button>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '430px' }}>
 
                                             <div>
-                                                <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(true); navigate('/signup'); }}>Don't have account?<b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> SignUp</b> </p>
+                                                <p style={{ marginTop: '3px', }} onClick={() => { setIsSignUp(true); navigate('/signup'); }}><p style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> SignUp</p> </p>
                                             </div>
                                             <div>
-                                                <p style={{ marginTop: '3px' }} onClick={() => { navigate("/forgotPassword") }}><b style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> Forgot Password</b> </p>
+                                                <p style={{ marginTop: '3px', }} onClick={() => { navigate("/forgotPassword") }}><p style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> Forgot Password</p> </p>
 
 
 
@@ -194,3 +205,8 @@ const LoginCompo = () => {
 }
 export default LoginCompo;
 
+//Email required is removed and signup or forgot password text not bold
+//Email (lable) replace by Email only
+// the password take min latter 8
+//fogot password the bact button is not
+// E-mail => Email (NOt'-')

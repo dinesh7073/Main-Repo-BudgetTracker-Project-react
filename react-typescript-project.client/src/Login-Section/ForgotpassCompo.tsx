@@ -5,6 +5,7 @@ import '../CSS/LoginSignUp.css';
 import logo from '../images/logo.png';
 import pic6 from '../images/pic6.png';
 import { useNavigate } from 'react-router-dom';
+import { MoveLeft } from 'lucide-react';
 
 
 interface ISignUp {
@@ -53,28 +54,31 @@ const ForgotpassCompo = () => {
 
                 <div style={{ width: '61%', backgroundColor: '#FFFFFF', borderTopLeftRadius: '55px', borderBottomLeftRadius: '55px' }}>
                     <div style={{ width: '100%', minHeight: '100vh' }}>
+                    <span style={{ marginLeft: '830px',}} onClick={() => navigate('/login')}> <Button icon={<MoveLeft/>}/> </span>
                         <div style={{  alignContent: 'center', alignItems: 'center', padding: '15% 18%', width:'80%', marginLeft:'12%' }}>
 
                             <h3 style={{ textAlign: 'center' }}>Forgot Password</h3>
 
                             <Form.Item
-                                label="E-mail"
+                              label="Email"
                                 name="email"
-                                // style={{ marginBottom: '18px' }}    
-                                rules={[{ required: true, message: 'Please input your email!' },
+                               
+                                style={{ marginBottom: '18px' }}    
+                                rules={[{ required: false, message: 'Please input your email!' },
                                 {
                                     type: 'email',
                                     message: 'Enter a valid email'
                                 }
                                 ]}
-                            />
+                          />
                             <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
 
 
-                            <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px', marginTop: '60px', }}>     Submit        </Button>
+                            <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px', marginTop: '24px', }}>     Submit        </Button>
                                 
                            
-                        <Button  style={{color:'#B1D9DB',left:'1%', backgroundColor:'#FFFFFF', top:'20px'}} onClick={() => navigate('/login')} size="large" >Back to Login</Button>
+                        
+                        {/* <Button  style={{color:'#B1D9DB',left:'1%', backgroundColor:'#FFFFFF', top:'20px'}} onClick={() => navigate('/login')} size="large" >Back to Login</Button> */}
                         </div>
                         
                     </div>
