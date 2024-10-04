@@ -76,9 +76,9 @@ const LoginCompo = () => {
 
                     localStorage.setItem('isUser', JSON.stringify(
                         {
-                            email: response?.data?.email,
+                            // email: response?.data?.email,
                             UserId: response?.data?.id,
-                            FirstName: response?.data?.firstName,
+                            // FirstName: response?.data?.firstName,
 
                         }));
 

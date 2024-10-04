@@ -8,11 +8,14 @@ namespace Budget_Tracker_Bend.Services
     {
 
         private readonly IMongoCollection<Budgets> budgetsModal;
+        private readonly IMongoCollection<ExpenseLimit> expenseLimitModal;
         public BudgetsServices(IOptions<BudgetTrackerSettings> settings)
         {
             var MongoClient = new MongoClient(settings.Value.ConnectionString);
             var database = MongoClient.GetDatabase(settings.Value.DataBaseName);
+
             budgetsModal = database.GetCollection<Budgets>(settings.Value.BudgetsCollection);
+            expenseLimitModal = database.GetCollection<ExpenseLimit>(settings.Value.ExpensesLimitCollection);
         }
 
 
@@ -38,6 +41,28 @@ namespace Budget_Tracker_Bend.Services
         {
             return await budgetsModal.DeleteOneAsync(budget => budget.Id == id);
         }
+
+
+
+        public async Task<List<ExpenseLimit>> GetExpensesLimitByUserIdAsync(string userId) =>
+          await expenseLimitModal.Find(limit => limit.UserId == userId).ToListAsync();
+
+        public async Task<ExpenseLimit> SaveExpensesLimitAsync(ExpenseLimit limits)
+        {   
+
+            var existingLimit = await expenseLimitModal.Find(b => b.Id == limits.Id).FirstOrDefaultAsync();
+
+            if (existingLimit == null)
+            {
+                await expenseLimitModal.InsertOneAsync(limits);
+            }
+            else
+            {
+                await expenseLimitModal.ReplaceOneAsync(b => b.Id == limits.Id, limits);
+            }
+            return limits;
+        }
+
 
 
     }

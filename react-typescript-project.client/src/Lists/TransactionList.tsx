@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag } from 'antd';
+import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX, Plus } from 'lucide-react';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -13,9 +13,12 @@ import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css'
 import CountUp from 'react-countup';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
-
+import { Utils } from '../Components/Common/Utilities/Utils';
+import buddhistEra from 'dayjs/plugin/buddhistEra';
+import en from 'antd/es/date-picker/locale/en_US';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(buddhistEra);
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 interface FormData {
@@ -35,7 +38,7 @@ interface FormData {
 const initialFormValues: FormData = {
     id: '',
     userId: '',
-    transactionType: null,
+    transactionType: 2,
     accountType: null,
     categoryType: null,
     currency: 'INR',
@@ -45,9 +48,6 @@ const initialFormValues: FormData = {
     time: null,
 };
 
-const formatter: StatisticProps['formatter'] = (value) => (
-    <CountUp end={value as number} separator="," />
-);
 
 const transformData = (records: FormData[]): FormData[] => {
     return records.map((transactions) => ({
@@ -57,7 +57,8 @@ const transformData = (records: FormData[]): FormData[] => {
 
 const TransactionList: React.FC = () => {
 
-    const { setTransactionData, userDetails, userWallet, setUserWallet, expensesLimit, UserId } = useContext<any>(UserContext);
+
+    const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -67,6 +68,7 @@ const TransactionList: React.FC = () => {
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
     const [transactiontransactionType, setTransactiontransactionType] = useState<'Income' | 'Expense' | 'All'>('All');
+
 
     const navigate = useNavigate();
 
@@ -95,6 +97,7 @@ const TransactionList: React.FC = () => {
         const totalExpenses = records
             .filter(record => record.transactionType === 2)
             .reduce((total, record) => total + (record.amount as number), 0);
+
         setUserWallet(totalIncome - totalExpenses);
     };
 
@@ -115,6 +118,18 @@ const TransactionList: React.FC = () => {
         { label: 'Other Income', value: 4 },
     ];
 
+    const incomeAccountType = [
+        { label: 'Saving Account', value: 2 },
+        { label: 'Current Account', value: 5 }
+    ]
+    const expenseAccountType = [
+
+        { label: 'Saving Account', value: 2 },
+        { label: 'Credit Card', value: 4 },
+        { label: 'Current Account', value: 5 }
+    ]
+
+
     const totalIncome = records
         .filter(record => record.transactionType === 1 && record.amount !== null)
         .reduce((total, record) => total + (record.amount as number), 0);
@@ -122,15 +137,17 @@ const TransactionList: React.FC = () => {
         .filter(record => record.transactionType === 2)
         .reduce((total, record) => total + (record.amount as number), 0);
 
-    const handleTypeChange = (e: any) => {
+
+    const handleTypeChange = (value: any) => {
 
         setFormData((prevData) => ({
             ...prevData,
-            transactionType: e.target.value,
+            transactionType: value,
             categoryType: null,
+            accountType: null,
         }));
 
-        form.setFieldsValue({ categoryType: null });
+        form.setFieldsValue({ categoryType: null, accountType: null });
     };
 
     const handleDateRangeChange = (dates: [Dayjs, Dayjs] | any) => {
@@ -172,6 +189,15 @@ const TransactionList: React.FC = () => {
         setSelectedCategories(values);
     };
 
+
+    const getAccountTypeLabel = (value: number | null) => {
+        switch (value) {
+            case 2: return 'Saving Account';
+            case 4: return 'Credit Card';
+            case 5: return 'Current Account';
+        }
+
+    }
     const getCategoryLabel = (category: number | null) => {
         switch (category) {
             case 1: return 'Salary';
@@ -230,8 +256,12 @@ const TransactionList: React.FC = () => {
                 categoryType: {
                     label: getCategoryLabel(transaction.categoryType),
                     value: transaction.categoryType
-
                 },
+                accountType: {
+                    label: getAccountTypeLabel(transaction.accountType),
+                    value: transaction.accountType
+                },
+
                 time: dayjs(transaction.time),
                 date: dayjs(transaction.date),
 
@@ -257,11 +287,13 @@ const TransactionList: React.FC = () => {
             const amount = Number(values.amount);
             const userId = UserId;
             const categoryType = values.categoryType.value;
+            const accountType = values.accountType.value;
             const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
 
 
 
-            const transactionData = { ...values, amount, userId, categoryType };
+            const transactionData = { ...values, amount, userId, categoryType, accountType };
+
             if (editingTransaction) {
                 transactionData.id = editingTransaction.id;
             }
@@ -289,11 +321,12 @@ const TransactionList: React.FC = () => {
             const amount = Number(values.amount);
             const userId = UserId;
             const categoryType = values.categoryType.value;
+            const accountType = values.accountType.value;
             const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
 
 
 
-            const transactionData = { ...values, amount, userId, categoryType };
+            const transactionData = { ...values, amount, userId, categoryType, accountType };
             if (editingTransaction) {
                 transactionData.id = editingTransaction.id;
             }
@@ -348,11 +381,14 @@ const TransactionList: React.FC = () => {
         //     render: (id: any) => `${id+=1}`,
 
         // },
+
         {
+
             title: 'Category',
             dataIndex: 'categoryType',
             key: 'categoryType',
-            render: (categoryType: number) => getCategoryLabel(categoryType), // Assuming you have this helper function
+            render: (categoryType: number) => getCategoryLabel(categoryType),
+
         },
         {
             title: 'Label',
@@ -360,35 +396,40 @@ const TransactionList: React.FC = () => {
             key: 'label',
         },
         {
+            width: '15%',
             title: 'Account Type',
             dataIndex: 'accountType',
             key: 'accountType',
-            render: (accountType: number) => getAccountName(accountType), // Assuming you have this helper function
+            render: (accountType: number) => getAccountName(accountType),
         },
         {
+            width: '13%',
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
             render: (date: string) => dayjs(date).format('DD-MM-YYYY'),
         },
         {
-            title: "Status",
+            width: '11%',
+            title: "Type",
             dataIndex: 'transactionType',
             key: 'transactionType',
             render: (transactionType: number) => <><Tag style={{ width: '57px' }} color={transactionType == 1 ? 'green' : 'red'}>{transactionType == 1 ? " Income " : "Expense"}</Tag> </>,
 
         },
         {
+            width: '14%',
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount',
             render: (amount: number, record: any) => (
                 <span style={{ color: record.transactionType === 1 ? 'green' : 'red', }} >
-                    {record.transactionType === 1 ? `₹ +${amount.toLocaleString()}` : `₹ -${amount.toLocaleString()}`}
+                    {record.transactionType === 1 ? `₹ +${Utils.getFormattedNumber(amount)}` : `₹ -${Utils.getFormattedNumber(amount)}`}
                 </span>
             ),
         },
         {
+            width: '12%',
             title: 'Actions',
             key: 'actions',
             render: (text: string, record: any) => (
@@ -402,44 +443,52 @@ const TransactionList: React.FC = () => {
             ),
         },
     ];
+
+
+    const buddhistLocale: typeof en = {
+        ...en,
+        lang: {
+            ...en.lang,
+            fieldDateFormat: 'DD-MM-YYYY',
+            fieldDateTimeFormat: 'DD-MM-YYYY  HH:mm',
+            yearFormat: 'YYYY',
+            cellYearFormat: 'YYYY',
+        },
+    };
+
     return (
         <div style={{ padding: '10px 16px 16px 16px', backgroundColor: 'white' }}>
             <Col span={24}>
                 <Row gutter={24} className='d-flex flex-row justify-content-between mb-3'>
-                    <Col span={15}>
+                    <Col span={14}>
                         <Breadcrumb
                             items={[
                                 {
                                     title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
                                 },
                                 {
-                                    title: 'transactions ',
+                                    title: 'Transactions ',
                                 },
                             ]}
                         />
                     </Col>
-                    <Col span={9} className='d-flex flex-row justify-content-between'>
-
-                        <Statistic className='d-flex mx-2' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'goldenrod', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>} value={userWallet} formatter={formatter} />
-                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'green', marginRight: '5px', fontWeight: '500' }}>Incomes  : ₹</span>} value={totalIncome} formatter={formatter} />
-
-                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'red', marginRight: '5px', fontWeight: '500' }}>Expenses  : ₹ </span>} value={totalExpenses} formatter={formatter} />
-
+                    <Col span={10} className='d-flex flex-row justify-content-between'>
+                        <Statistic className='d-flex mx-1' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'goldenrod', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>} value={Utils.getFormattedNumber(userWallet)} />
+                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'green', marginRight: '5px', fontWeight: '500' }}>Incomes  : ₹</span>} value={Utils.getFormattedNumber(totalIncome)} />
+                        <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'red', marginRight: '5px', fontWeight: '500' }}>Expenses  : ₹ </span>} value={Utils.getFormattedNumber(totalExpenses)} />
                     </Col>
                 </Row>
                 <Row gutter={24} className='d-flex flex-row'>
 
-
-                    <Col span={3}>
+                    <Col span={2} >
                         <Button className='main-buttons p-2' type="primary" onClick={() => showModal()}><Plus size={19} />Add Record</Button>
                     </Col>
 
-                    <Col span={21} >
+                    <Col span={22} >
+                        <Row className='d-flex flex-row mx-1' justify={'space-between'} gutter={24}  >
 
-                        <Row className='d-flex flex-row ' justify={'space-between'} gutter={24}  >
-
-                            <Col span={5} className='d-flex' >
-                                <span className='align-content-center mx-2' style={{ width: '150px' }}> Sort by type:</span>
+                            <Col span={4} className='d-flex' >
+                                <span className='align-content-center mx-2' style={{ width: '30px' }}>Type:</span>
                                 <Select
                                     style={{ width: '100%' }}
                                     value={transactiontransactionType}
@@ -449,11 +498,10 @@ const TransactionList: React.FC = () => {
                                     <Option value="Income">Income</Option>
                                     <Option value="Expense">Expense</Option>
                                 </Select>
-
                             </Col>
 
-                            <Col span={5} className='d-flex'>
-                                <span className='align-content-center mx-2' style={{ width: '90px' }}> Sort by :</span>
+                            <Col span={4} className='d-flex'>
+                                <span className='align-content-center mx-2' style={{ width: '89px' }}>Sort by:</span>
                                 <Select
                                     onChange={(e) => setSorttransactionType(e)}
                                     style={{ width: '100%' }}
@@ -467,13 +515,14 @@ const TransactionList: React.FC = () => {
                                 </Select>
                             </Col>
                             <Col span={8} className='d-flex'>
-                                <span className='align-content-center' style={{ width: '100px' }}> Sort by date:</span>
+                                <span className='align-content-center' style={{ width: '100px' }}>Filter by date:</span>
                                 <RangePicker
                                     onChange={handleDateRangeChange}
                                     value={selectedDateRange}
                                 />
                             </Col>
-                            <Col span={6}>
+                            <Col span={8} className='d-flex'>
+                                <span className='align-content-center' style={{ width: '130px' }}>Filter category:</span>
                                 <Select
                                     mode="multiple"
                                     style={{ width: '100%' }}
@@ -501,20 +550,17 @@ const TransactionList: React.FC = () => {
             </Col>
 
 
-            <hr className='mt-2' />
+            <hr className='mt-2 mb-2' />
             <Table
-                size='middle'
-
+                size='small'
                 dataSource={sortedTransactions}
                 columns={columns}
                 rowKey="id"
-                scroll={{ y: 420 }}
+                scroll={{ y: 445 }}
                 pagination={false}
 
                 summary={(data: any) => {
                     let totalAmount = 0;
-
-
                     data.forEach(({ amount }: any) => {
                         totalAmount += amount;
                     });
@@ -527,7 +573,7 @@ const TransactionList: React.FC = () => {
                                 <Table.Summary.Cell index={3}></Table.Summary.Cell>
                                 <Table.Summary.Cell index={4}></Table.Summary.Cell>
                                 <Table.Summary.Cell index={5}>
-                                    <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={totalAmount} formatter={formatter} />
+                                    <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
                                 </Table.Summary.Cell>
                                 <Table.Summary.Cell index={6}></Table.Summary.Cell>
                             </Table.Summary.Row>
@@ -554,38 +600,49 @@ const TransactionList: React.FC = () => {
                     className='p-3 rounded'
                     style={{ maxWidth: '670px', backgroundColor: '' }}
                     onFinish={handleSubmit}
-                    initialValues={formData || { categoryType: '', amount: 0, transactionType: null, accountType: 1, currency: 'INR' }}
+                    initialValues={formData || { categoryType: '', amount: 0, transactionType: null, accountType: '', currency: 'INR' }}
                 >
                     <div className='d-flex justify-content-center pt-3' style={{ width: '100%' }}>
+
                         <Form.Item
                             name="transactionType"
                             rules={[{ required: true, message: 'Please select a transactiontype!' }]}
-                            style={{ width: '75%' }}
+                            style={{ width: '100%' }}
                         >
-                            <Radio.Group onChange={handleTypeChange} value={formData.transactionType} style={{ width: '100%' }}>
 
-                                <Radio.Button value={1} className='text-center w-50' >Income</Radio.Button>
-                                <Radio.Button value={2} className='text-center w-50'>Expense</Radio.Button>
-                            </Radio.Group>
+                            <Segmented size='middle' options={[
+                                { label: 'Income', value: 1, },
+                                { label: 'Expense', value: 2, },
+                            ]}
+                                onChange={handleTypeChange}
+                                defaultValue={2}
+                                value={formData.transactionType}
+                                style={{ width: '100%', backgroundColor: '#F3F4FA' }}
+                                block
+                            />
+
                         </Form.Item>
+
+
                     </div>
                     <div className='d-flex flex-row align-content-center'>
                         <div className='mx-2 w-50'>
                             <Form.Item
                                 label="Account Type"
                                 name="accountType"
-                                rules={[{ required: true, message: 'Please select an account transactiontype!' }]}
+                                rules={[{ required: true, message: 'Please select a account type!' }]}
                             >
                                 <Select
                                     placeholder="Select accounttype"
                                     className='w-100'
-                                    value={formData.accountType}
+                                    labelInValue
                                 >
-                                    {/* <Option value={1}>Cash</Option> */}
-                                    <Option value={2}>Saving Account</Option>
-                                    {/* <Option value={3}>General</Option> */}
-                                    <Option value={4}>Credit Card</Option>
-                                    <Option value={5}>Current Account</Option>
+                                    {(formData.transactionType === 2 ? expenseAccountType : incomeAccountType).map((accountType) => (
+                                        <Option key={accountType.value} value={accountType.value}>
+                                            {getAccountTypeLabel(accountType.value)}
+                                        </Option>
+                                    ))}
+
                                 </Select>
                             </Form.Item>
                             <div className='d-flex flex-row justify-content-between'>
@@ -652,19 +709,29 @@ const TransactionList: React.FC = () => {
                                     placeholder="Enter label"
                                 />
                             </Form.Item>
+
                             <Form.Item
                                 label="Date"
                                 name="date"
-                                rules={[{ required: true, message: 'Please select a date!' }]}
+                                rules={[{ required: true, message: 'Please select a date !' }]}
                             >
-                                <DatePicker
+                                {/* <DatePicker
                                     className='w-100'
                                     picker='date'
-                                    value={dayjs('2024-08-27', 'YYYY-MM-DD')}
+                                    value={dayjs()}
+                                    format={'DD-MM-YYYY'}
+
+                                /> */}
+                                <DatePicker
+                                    className='w-100'
+                                    defaultValue={dayjs()}
+                                    showTime
+                                    locale={buddhistLocale}
+                                    value={dayjs()}
 
                                 />
                             </Form.Item>
-                            <Form.Item
+                            {/* <Form.Item
                                 label="Time"
                                 name="time"
                                 rules={[{ required: true, message: 'Please select a time!' }]}
@@ -677,17 +744,18 @@ const TransactionList: React.FC = () => {
                                     format="HH:mm"
                                     picker="time"
                                 />
-                            </Form.Item>
+                            </Form.Item> */}
+
                         </div>
                     </div>
-                    <div >
-                        <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='w-100'>
-
-                            {editingTransaction ? <RotateCcw size={16} /> : <Plus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
-                        </Button>
-                        <Form.Item>
-                            <Button type="link" htmlType="button" onClick={() => form.resetFields()} className='w-100 text-center'>
+                    <div className=''>
+                        <Form.Item className='d-flex flex-column'>
+                            <Button type="dashed" htmlType="button" onClick={() => form.resetFields()} className=' text-center float-end mx-1' style={{ width: '30%' }}>
                                 <CircleX size={16} />   Reset Form
+                            </Button>
+                            <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='float-end' style={{ width: '30%' }}>
+
+                                {editingTransaction ? <RotateCcw size={16} /> : <Plus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
                             </Button>
                         </Form.Item>
                     </div>

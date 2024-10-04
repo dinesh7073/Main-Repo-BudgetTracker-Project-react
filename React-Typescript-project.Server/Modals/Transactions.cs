@@ -14,7 +14,7 @@ namespace Budget_Tracker_Bend.Modals
         public string UserId { get; set; }
 
         [BsonElement("TType")]
-        public  TransactionType TransactionType { get; set; }
+        public  TransactionType TransactionType { get; set; }   
 
         [BsonElement("accountType")]
         public AccountType AccountType { get; set; }

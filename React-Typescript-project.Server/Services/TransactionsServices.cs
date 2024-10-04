@@ -26,7 +26,7 @@ namespace Budget_Tracker_Bend.Services
 
             if (existingTransaction == null)
             {
-                await transactionsModal.InsertOneAsync(transaction);
+                await transactionsModal.InsertOneAsync(transaction);    
             }
             else
             {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Sidebar from "../../Main-Compos/Sidebar";
 import UserContext from "../../UserContext";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import SignUpSection from "../../Login-Section/SignUpSection";
 import { Dayjs } from "dayjs";
 import '../../CSS/Dashboard.css'
@@ -11,6 +11,7 @@ import LoginCompo from "../../Login-Section/LoginCompo";
 import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
 import { REACT_APP_BASE_URL } from "./Url";
 import axios from "axios";
+import { useLocale } from "antd/es/locale";
 
 
 export interface TransactionType {  // the final fileds for frontend and backend 
@@ -25,22 +26,29 @@ export interface TransactionType {  // the final fileds for frontend and backend
   time: Dayjs | null;
   currency?: string;
 }
+interface ExpenseLimitTypes {
+  id: string;
+  userId: string;
+  amount: number;
+}
 
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
+
   // console.log(import.meta.env.VITE_SOME_KEY) // 123
   // console.log(import.meta.env.VITE_REACT_APP_BASE_URL,'base url') // 123
 
 
+  const [userWallet, setUserWallet] = useState<number>()
 
-
- const [UserId, setUserId] = useState<string>('');
+  const [UserId, setUserId] = useState<string>('');
   const navigate = useNavigate();
+  const location = useLocation();
   // const [userdata, setUserdata] = useState({});
   const [userDetails, setUserDetails] = useState<any>({});
-  // const [UserWallet, setUserWallet] = useState<number>();
+
   const [transactionData, setTransactionData] = useState<TransactionType[]>([]); //
 
   useEffect(() => {
@@ -51,16 +59,16 @@ function App() {
         const parsedUser = JSON.parse(storedUser);
         // const parsedUserId = parsedUser.UserId;
         if (parsedUser.UserId) {
-           setUserId(parsedUser.UserId);
+          setUserId(parsedUser.UserId);
           // setUserdata(parsedUser);
 
-          axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res)=>{
+          axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
             setUserDetails(res.data);
-          setIsLogin(true);
-            
-        }).catch((err)=>{
-          console.log('error',err);
-        })
+            setIsLogin(true);
+
+          }).catch((err) => {
+            console.log('error', err);
+          })
 
         } else {
 
@@ -75,6 +83,16 @@ function App() {
       navigate('/login');
     }
   }, [isLogin]);
+
+  useEffect(()=>{
+
+    const locationName = location.pathname;
+
+    if(locationName){
+      navigate(locationName);
+    }
+
+  },[]);
 
   const ShowError = (message: string) => {
     notification.error({
@@ -104,7 +122,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails,UserId }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>
