@@ -47,7 +47,7 @@ function App() {
   const location = useLocation();
   // const [userdata, setUserdata] = useState({});
   const [userDetails, setUserDetails] = useState<any>({});
-
+  const [loader, setLoader] = useState(false);
   const [transactionData, setTransactionData] = useState<TransactionType[]>([]); //
 
   useEffect(() => {

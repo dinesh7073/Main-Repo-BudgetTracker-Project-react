@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 const { RangePicker } = DatePicker;
+import '../CSS/Goal.css';
+import { Utils } from './Common/Utilities/Utils';
 
 interface GoalData {
   id: string,
@@ -19,6 +21,8 @@ interface GoalData {
   savedAmount: number,
   targetDate: Dayjs | null
 }
+// type SearchProps = GetProps<typeof Input.Search>;
+
 const Goal = () => {
 
   const navigate = useNavigate();
@@ -45,6 +49,8 @@ const Goal = () => {
     }));
   };
 
+  const { Search } = Input;
+ 
 
   useEffect(() => {
 
@@ -136,15 +142,23 @@ const Goal = () => {
       });
   };
 
-
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+  };
   const GoalCard = () => {
 
-    const filteredGoals = selectedDateRange?goals.filter((goal)=>{
-      return(
-      goal.targetDate?.isSameOrAfter(selectedDateRange[0], 'day') &&
-      goal.targetDate.isSameOrBefore(selectedDateRange[1], 'day')
-      )
-    }):goals;
+    const filteredGoals = goals.filter((goal) => {
+
+      const matchesSearch = goal.goal.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesDateRange = selectedDateRange
+        ? goal.targetDate?.isSameOrAfter(selectedDateRange[0], 'day') &&
+          goal.targetDate?.isSameOrBefore(selectedDateRange[1], 'day')
+        : goals
+        ;
+      return matchesSearch && matchesDateRange ;
+    });
 
     return (
 
@@ -174,8 +188,9 @@ const Goal = () => {
                 style={{
                   width: 290,
                   height:'74%',
-                  margin: 10,
-                  padding:5,
+                   margin:'10px 15px 10px 0px',
+                  // margin:10,
+                  padding:3,
                   backgroundColor: isComplete ? '#dff0d8' : '#e1e8f5'
                 }}>
                 <Card.Meta
@@ -206,7 +221,7 @@ const Goal = () => {
                           </small>
                         </div>
                       </div>
-                      <div className='d-flex '>
+                      <div className='d-flex progressBar '>
                         <Progress
                           type="circle"
                           width={60}
@@ -214,12 +229,12 @@ const Goal = () => {
                           strokeColor={isComplete ? '#52c41a' : color}
                           format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
 
-                          style={{ marginRight: '19px', paddingLeft: '8px', paddingTop: '3px' }}
+                          style={{ marginRight: '19px', paddingLeft: '8px', paddingTop: '3px' , color:'black'}}
                         />
                         <div className='d-flex flex-column '>
 
-                          <small className='text-dark'>Target amount - ₹{goal.targetAmount.toLocaleString()}</small>
-                          <small className='text-dark'>Saved amount - ₹{goal.savedAmount.toLocaleString()}</small>
+                          <small className='text-dark'>Target amount - ₹{Utils.getFormattedNumber(goal.targetAmount)}</small>
+                          <small className='text-dark'>Saved amount - ₹{Utils.getFormattedNumber(goal.savedAmount)}</small>
                           <small className='text-dark'>Target date - {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
                         </div>
 
@@ -253,7 +268,7 @@ const Goal = () => {
   return (
     <>
       <Card style={{ width: '100%', height: '87vh', overflow:'auto' }}>
-        <div className='px-3 my-3'>
+        <div className='mb-3'>
           <Breadcrumb
             items={[
               {
@@ -266,22 +281,25 @@ const Goal = () => {
           />
 
         </div>
-        <Row gutter={24} className='d-flex flex-row  justify-between' style={{width:'100%'}}>
+        <Row gutter={18} className='d-flex flex-row  justify-between' style={{width:'100%'}}>
 
 
-          <Col span={17} style={{width:'100%'}}>
-            <Button className='main-buttons p-2 mx-3' type="primary" onClick={() => setIsModalVisible(true)}>Add Goal</Button>
+          <Col span={10} style={{width:'100%'}}>
+            <Button className='main-buttons p-2 ' type="primary" onClick={() => setIsModalVisible(true)}>Add Goal</Button>
           </Col>
+            <Col span={6} style={{width:'100%', display:'flex'}}>
+            <p className='pt-1 ' style={{ width: '82px' }}>Search goal</p>
+            <Search placeholder="Search goal" style={{ width: 200 }} onSearch={handleSearch} />
+            </Col>
+          <Col lg={{span:8}} className='d-flex '  >
 
-          <Col lg={{span:7}} className='d-flex flex-row'  >
-
-            
-                <span className='align-content-center ' style={{ width: '100px' }}> Sort by date:</span>
+                <p className='align-content-center ' style={{ width: '85px' }}> Sort by date </p>
                 
                 <RangePicker
                   onChange={ handleDateRangeChange}
                   value={selectedDateRange}
                   format='DD-MM-YYYY'
+                style={{height:'32px'}}
                 />
               
           </Col>
@@ -352,7 +370,7 @@ const Goal = () => {
             </Form.Item>
 
             <Form.Item
-              label="Desired date"
+              label="Target date"
               name="targetDate"
               rules={[{ required: true, message: 'Please select a date!' }]}
             >

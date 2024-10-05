@@ -13,6 +13,8 @@ import UserContext from '../UserContext';
 import '../CSS/ThemeColors.css'
 import { REACT_APP_BASE_URL } from './Common/Url';
 import '../Common_CSS_Class/commonCss.css';
+import { PieChartOutlined } from '@ant-design/icons';
+import { Utils } from './Common/Utilities/Utils';
 
 const formatter: StatisticProps['formatter'] = (value) => (
   <CountUp end={value as number} separator="," />
@@ -169,6 +171,7 @@ const Dashboard = () => {
   };
 
   const [timeRange, setTimeRange] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
+
   const handleTimeRangeChange = (value: 'weekly' | 'monthly' | 'yearly') => {
     setTimeRange(value);
   };
@@ -201,8 +204,11 @@ const Dashboard = () => {
   const { pData, uData, xLabels } = getDataForTimeRange(timeRange);
   const twoColors: ProgressProps['strokeColor'] = {
     '0%': '#ffffff',
+    '20%' : 'blue',
     '100%': '#088395',
   };
+
+  
   const oneColors: ProgressProps['strokeColor'] = {
     '0%': '#ffffff',
     '100%': '#FF4D4F',
@@ -320,6 +326,15 @@ const Dashboard = () => {
 
   const Incomepercent = (totalExpenses / totalIncome) * 100;
 
+  const Expensepercent = (totalExpenses/expensesLimit) * 100;
+
+  const progressColor = (percent: number) => {
+    
+    return percent <= 25 ? '#00C853' :
+      percent <= 50 ? '#FFEB3B' :
+        percent <= 75 ? '#FFA500' :
+         '#FF4D4F' ;
+  }
   return (
     <>
 
@@ -327,7 +342,10 @@ const Dashboard = () => {
         <Row gutter={[16, 24]}>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: "5px"}}>
-              <p style={{ marginBottom: 5 }}> Expenses Structure</p>
+              <div className='d-flex '>
+              <h6 className='pe-2 mb-1'><PieChartOutlined /></h6>
+              <p style={{ marginBottom: 5,  }}> Expenses Structure</p>
+              </div>
               <div className="top-one-cards" >
                 <Row gutter={20}>
                   <Col span={13}>
@@ -350,13 +368,13 @@ const Dashboard = () => {
 
 
                     <Card style={{ width: '120px', height: '80px', padding: 0, marginLeft:'6px' }} className='expenseCard ant-card ant-card-body'>
-                      <p style={{ marginBottom: 4, fontSize: '13px' , padding:0 }}>Total Expenses</p>
+                      <p style={{ marginBottom: 4, fontSize: '13px' , padding:0 }}>Total Expense</p>
                       <Statistic
 
-                        value={totalExpenses}
+                        value={Utils.getFormattedNumber(totalExpenses)}
 
                         prefix="₹"
-                        valueStyle={{ color: '#ff4d4f', fontSize: '18px', margin:0 }}
+                        valueStyle={{ color: '#ff4d4f', fontSize: '16px', margin:0 }}
                       />
                     </Card>
 
@@ -368,7 +386,7 @@ const Dashboard = () => {
           <Col xs={{ span: 10, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: '0px 5px 10px 5px', }}>
               <p>
-                <BiCoin className="recent-transactions-icon" color="#121212" size={20} />
+                <BiCoin className="recent-transactions-icon" color="#3C3D37" size={20} />
                 Budget
               </p>
 
@@ -384,14 +402,14 @@ const Dashboard = () => {
                       <div className="statistic-container" style={{ margin: 0 }}>
                         <span style={{ fontSize: '18px', marginRight: '5px' }}> ₹ </span>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize: '16px' }}>
-                          <Statistic className="statistic-value" value={totalIncome.toLocaleString()}  valueStyle={{ fontSize: '18px' }} />
+                          <Statistic className="statistic-value" value={Utils.getFormattedNumber(totalIncome)}  valueStyle={{ fontSize: '18px' }} />
                         </div>
                       </div>
                     </div>
                   </div>
-                  <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Spent <span style={{ fontWeight: 500 }}> ₹{`${totalExpenses.toLocaleString()}`}</span></p>
+                  <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Spent <span style={{ fontWeight: 500 }}> ₹{`${Utils.getFormattedNumber(totalExpenses)}`}</span></p>
                   <Flex vertical gap="middle">
-                    <Progress percent={Incomepercent} format={(percent: any) => `${Math.round(percent).toLocaleString()}%`} strokeColor={twoColors} />
+                    <Progress percent={Incomepercent} format={(percent: any) => `${Math.round(percent)}%`} strokeColor={progressColor(Incomepercent)} />
                   </Flex>
                 </div>
               </div>
@@ -407,15 +425,15 @@ const Dashboard = () => {
                       <span style={{ fontSize: '18px', marginRight: '4px' }}> ₹ </span>
 
                       <div style={{ display: 'flex', flexDirection: 'row', fontSize: '16px' }}>
-                        <Statistic value={totalExpenses.toLocaleString()} valueStyle={{ fontSize: '18px' }} />
+                        <Statistic value={Utils.getFormattedNumber(totalExpenses)} valueStyle={{ fontSize: '18px' }} />
                       </div>
                     </div>
                     
                   </div>
                 </div>
-                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 'bold' }}>₹{expensesLimit}</span></p>
+                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 'bold' }}>₹{Utils.getFormattedNumber(expensesLimit)}</span></p>
                 <Flex vertical gap="middle">
-                  <Progress percent={69.9} strokeColor={oneColors} />
+                  <Progress percent={Expensepercent} strokeColor={progressColor(Expensepercent)} />
                 </Flex>
               </div>
 
@@ -425,7 +443,7 @@ const Dashboard = () => {
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: '0px 5px', }}>
               <p >
-                <Goal className="recent-transactions-icon" color="#121212" size={18} />
+                <Goal className="recent-transactions-icon" color="#3C3D37" size={18} />
                 Recent Goals
               </p>
 
@@ -468,8 +486,8 @@ const Dashboard = () => {
                         }
                         description={
                           <div className='d-flex flex-column '>
-                            <small className='text-dark ' style={{ fontSize: '13px' }}>Target amount - ₹{goal.targetAmount.toLocaleString()}</small>
-                            <small className='text-dark'>Saved amount - ₹{goal.savedAmount.toLocaleString()}</small>
+                            <small className='text-dark ' style={{ fontSize: '13px' }}>Target amount - ₹{Utils.getFormattedNumber(goal.targetAmount)}</small>
+                            <small className='text-dark'>Saved amount - ₹{Utils.getFormattedNumber(goal.savedAmount)}</small>
                             <small className='text-dark'>Target date -  {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
                           </div>
                         }
@@ -484,12 +502,12 @@ const Dashboard = () => {
           <Col xs={{ span: 5 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: '0px 5px',  }}>
               <p style={{ margin: 0, paddingBottom: "6px" }} >
-                <ArrowLeftRight className="recent-transactions-icon " color="#121212" size={20} />
+                <ArrowLeftRight className="recent-transactions-icon " color="#3C3D37" size={20} />
                 Recent Transactions
               </p>
 
 
-              <div>
+              <div style={{height:'180px'}}>
 
 
                 <List
@@ -503,13 +521,13 @@ const Dashboard = () => {
                         description={<p style={{ fontSize: '13px' }}>{getAccountName(transaction.accountType)} - {dayjs(transaction.date).format('DD-MM-YYYY')}</p>}
                       />
                       <Text type={transaction.transactionType === 1 ? 'success' : 'danger'} style={{ fontSize: '14px' }}>
-                        {transaction.transactionType === 1 ? '+' : '-'}₹{transaction.amount.toLocaleString()}
+                        {transaction.transactionType === 1 ? '+' : '-'}₹{Utils.getFormattedNumber(transaction.amount)}
                       </Text>
                     </List.Item>
                   )}
                 />
               </div>
-              { sortedTransactions?<Button className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{ marginLeft: '50px' }}>
+              { sortedTransactions.length > 0?<Button className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{ marginLeft: '50px' }}>
                 View All Transactions
               </Button>:''}
               {/* <Tag color="default"> View All Transaction</Tag> */}
@@ -523,7 +541,7 @@ const Dashboard = () => {
             <Card style={{ width: "100%", height: "100%", }}>
 
               {/* <Card className='five-cards total-cards-background' style={{ width: '57.5%', height: 340 }} > */}
-              <div style={{
+              {/* <div style={{
                 marginBottom: '-15px'
 
               }}>
@@ -536,10 +554,10 @@ const Dashboard = () => {
                   <MenuItem value="monthly">Monthly</MenuItem>
                   <MenuItem value="yearly">Yearly</MenuItem>
                 </Select>
-              </div>
+              </div> */}
               <LineChart
                 width={640}
-                height={315}
+                height={330}
                 series={[
                   { data: pData, label: 'Income', color: '#071952' },
                   { data: uData, label: 'Expenses', color: '#088395' },
@@ -569,9 +587,9 @@ const Dashboard = () => {
                   Budget v/s Expenses
                 </p>
                 <hr style={{ margin: '10px 0px 0px 0px' }} />
-                <div className="top-one-cards" onClick={() => navigate("/goal")}>
+                <div className="top-one-cards " onClick={() => navigate("/budget")}>
                   <BarChart
-                    width={650}
+                    width={600}
                     height={298}
                     series={[
                       { data: seriesData.map(data => data.amount), label: 'Budget', color: '#2190A0' },
