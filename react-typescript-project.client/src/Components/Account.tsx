@@ -23,7 +23,7 @@ interface ISignUp {
 const Account = () => {
 
   const [visible, setVisible] = useState<boolean>(true);
-  const { UserId, userDetails, setUserDetails } = useContext<any>(UserContext)
+  const { UserId, userDetails, setUserDetails, loader, setLoader } = useContext<any>(UserContext)
 
   const [profiledata, setProfiledata] = useState<ISignUp>({
     id: '',
@@ -37,13 +37,13 @@ const Account = () => {
   const [editProfile, setEditProfile] = useState<ISignUp | null>(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const [loader, setLoader] = useState(false);
+  
 
   const letter = userDetails.firstName.charAt(0) + userDetails.lastName.charAt(0);
 
 
   const onSave = (values: ISignUp) => {
-    setLoader(true);
+    
     console.log(userDetails);
     const profileData = { ...values, id: UserId, password:userDetails.password };
 
@@ -102,10 +102,8 @@ const Account = () => {
           </Row>
           <Row gutter={18} >
 
-
-
             <Card style={{ width: '100%', marginTop: '10px', height: '100%', }}>
-              <p className='fw-100 fs-4 ms-4 pt-2'>User Details</p>
+              <p className='fw-100  ms-4 pt-2 ' style={{fontSize:'18px'}}>User Details</p>
               <div className='d-flex justify-center' >
 
 
@@ -167,7 +165,7 @@ const Account = () => {
         <Col xs={{ span: 10, offset: 0 }} lg={{ span: 14 }}>
           <Card style={{ width: '100%', height: '100%', background: '#ffffff', position: 'relative', paddingLeft: '5px' }}>
             <Spin spinning={loader} />
-
+            <p style={{fontSize:'18px',padding:'20px' , marginLeft:'22px'}}>Edit Account</p>
             <Button style={{ position: 'absolute', right: '50px', top: '30px', cursor: 'pointer', fontSize: '18px' }} onClick={() => setVisible(!visible)}>  {visible ? <Edit /> : <IoMdClose />}  </Button>
 
             <Form

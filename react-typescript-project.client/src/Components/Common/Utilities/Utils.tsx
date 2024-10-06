@@ -115,7 +115,7 @@ class UtilsBase {
       }
       if (t.length > 1) str += "." + t[1];
     }
-    return (withCurrency ? "₹ " : "") + (isNegative ? `(${str})` : str);
+    return (withCurrency ? "₹ " : "") + (isNegative ? `(-${str})` : str);
   };
   /**
    * Get formatted number
