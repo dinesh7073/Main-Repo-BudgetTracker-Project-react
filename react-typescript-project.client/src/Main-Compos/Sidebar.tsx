@@ -121,7 +121,7 @@ const Sidebar: React.FC = () => {
   const siderMenuItems = [
     {
       key: "/dashboard",
-      icon: <LayoutDashboard className="fs-4" style={{ color:"#3C3D37" }} />,
+      icon: <LayoutDashboard className="fs-4" style={{ color: "#3C3D37" }} />,
       label: "Dashboard",
       onClick: () => navigate("/dashboard"),
     },
@@ -148,6 +148,12 @@ const Sidebar: React.FC = () => {
       icon: <UserRound style={{ color: '#3C3D37' }} />,
       label: "Account",
       onClick: () => navigate("/account"),
+    },
+    {
+      key: "/settings/account",
+      icon: <Settings style={{ color: '#3C3D37' }} />,
+      label: "Settings",
+      onClick: () => navigate("/settings/account"),
     },
     // ================== help compo on=====================
     {
@@ -235,35 +241,35 @@ const Sidebar: React.FC = () => {
                   <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName}</p>
                 </div>
               </Dropdown> */}
- 
-              <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center',}}>
-               <div className=" ms-4" style={{justifyContent:'space-between',width:'160px', height:'150px' ,textAlign:'center'}}>
-                <Avatar size={25} icon={<UserOutlined />} style={{textAlign:'center'}}/>
-                <div className="mt-3 ">
-                  <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName} </p>
-                  {userDetails.email}
-                </div >
 
-                <div className="mt-2 ms-1">
-                  <Link
-                    className="itemsLink"
-                    to="/account"
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    <UserRound size={15} style={{ marginRight: "8px", fontWeight: 100 }} /> Account{" "}
-                  </Link>
+              <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center', }}>
+                <div className=" ms-4" style={{ justifyContent: 'space-between', width: '160px', height: '150px', textAlign: 'center' }}>
+                  <Avatar size={25} icon={<UserOutlined />} style={{ textAlign: 'center' }} />
+                  <div className="mt-3 ">
+                    <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName} </p>
+                    {userDetails.email}
+                  </div >
 
-                </div>
+                  <div className="mt-2 ms-1">
+                    <Link
+                      className="itemsLink"
+                      to="/account"
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
+                      <UserRound size={15} style={{ marginRight: "8px", fontWeight: 100 }} /> Account{" "}
+                    </Link>
 
-                <div className="mt-2 ms-1">
-                  <Link
-                    className="itemsLink"
-                    to={"/login"}
-                    style={{ display: "flex", alignItems: "center" }}
-                    onClick={handleLogout}
-                  >
-                    <LogOut size={15} style={{ marginRight: "8px" }} /> Logout{"  "}
-                  </Link></div>
+                  </div>
+
+                  <div className="mt-2 ms-1">
+                    <Link
+                      className="itemsLink"
+                      to={"/login"}
+                      style={{ display: "flex", alignItems: "center" }}
+                      onClick={handleLogout}
+                    >
+                      <LogOut size={15} style={{ marginRight: "8px" }} /> Logout{"  "}
+                    </Link></div>
 
 
 
