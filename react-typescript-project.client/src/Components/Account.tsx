@@ -37,15 +37,15 @@ const Account = () => {
   const [editProfile, setEditProfile] = useState<ISignUp | null>(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  
+
 
   const letter = userDetails.firstName.charAt(0) + userDetails.lastName.charAt(0);
 
 
   const onSave = (values: ISignUp) => {
-    
+
     console.log(userDetails);
-    const profileData = { ...values, id: UserId, password:userDetails.password };
+    const profileData = { ...values, id: UserId, password: userDetails.password };
 
     if (editProfile) {
       profileData.id = editProfile.id;
@@ -62,6 +62,7 @@ const Account = () => {
         });
       })
       .catch((error) => {
+        setLoader(false)
         notification.error({
           message: 'Failed to save profile',
           description: error.message,
@@ -69,7 +70,7 @@ const Account = () => {
       });
 
     setEditProfile(null);
-   setVisible(!visible);
+    setVisible(!visible);
   };
 
 
@@ -87,7 +88,7 @@ const Account = () => {
           ]}
         />
 </div> */}
-      
+
       <Row gutter={18}>
 
         <Col xs={{ span: 10, offset: 0 }} lg={{ span: 10 }}>
@@ -95,15 +96,15 @@ const Account = () => {
           <Row gutter={18}>
             <Card style={{ width: '100%', height: '100%', background: '#ffffff', color: '#343131', fontSize: '15px', fontFamily: 'sans-serif', borderRadius: '10px', padding: '10px 0px' }} >
               {/* <Avatar icon={<UserOutlined />} size={150} style={{ marginLeft: '35%', color: 'gray', background: '#f3f4fa', marginTop: '10px' }} /> */}
-        <div style={{  color: 'gray', background: '#f3f4fa', marginTop: '10px', fontSize:'50px', width:'150px', textAlign:'center',borderRadius:'50%', height:'150px',justifyContent:'center', paddingTop:'35px', margin:'0 auto'  }}>{letter}</div>
+              <div style={{ color: 'gray', background: '#f3f4fa', marginTop: '10px', fontSize: '50px', width: '150px', textAlign: 'center', borderRadius: '50%', height: '150px', justifyContent: 'center', paddingTop: '35px', margin: '0 auto' }}>{letter}</div>
               <h3 className='text-center' style={{ fontWeight: 500, paddingTop: '12px' }} >{userDetails.firstName} {userDetails.lastName}</h3>
-        
+
             </Card>
           </Row>
           <Row gutter={18} >
 
             <Card style={{ width: '100%', marginTop: '10px', height: '100%', }}>
-              <p className='fw-100  ms-4 pt-2 ' style={{fontSize:'18px'}}>User Details</p>
+              <p className='fw-100  ms-4 pt-2 ' style={{ fontSize: '18px' }}>User Details</p>
               <div className='d-flex justify-center' >
 
 
@@ -145,7 +146,7 @@ const Account = () => {
                     <Col lg={{ span: 12 }}>
                       <Card className='d-flex   justify-between mt-3' style={{ width: '220px', height: '100px', background: '#f3f4fa' }}>
                         <div className='d-flex '>
-                          <p className='pe-2'><PhoneOutlined style={{rotate:'90deg'}}/></p>
+                          <p className='pe-2'><PhoneOutlined style={{ rotate: '90deg' }} /></p>
                           <h6 style={{ fontSize: '16px', paddingTop: '1px' }}> Contact</h6>
 
                         </div>
@@ -164,8 +165,10 @@ const Account = () => {
         </Col>
         <Col xs={{ span: 10, offset: 0 }} lg={{ span: 14 }}>
           <Card style={{ width: '100%', height: '100%', background: '#ffffff', position: 'relative', paddingLeft: '5px' }}>
+
             <Spin spinning={loader} />
-            <p style={{fontSize:'18px',padding:'20px' , marginLeft:'22px'}}>Edit Account</p>
+
+            <p style={{ fontSize: '18px', padding: '20px', marginLeft: '22px' }}>Edit Profile</p>
             <Button style={{ position: 'absolute', right: '50px', top: '30px', cursor: 'pointer', fontSize: '18px' }} onClick={() => setVisible(!visible)}>  {visible ? <Edit /> : <IoMdClose />}  </Button>
 
             <Form
