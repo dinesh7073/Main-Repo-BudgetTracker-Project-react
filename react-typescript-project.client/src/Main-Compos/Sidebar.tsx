@@ -237,11 +237,11 @@ const Sidebar: React.FC = () => {
               </Dropdown> */}
  
               <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center',}}>
-               <div className=" ms-4" style={{justifyContent:'space-between',width:'160px', height:'130px' ,textAlign:'center'}}>
-                <Avatar size={25} icon={<UserOutlined />} className="align-self-center me-2" />
-                <div className="mt-3 ms-3">
-                  <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName}</p>
-
+               <div className=" ms-4" style={{justifyContent:'space-between',width:'160px', height:'150px' ,textAlign:'center'}}>
+                <Avatar size={25} icon={<UserOutlined />} style={{textAlign:'center'}}/>
+                <div className="mt-3 ">
+                  <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName} </p>
+                  {userDetails.email}
                 </div >
 
                 <div className="mt-2 ms-1">
