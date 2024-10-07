@@ -11,3 +11,11 @@
 :where(.css-dev-only-do-not-override-qnu6hi).ant-table-wrapper .ant-table-thead>tr>td {
     background-color: rgb(236, 236, 236);
 }
+
+:where(.css-dev-only-do-not-override-qnu6hi).ant-modal .ant-modal-content {
+    width: 575px !important;
+}
+
+.ant-table-body{
+    scrollbar-width: thin !important;
+}

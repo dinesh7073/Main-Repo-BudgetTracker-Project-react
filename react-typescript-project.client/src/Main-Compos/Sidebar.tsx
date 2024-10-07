@@ -121,38 +121,38 @@ const Sidebar: React.FC = () => {
   const siderMenuItems = [
     {
       key: "/dashboard",
-      icon: <LayoutDashboard className="fs-4" style={{ color: '#373737' }} />,
+      icon: <LayoutDashboard className="fs-4" style={{ color:"#3C3D37" }} />,
       label: "Dashboard",
       onClick: () => navigate("/dashboard"),
     },
     {
       key: "/budget",
-      icon: <BiCoin className="fs-4" style={{ color: '#373737' }} />,
+      icon: <BiCoin className="fs-4" style={{ color: '#3C3D37' }} />,
       label: "Budget",
       onClick: () => navigate("/budget"),
     },
     {
       key: "/goal",
-      icon: <GoGoal className="fs-4" style={{ color: '#373737' }} />,
+      icon: <GoGoal className="fs-4" style={{ color: '#3C3D37' }} />,
       label: "Goals",
       onClick: () => navigate("/goal"),
     },
     {
       key: "/transaction",
-      icon: <ArrowRightLeft style={{ color: '#373737' }} />,
+      icon: <ArrowRightLeft style={{ color: '#3C3D37' }} />,
       label: "Transactions",
       onClick: () => navigate("/transaction"),
     },
     {
       key: "/account",
-      icon: <UserRound style={{ color: '#373737' }} />,
+      icon: <UserRound style={{ color: '#3C3D37' }} />,
       label: "Account",
       onClick: () => navigate("/account"),
     },
     // ================== help compo on=====================
     {
       key: "/help",
-      icon: <CircleHelp className="fs-4 fw-light" />,
+      icon: <CircleHelp className="fs-4 fw-light" style={{ color: '#3C3D37' }} />,
       label: "Help",
       onClick: () => navigate("/help"),
     },

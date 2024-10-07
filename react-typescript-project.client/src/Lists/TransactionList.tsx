@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps } from 'antd';
+import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps, Tooltip, Skeleton, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX, Plus } from 'lucide-react';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -15,10 +15,14 @@ import CountUp from 'react-countup';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 import { Utils } from '../Components/Common/Utilities/Utils';
 import buddhistEra from 'dayjs/plugin/buddhistEra';
-import en from 'antd/es/date-picker/locale/en_US';
+import 'dayjs/locale/en';
+import buddhistLocale from 'antd/es/date-picker/locale/en_US';
+
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(buddhistEra);
+
+
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 interface FormData {
@@ -68,12 +72,14 @@ const TransactionList: React.FC = () => {
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
     const [transactiontransactionType, setTransactiontransactionType] = useState<'Income' | 'Expense' | 'All'>('All');
+    const [loader, setLoader] = useState<boolean>(false)
 
 
     const navigate = useNavigate();
 
 
     useEffect(() => {
+        setLoader(true);
 
         axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
             .then((res) => {
@@ -83,11 +89,15 @@ const TransactionList: React.FC = () => {
                         ...record,
                         amount: Number(record.amount),
                     })));
-                    setTransactionData(transformedRecords)
+                    setTransactionData(transformedRecords);
                     updateUserWallet(transformedRecords);
+                    setLoader(false);
                 }
             })
-            .catch((err) => console.log("Error from server", err));
+            .catch((err) => {
+                console.log("Error from server", err);
+                setLoader(false)
+            });
     }, [UserId, setTransactionData]);
 
     const updateUserWallet = (records: FormData[]) => {
@@ -283,7 +293,10 @@ const TransactionList: React.FC = () => {
 
         if (expensesLimit < totalExpenses) {
 
-            alert("You have reached the expenses limit!!")
+            notification.warning({
+                message: "You have reached the expenses limit!!",
+            })
+
             const amount = Number(values.amount);
             const userId = UserId;
             const categoryType = values.categoryType.value;
@@ -394,6 +407,14 @@ const TransactionList: React.FC = () => {
             title: 'Label',
             dataIndex: 'label',
             key: 'label',
+            ellipsis: {
+                showTitle: false,
+            },
+            // render: (label: string) => (
+            //     <Tooltip placement="topLeft" title={label}>
+            //         {label}
+            //     </Tooltip>
+            // ),
         },
         {
             width: '15%',
@@ -445,18 +466,9 @@ const TransactionList: React.FC = () => {
     ];
 
 
-    const buddhistLocale: typeof en = {
-        ...en,
-        lang: {
-            ...en.lang,
-            fieldDateFormat: 'DD-MM-YYYY',
-            fieldDateTimeFormat: 'DD-MM-YYYY  HH:mm',
-            yearFormat: 'YYYY',
-            cellYearFormat: 'YYYY',
-        },
-    };
 
     return (
+
         <div style={{ padding: '10px 16px 16px 16px', backgroundColor: 'white' }}>
             <Col span={24}>
                 <Row gutter={24} className='d-flex flex-row justify-content-between mb-3'>
@@ -551,109 +563,133 @@ const TransactionList: React.FC = () => {
 
 
             <hr className='mt-2 mb-2' />
-            <Table
-                size='small'
-                dataSource={sortedTransactions}
-                columns={columns}
-                rowKey="id"
-                scroll={{ y: 445 }}
-                pagination={false}
 
-                summary={(data: any) => {
-                    let totalAmount = 0;
-                    data.forEach(({ amount }: any) => {
-                        totalAmount += amount;
-                    });
-                    return (
-                        <Table.Summary fixed>
-                            <Table.Summary.Row>
-                                <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
-                                <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                                <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                                <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                                <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                                <Table.Summary.Cell index={5}>
-                                    <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                            </Table.Summary.Row>
-                        </Table.Summary>
-                    )
-                }}
+            {loader ? (
+                <Spin spinning={loader} size={'large'} className="d-flex justify-content-center py-5" />
+            ) : (
+                <Table
+                    size='small'
+                    dataSource={sortedTransactions}
+                    columns={columns}
+                    rowKey="id"
+                    scroll={{ y: 445 }}
 
-            // footer={()=> [{
-            //     title:'gajf',
+                    pagination={false}
 
-            // }]}
-            />
+                    summary={(data: any) => {
+                        let totalAmount = 0;
+                        data.forEach(({ amount }: any) => {
+                            totalAmount += amount;
+                        });
+                        return (
+                            <Table.Summary fixed>
+                                <Table.Summary.Row>
+                                    <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={5}>
+                                        <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
+                                    </Table.Summary.Cell>
+                                    <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                                </Table.Summary.Row>
+                            </Table.Summary>
+                        )
+                    }}
+
+                // footer={()=> [{
+                //     title:'gajf',
+
+                // }]}
+                />
+            )}
             <Modal
-                style={{ width: '650px' }}
+                style={{ width: '700px' }}
                 title={editingTransaction ? 'Edit Record' : 'Add Record'}
                 visible={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
+                    <Form.Item className='d-flex flex-column px-3'>
+                        <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='float-end' style={{ width: '30%' }}>
+
+                            {editingTransaction ? <RotateCcw size={16} /> : <Plus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
+                        </Button>
+                        <Button type="dashed" htmlType="button" onClick={() => form.resetFields()} className=' text-center float-end mx-1' style={{ width: '30%' }}>
+                            <CircleX size={16} />   Reset Form
+                        </Button>
+                    </Form.Item>
                 ]}
             >
                 <Form
                     form={form}
                     layout="vertical"
                     className='p-3 rounded'
-                    style={{ maxWidth: '670px', backgroundColor: '' }}
+                    style={{ maxWidth: '100%', backgroundColor: '', minWidth: '100%' }}
                     onFinish={handleSubmit}
                     initialValues={formData || { categoryType: '', amount: 0, transactionType: null, accountType: '', currency: 'INR' }}
                 >
-                    <div className='d-flex justify-content-center pt-3' style={{ width: '100%' }}>
+                    <Col span={24} >
 
-                        <Form.Item
-                            name="transactionType"
-                            rules={[{ required: true, message: 'Please select a transactiontype!' }]}
-                            style={{ width: '100%' }}
-                        >
+                        <Row gutter={24}>
 
-                            <Segmented size='middle' options={[
-                                { label: 'Income', value: 1, },
-                                { label: 'Expense', value: 2, },
-                            ]}
-                                onChange={handleTypeChange}
-                                defaultValue={2}
-                                value={formData.transactionType}
-                                style={{ width: '100%', backgroundColor: '#F3F4FA' }}
-                                block
-                            />
+                            <Col span={12}>
 
-                        </Form.Item>
-
-
-                    </div>
-                    <div className='d-flex flex-row align-content-center'>
-                        <div className='mx-2 w-50'>
-                            <Form.Item
-                                label="Account Type"
-                                name="accountType"
-                                rules={[{ required: true, message: 'Please select a account type!' }]}
-                            >
-                                <Select
-                                    placeholder="Select accounttype"
-                                    className='w-100'
-                                    labelInValue
-                                >
-                                    {(formData.transactionType === 2 ? expenseAccountType : incomeAccountType).map((accountType) => (
-                                        <Option key={accountType.value} value={accountType.value}>
-                                            {getAccountTypeLabel(accountType.value)}
-                                        </Option>
-                                    ))}
-
-                                </Select>
-                            </Form.Item>
-                            <div className='d-flex flex-row justify-content-between'>
                                 <Form.Item
+                                    label="Transaction Type"
+                                    name="transactionType"
+                                    rules={[{ required: true, message: 'Please select a transactiontype!' }]}
+                                    style={{ width: '100%' }}
+                                >
+
+                                    <Segmented size='middle' options={[
+                                        { label: 'Income', value: 1, },
+                                        { label: 'Expense', value: 2, },
+                                    ]}
+                                        onChange={handleTypeChange}
+                                        defaultValue={2}
+                                        value={formData.transactionType}
+                                        style={{ width: '100%', backgroundColor: '#F3F4FA' }}
+                                        block
+                                    />
+
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    label="Account Type"
+                                    name="accountType"
+                                    rules={[{ required: true, message: 'Please select a account type!' }]}
+                                >
+                                    <Select
+                                        placeholder="Select account type"
+                                        className='w-100'
+                                        labelInValue
+                                    >
+                                        {(formData.transactionType === 2 ? expenseAccountType : incomeAccountType).map((accountType) => (
+                                            <Option key={accountType.value} value={accountType.value}>
+                                                {getAccountTypeLabel(accountType.value)}
+                                            </Option>
+                                        ))}
+
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+
+
+                        </Row>
+                        <Row gutter={24}>
+                            <Col span={12} className='d-flex flex-row'>
+
+                                <Form.Item
+                                    className='w-100'
                                     label="Amount"
                                     name="amount"
                                     rules={[{ required: true, message: 'Please enter an amount!' }]}
                                 >
                                     <Input
-
-                                        style={{ width: '95%' }}
+                                        suffix="₹"
+                                        className='w-100'
                                         type="number"
                                         placeholder="Enter amount"
                                         min={0}
@@ -666,7 +702,7 @@ const TransactionList: React.FC = () => {
                                         }}
                                     />
                                 </Form.Item>
-                                <Form.Item
+                                {/* <Form.Item
                                     label="Currency"
                                     name="currency"
                                     rules={[{ message: 'Please select a currency!' }]}
@@ -679,86 +715,74 @@ const TransactionList: React.FC = () => {
                                     >
                                         <Option value="INR">INR</Option>
                                     </Select>
-                                </Form.Item>
-                            </div>
-                            <Form.Item
-                                label="Category"
-                                name="categoryType"
-                                rules={[{ required: true, message: 'Please select a category!' }]}
-                            >
-                                <Select
-                                    placeholder="Select category"
-                                    className='w-100'
-                                    labelInValue
+                                </Form.Item> */}
+                            </Col>
+
+                            <Col span={12}>
+
+                                <Form.Item
+                                    label="Category"
+                                    name="categoryType"
+                                    rules={[{ required: true, message: 'Please select a category!' }]}
                                 >
-                                    {(formData.transactionType === 2 ? expenseCategories : incomeCategories).map((categoryType) => (
-                                        <Option key={categoryType.value} value={categoryType.value}>
-                                            {getCategoryLabel(categoryType.value)}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </div>
-                        <div className='w-50'>
-                            <Form.Item
-                                label="Label"
-                                name="label"
-                            >
-                                <Input
-                                    onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
-                                    placeholder="Enter label"
-                                />
-                            </Form.Item>
+                                    <Select
+                                        placeholder="Select category"
+                                        className='w-100'
+                                        labelInValue
+                                    >
+                                        {(formData.transactionType === 2 ? expenseCategories : incomeCategories).map((categoryType) => (
+                                            <Option key={categoryType.value} value={categoryType.value}>
+                                                {getCategoryLabel(categoryType.value)}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
 
-                            <Form.Item
-                                label="Date"
-                                name="date"
-                                rules={[{ required: true, message: 'Please select a date !' }]}
-                            >
-                                {/* <DatePicker
+                        <Row gutter={24}>
+
+
+
+                            <Col span={12}>
+
+
+                                <Form.Item
                                     className='w-100'
-                                    picker='date'
-                                    value={dayjs()}
-                                    format={'DD-MM-YYYY'}
+                                    label="Date & Time"
+                                    name="date"
+                                    rules={[{ required: true, message: 'Please select a date !' }]}
+                                >
 
-                                /> */}
-                                <DatePicker
+                                    <DatePicker
+                                        className='w-100'
+                                        placeholder='Select date & time'
+                                        defaultValue={dayjs(new Date)}
+                                        showTime
+                                        format={"DD-MM-YYYY HH:mm:ss"}
+                                        value={dayjs()}
+
+
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+
+
+
+                                <Form.Item
                                     className='w-100'
-                                    defaultValue={dayjs()}
-                                    showTime
-                                    locale={buddhistLocale}
-                                    value={dayjs()}
-
-                                />
-                            </Form.Item>
-                            {/* <Form.Item
-                                label="Time"
-                                name="time"
-                                rules={[{ required: true, message: 'Please select a time!' }]}
-                                className='mb-5'
-                            >
-                                <DatePicker
-
-                                    className='w-100'
-                                    showTime={{ format: 'HH:mm' }}
-                                    format="HH:mm"
-                                    picker="time"
-                                />
-                            </Form.Item> */}
-
-                        </div>
-                    </div>
-                    <div className=''>
-                        <Form.Item className='d-flex flex-column'>
-                            <Button type="dashed" htmlType="button" onClick={() => form.resetFields()} className=' text-center float-end mx-1' style={{ width: '30%' }}>
-                                <CircleX size={16} />   Reset Form
-                            </Button>
-                            <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='float-end' style={{ width: '30%' }}>
-
-                                {editingTransaction ? <RotateCcw size={16} /> : <Plus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
-                            </Button>
-                        </Form.Item>
-                    </div>
+                                    label="Label"
+                                    name="label"
+                                >
+                                    <Input
+                                        onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
+                                        placeholder="Enter label"
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Col>
                 </Form>
             </Modal>
 

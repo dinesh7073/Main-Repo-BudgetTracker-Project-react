@@ -28,7 +28,7 @@ export interface TransactionType {  // the final fileds for frontend and backend
 interface ExpenseLimitTypes {
   id: string;
   userId: string;
-  amount: number;
+  amount: number | 0;
 }
 
 function App() {
@@ -41,13 +41,14 @@ function App() {
 
 
   const [userWallet, setUserWallet] = useState<number>()
+  const [expensesLimit, setexpensesLimit] = useState<ExpenseLimitTypes[]>([])
 
   const [UserId, setUserId] = useState<string>('');
   const navigate = useNavigate();
   const location = useLocation();
   // const [userdata, setUserdata] = useState({});
   const [userDetails, setUserDetails] = useState<any>({});
-
+  const [loader, setLoader] = useState(false);
   const [transactionData, setTransactionData] = useState<TransactionType[]>([]); //
 
   useEffect(() => {
@@ -83,15 +84,15 @@ function App() {
     }
   }, [isLogin]);
 
-  useEffect(()=>{
+  useEffect(() => {
 
     const locationName = location.pathname;
 
-    if(locationName){
+    if (locationName) {
       navigate(locationName);
     }
 
-  },[]);
+  }, []);
 
   const ShowError = (message: string) => {
     notification.error({
@@ -121,7 +122,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>
