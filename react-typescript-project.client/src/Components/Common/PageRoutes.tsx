@@ -6,6 +6,7 @@ import Dashboard from '../Dashboard'
 import HelpCompo from '../HelpCompo'
 import Transactions from '../Transactions'
 import Goal from '../Goal'
+import SettingsCompo from '../SettingsCompo'
 
 const PageRoutes = () => {
     return (
@@ -16,7 +17,7 @@ const PageRoutes = () => {
                 <Route path="/transaction" element={<Transactions />} />
                 <Route path="/budget" element={<Budget />} />
                 <Route path="/account" element={<Account />} />
-                {/* <Route path="/settings" element={<SettingsCompo />} /> */}
+                <Route path="/settings/account" element={<SettingsCompo />} />
                 <Route path="/help" element={<HelpCompo />} />
             </Routes>
         </div>

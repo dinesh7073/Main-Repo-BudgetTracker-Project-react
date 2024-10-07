@@ -282,13 +282,14 @@ const Budget = () => {
     }, 0);
   };
 
+
   const handleFormSubmit = (values: any) => {
     const userId = UserId;
     const apiUrl = `${REACT_APP_BASE_URL}BudgetsController/${userId}CreateBudgetAndUpdate`;
 
     const [startDate, endDate] = values.dateRange || [null, null];
-    const formattedStartingDate = dayjs(startDate).format('DD-MM-YYYY');
-    const formattedEndingDate = dayjs(endDate).format('DD-MM-YYYY');
+    const formattedStartingDate = dayjs(startDate).format('YYYY-MM-DD');
+    const formattedEndingDate = dayjs(endDate).format('YYYY-MM-DD');
 
     const Budgetdata: Budget = {
       ...values,
@@ -647,7 +648,7 @@ const Budget = () => {
             }
           </Col>
         </Row>
-
+        {/* <hr className='mt-2 mb-2' /> */}
         {loader ? <Spin spinning={loader} size={'large'} className="d-flex justify-content-center py-5" /> :
 
           <div>

@@ -1,39 +1,58 @@
-import { useState } from 'react';
-import { Form, InputNumber, Button, notification } from 'antd';
+import { Breadcrumb, Col, Row, Tabs, TabsProps } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import ErrorPage from './ErrorPage';
+import AccountsCompo from './Settings-children\'s/AccountsCompo';
+import CategoriesCompo from './Settings-children\'s/CategoriesCompo';
 
 const Settings = () => {
-    // const [limit, setLimit] = useState<number | null>(null);
-
-    // const handleSaveLimit = () => {
-    //     // Save the limit to the database or localStorage
-    //     localStorage.setItem('spendingLimit', JSON.stringify(limit));
-    //     // You can also use an API call to save it here
-
-    //     // Show a notification that the limit has been added
-    //     notification.success({
-    //         message: 'Limit Added',
-    //         description: `Your spending limit has been set to ${limit ? limit : 0}.`,
-    //         placement: 'topRight', // You can change this to 'bottomLeft', etc.
-    //     });
-    // };
-
+    const navigate = useNavigate();
+    const items: TabsProps['items'] = [
+        {
+            key: '/account',
+            label: 'Account',
+            children: <AccountsCompo />,
+        },
+        {
+            key: '/categorries',
+            label: 'Categories',
+            children: <CategoriesCompo />,
+        },
+        {
+            key: '/personal',
+            label: 'Personal',
+            children: <ErrorPage />,
+        },
+    ];
+    const onChange = (key: string) => {
+        console.log(key);
+    };
     return (
-        // <Form>
-        //     <Form.Item label="Set Spending Limit">
-        //         <InputNumber
-        //             min={0}
-        //             value={limit}
-        //             onChange={(value) => setLimit(value)}
-        //         />
-        //     </Form.Item>
-        //     <Form.Item>
-        //         <Button type="primary" onClick={handleSaveLimit}>
-        //             Save Limit
-        //         </Button>
-        //     </Form.Item>
-        // </Form>
-        <div>
-
+        <div style={{ padding: '10px 16px 16px 16px', backgroundColor: 'white' }}>
+            <Col span={24}>
+                <Row gutter={24} className='d-flex flex-row justify-content-between mb-1'>
+                    <Col span={14}>
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
+                                },
+                                {
+                                    title: 'Settings ',
+                                },
+                                // {
+                                //     title: 'An Application',
+                                // },
+                            ]}
+                        />
+                    </Col>
+                </Row>
+                <Row gutter={24}>
+                    <Col span={24}>
+                        <Tabs defaultActiveKey="/account" items={items} onChange={onChange} />
+                    </Col>
+                </Row>
+            </Col>
         </div>
     );
 };
