@@ -463,6 +463,7 @@ const Budget = () => {
   const [open, setOpen] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   useEffect(() => {
+    // debugger
     axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetExpenseLimitById`)
       .then((res) => {
 
@@ -472,8 +473,8 @@ const Budget = () => {
       })
       .catch(() => {
         notification.error({
-          message: 'Failed to fetch expense limit',
-          description: 'Something went wrong!',
+          message: 'Please Set expense limit',
+       
         });
       });
   }, [expensesLimit]);
