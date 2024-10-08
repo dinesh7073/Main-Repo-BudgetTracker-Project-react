@@ -7,6 +7,7 @@ import HelpCompo from '../HelpCompo'
 import Transactions from '../Transactions'
 import Goal from '../Goal'
 import SettingsCompo from '../SettingsCompo'
+import ErrorPage from '../ErrorPage'
 
 const PageRoutes = () => {
     return (
@@ -19,6 +20,7 @@ const PageRoutes = () => {
                 <Route path="/account" element={<Account />} />
                 <Route path="/settings/account" element={<SettingsCompo />} />
                 <Route path="/help" element={<HelpCompo />} />
+                <Route path="*" element={<ErrorPage />} />
             </Routes>
         </div>
     )
