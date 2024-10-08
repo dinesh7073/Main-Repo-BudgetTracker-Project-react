@@ -117,63 +117,50 @@ const Sidebar: React.FC = () => {
   ];
 
 
-
   const siderMenuItems = [
     {
       key: "/dashboard",
-      icon: <LayoutDashboard className="fs-4" style={{ color: "#3C3D37" }} />,
+      icon: <LayoutDashboard className="fs-4" style={{ color: "rgb(105, 114, 122)" }} />,
       label: "Dashboard",
       onClick: () => navigate("/dashboard"),
     },
     {
       key: "/budget",
-      icon: <BiCoin className="fs-4" style={{ color: '#3C3D37' }} />,
+      icon: <BiCoin className="fs-4" style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Budget",
       onClick: () => navigate("/budget"),
     },
     {
       key: "/goal",
-      icon: <GoGoal className="fs-4" style={{ color: '#3C3D37' }} />,
+      icon: <GoGoal className="fs-4" style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Goals",
       onClick: () => navigate("/goal"),
     },
     {
       key: "/transaction",
-      icon: <ArrowRightLeft style={{ color: '#3C3D37' }} />,
+      icon: <ArrowRightLeft style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Transactions",
       onClick: () => navigate("/transaction"),
     },
     {
       key: "/profile",
-      icon: <UserRound style={{ color: '#3C3D37' }} />,
+      icon: <UserRound style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Profile",
       onClick: () => navigate("/profile"),
     },
     {
       key: "/settings/account",
-      icon: <Settings style={{ color: '#3C3D37' }} />,
+      icon: <Settings style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Settings",
       onClick: () => navigate("/settings/account"),
     },
     // ================== help compo on=====================
     {
       key: "/help",
-      icon: <CircleHelp className="fs-4 fw-light" style={{ color: '#3C3D37' }} />,
+      icon: <CircleHelp className="fs-4 fw-light" style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Help",
       onClick: () => navigate("/help"),
     },
-
-
-    // {
-    //   key: "/logout",
-    //   icon: (
-    //     <Popconfirm title="Are you sure?" onConfirm={handleLogout}>
-    //       <LogOut className="fs-4" />
-    //     </Popconfirm>
-    //   ),
-    //   label: "Logout",
-    // },
-  ];
 
 
   const { isLogin, setIsLogin } = useContext<any>(UserContext);
