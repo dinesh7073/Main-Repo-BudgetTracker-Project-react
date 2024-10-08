@@ -11,7 +11,16 @@
     background-color: white !important;
     cursor: default;
 }
+
 :where(.css-dev-only-do-not-override-qnu6hi).ant-layout .ant-layout-sider-trigger {
     background-color: #CCD7ED !important;
     color: black;
+}
+
+.ant-menu-light .ant-menu-item-selected,
+.ant-menu-light>.ant-menu .ant-menu-item-selected {
+    font-weight: 500;
+    border-radius: 0px !important;
+    background-color: #f1ecff !important;
+    border-right: 3px solid #6439FF !important;
 }

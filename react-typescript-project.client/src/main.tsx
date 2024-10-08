@@ -16,7 +16,7 @@ root.render(
 
   <React.StrictMode>
     <BrowserRouter>
-      <ConfigProvider theme={{ token: { colorPrimary: "#0000FF" } }}>
+      <ConfigProvider theme={{ token: { colorPrimary: "#6439FF" } }}>
         <App />
       </ConfigProvider>
     </BrowserRouter>

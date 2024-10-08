@@ -48,9 +48,9 @@ namespace Budget_Tracker_Bend.Services
           await expenseLimitModal.Find(limit => limit.UserId == userId).ToListAsync();
 
         public async Task<ExpenseLimit> SaveExpensesLimitAsync(ExpenseLimit limits)
-        {   
+        {
 
-            var existingLimit = await expenseLimitModal.Find(b => b.Id == limits.Id).FirstOrDefaultAsync();
+            var existingLimit = await expenseLimitModal.Find(b => b.UserId == limits.UserId).FirstOrDefaultAsync();
 
             if (existingLimit == null)
             {
@@ -58,7 +58,7 @@ namespace Budget_Tracker_Bend.Services
             }
             else
             {
-                await expenseLimitModal.ReplaceOneAsync(b => b.Id == limits.Id, limits);
+                await expenseLimitModal.ReplaceOneAsync(b => b.UserId == limits.UserId, limits);
             }
             return limits;
         }

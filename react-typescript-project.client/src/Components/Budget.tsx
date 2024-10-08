@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, Select, Modal, Progress, notification, Card, Tooltip, Popconfirm, Breadcrumb, Empty, Carousel, Col, Row, Statistic, StatisticProps, Tag, Alert, Space, Popover, Spin, } from "antd"
+import { Button, DatePicker, Form, Input, Select, Modal, Progress, notification, Card, Tooltip, Popconfirm, Breadcrumb, Empty, Carousel, Col, Row, Statistic, StatisticProps, Tag, Alert, Space, Popover, Spin, Table, } from "antd"
 import dayjs, { Dayjs } from "dayjs";
 import { Car, DollarSign, Edit, HelpCircle, Home, IndianRupee, Laptop, Plus, ShoppingBag, Trash2, Zap } from "lucide-react"
 import { useContext, useEffect, useState } from "react";
@@ -466,8 +466,7 @@ const Budget = () => {
     axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetExpenseLimitById`)
       .then((res) => {
 
-        if (res.status === 200 && res.data.length > 0) {
-
+        if (res.status === 200) {
           setexpensesLimit(res.data);
         }
       })
@@ -477,26 +476,20 @@ const Budget = () => {
           description: 'Something went wrong!',
         });
       });
-  }, [REACT_APP_BASE_URL]);
+  }, [expensesLimit]);
 
 
   const handleSetLimit = (e: any) => {
     e.preventDefault();
-
     const amount = Number(e.target.elements.limitInput.value);
-
     if (!amount || amount <= 0) {
       setValidationError('Please enter a valid amount!');
       return;
     }
     setValidationError(null);
-
     const ExpenseLimitData = { amount, UserId, id: expensesLimit?.id };
-
     axios.post(`${REACT_APP_BASE_URL}BudgetsController/${UserId}CreateExpenseLimitAndUpdate`, ExpenseLimitData)
       .then((response) => {
-
-
         setexpensesLimit(response.data.amount);
         notification.success({
           message: editingLimit ? 'Expense Limit updated successfully' : 'Expense Limit added successfully',
@@ -506,13 +499,78 @@ const Budget = () => {
       })
       .catch((e) => {
         console.log(e.message);
-
         notification.error({
           message: 'Failed to set expense limit',
           description: 'Something went wrong!',
         });
       });
   };
+
+  const columns = [
+
+    {
+
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+      render: (text: any, budget: Budget) => getCategoryLabel(budget.category),
+
+    },
+    {
+      title: 'Budget',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (text: any) => (
+
+        <span style={{ color: 'blue' }}>{`₹${Utils.getFormattedNumber(text)}`}</span>)
+    },
+    {
+      title: 'Spent',
+      dataIndex: 'amountSpent',
+      key: 'amountSpent',
+      render: (text: any) => (<span style={{ color: 'red' }}> {`₹${Utils.getFormattedNumber(text)}`}</span>)
+    },
+    {
+      width: '14%',
+      title: 'Remaining',
+      dataIndex: 'remainingAmount',
+      key: 'remaining',
+      render: (text: any, budget: Budget) => (
+        <span >
+          {`₹ ${Utils.getFormattedNumber((budget.amount - budget.amountSpent))}`}
+        </span>
+      ),
+    },
+    {
+      width: '13%',
+      title: 'From',
+      dataIndex: 'startDate',
+      key: 'startDate',
+      render: (date: string) => dayjs(date).format('DD-MM-YYYY'),
+    },
+    {
+      width: '13%',
+      title: 'To',
+      dataIndex: 'endDate',
+      key: 'endDate',
+      render: (date: string) => dayjs(date).format('DD-MM-YYYY'),
+    },
+    {
+      width: '12%',
+      title: 'Actions',
+      key: 'actions',
+      render: (text: string, record: any) => (
+        <>
+
+          {/* <Button className='mx-0 p-0' type='text' icon={<Edit size={21} />} onClick={() => showModal(record)} /> */}
+          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}>
+            <Button type='text' danger icon={<Trash2 size={18} />} />
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
+
 
 
   return (
@@ -594,7 +652,7 @@ const Budget = () => {
                         type="number"
                         name="limitInput"
                         placeholder="Enter Limit"
-                        defaultValue={expensesLimit}
+                        defaultValue={expensesLimit.amount}
                         style={{ width: '130px', marginBottom: '5px' }}
                       />
 
@@ -652,136 +710,179 @@ const Budget = () => {
         {loader ? <Spin spinning={loader} size={'large'} className="d-flex justify-content-center py-5" /> :
 
           <div>
-            {budgetExists ? <div>
-              <Carousel className="p" arrows infinite={true} style={{ width: '100%', backgroundColor: '#F5F5F5', borderRadius: '10px' }} >
-
-                {groupedBudgets.length > 0 ? (
-
-                  groupedBudgets.map((budget: Budget[], index) => (
-
-                    // <Carousel key={index} style={{ width: '100%' }} >
-
-                    // <div className="d-flex justify-content-between">
-
-                    <Row gutter={10} className="d-flex flex-row justify-content-between ">
-
-                      {budget.map((budget) => (
-                        <Col span={8} className="">
+            {budgetExists ?
 
 
-                          <Card
+              <div>
 
-                            className="total-cards-background "
-                            key={budget.id}
-                            onClick={() => handlePie(budget.category)}
-                            actions={[
-                              <text className='text-dark'>Budget : <br /> ₹{Utils.getFormattedNumber(budget.amount)}</text>,
-                              <text className='text-danger'>Spent : <br /> ₹{budget.category === 13 ? TotalSpentOfOtherCategories() : Utils.getFormattedNumber(budget.amountSpent)}</text>,
-                              <text
-                                className={budget.category === 13 ?
-                                  (Utils.getFormattedNumber(budget.amount - TotalSpentOfOtherCategories() < 0) ? 'text-danger' : 'text-success')
-                                  : ((budget.amount - budget.amountSpent) < 0 ? 'text-danger' : 'text-success')
-                                }
+                {/* <Carousel className="p" arrows infinite={true} style={{ width: '100%', backgroundColor: '#F5F5F5', borderRadius: '10px' }} >
 
-                              >
-                                Remaining:<br />  {remainingAmt(budget, budget.category, budget.amount)}
-                              </text>
-                            ]}
-                            extra={
-                              <div className='text-secondary'>
-                                <small className=' px-2 '>
-                                  <Tooltip color='grey' title="Edit budget">
-                                    <Edit
-                                      size={19}
-                                      key="edit"
-                                      onClick={() => handleOpenModal(budget)}
-                                      style={{ cursor: "pointer" }} />
+                  {groupedBudgets.length > 0 ? (
 
-                                  </Tooltip>
-                                </small>
-                                <small>
-                                  <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(budget.id)}>
+                    groupedBudgets.map((budget: Budget[], index) => (
 
-                                    <Trash2
-                                      size={19}
-                                      key="delete"
-                                      style={{ cursor: "pointer" }} />
+                      // <Carousel key={index} style={{ width: '100%' }} >
 
-                                  </Popconfirm>
-                                </small>
-                              </div>
-                            }
-                            title={
-                              <div >
-                                <text>{getCategoryLabel(budget.category)} <span style={{ fontSize: '14px' }}> </span></text>
-                              </div>}
-                            style={{
-                              width: '100%',
-                              height: 190,
-                              margin: 5,
-                              padding: 5,
-                              backgroundColor: "white",
-                              boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px'
-                            }}>
+                      // <div className="d-flex justify-content-between">
 
-                            <Card.Meta
-                              style={{
-                                padding: 5
-                              }}
-                              avatar={getCategoryTypeIcon(budget.category)}
-                              description={
-                                <div>
-                                  <Progress
-                                    percent={budget.category === 13 ? (TotalSpentOfOtherCategories() / budget.amount * 100) : (budget.amountSpent / budget.amount) * 100}
-                                    format={(percent: any) => `${percent.toLocaleString()}%`}
-                                    strokeColor={progressColor(budget.amount, budget.amountSpent, budget.category)}
-                                  />
+                      <Row gutter={10} className="d-flex flex-row justify-content-between ">
+
+                        {budget.map((budget) => (
+                          <Col span={8} className="">
+
+
+                            <Card
+
+                              className="total-cards-background "
+                              key={budget.id}
+                              onClick={() => handlePie(budget.category)}
+                              actions={[
+                                <text className='text-dark'>Budget : <br /> ₹{Utils.getFormattedNumber(budget.amount)}</text>,
+                                <text className='text-danger'>Spent : <br /> ₹{budget.category === 13 ? TotalSpentOfOtherCategories() : Utils.getFormattedNumber(budget.amountSpent)}</text>,
+                                <text
+                                  className={budget.category === 13 ?
+                                    (Utils.getFormattedNumber(budget.amount - TotalSpentOfOtherCategories() < 0) ? 'text-danger' : 'text-success')
+                                    : ((budget.amount - budget.amountSpent) < 0 ? 'text-danger' : 'text-success')
+                                  }
+
+                                >
+                                  Remaining:<br />  {remainingAmt(budget, budget.category, budget.amount)}
+                                </text>
+                              ]}
+                              extra={
+                                <div className='text-secondary'>
+                                  <small className=' px-2 '>
+                                    <Tooltip color='grey' title="Edit budget">
+                                      <Edit
+                                        size={19}
+                                        key="edit"
+                                        onClick={() => handleOpenModal(budget)}
+                                        style={{ cursor: "pointer" }} />
+
+                                    </Tooltip>
+                                  </small>
+                                  <small>
+                                    <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(budget.id)}>
+
+                                      <Trash2
+                                        size={19}
+                                        key="delete"
+                                        style={{ cursor: "pointer" }} />
+
+                                    </Popconfirm>
+                                  </small>
                                 </div>
                               }
-                            />
-                          </Card>
-                        </Col>
+                              title={
+                                <div >
+                                  <text>{getCategoryLabel(budget.category)} <span style={{ fontSize: '14px' }}> </span></text>
+                                </div>}
+                              style={{
+                                width: '100%',
+                                height: 190,
+                                margin: 5,
+                                padding: 5,
+                                backgroundColor: "white",
+                                boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px'
+                              }}>
 
-                      ))}
-                    </Row>
-                    // </div>
+                              <Card.Meta
+                                style={{
+                                  padding: 5
+                                }}
+                                avatar={getCategoryTypeIcon(budget.category)}
+                                description={
+                                  <div>
+                                    <Progress
+                                      percent={budget.category === 13 ? (TotalSpentOfOtherCategories() / budget.amount * 100) : (budget.amountSpent / budget.amount) * 100}
+                                      format={(percent: any) => `${percent.toLocaleString()}%`}
+                                      strokeColor={progressColor(budget.amount, budget.amountSpent, budget.category)}
+                                    />
+                                  </div>
+                                }
+                              />
+                            </Card>
+                          </Col>
 
-                    // </Carousel>
-                  )
-                  )) : ""}
-              </Carousel>
+                        ))}
+                      </Row>
+                      // </div>
 
+                      // </Carousel>
+                    )
+                    )) : ""}
+                </Carousel> */}
 
-              <div className="d-flex flex-row mt-2 justify-content-between " style={{ height: '100%', width: '100%' }}>
+                <Table
+                  size='small'
+                  dataSource={groupedBudgets.flat()}
+                  columns={columns}
+                  rowKey="id"
+                  scroll={{ y: 445 }}
 
-                <Card className="mx-">
-                  <h4>Expense Pie Chart</h4>
-                  <PieChart
-                    className="mt-5  "
-                    width={490}
-                    height={180}
-                    series={[
-                      {
-                        innerRadius: 50,
-                        data: pieChartData
-                      }
-                    ]}
-                  />
-                </Card>
-                <Card className="">
-                  <BarChart
-                    width={680}
-                    height={300}
-                    xAxis={[{ scaleType: 'band', data: categories }]}
-                    series={[
-                      { label: 'Budgeted Amount', data: seriesData.map(data => data.amount), color: '#C4D7FF' },
-                      { label: 'Spent Amount', data: seriesData.map(data => data.amountSpent), color: '#87A2FF' }
-                    ]}
-                  />
-                </Card>
+                  pagination={false}
+
+                  summary={(data: any) => {
+                    let totalAmount = 0;
+                    data.forEach(({ amount }: any) => {
+                      totalAmount += amount;
+                    });
+                    return (
+                      <Table.Summary fixed>
+                        <Table.Summary.Row>
+                          <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={5}>
+                            <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
+                          </Table.Summary.Cell>
+                          <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )
+                  }}
+
+                // footer={()=> [{
+                //     title:'gajf',
+
+                // }]}
+                />
+
+                {/* <div className="d-flex flex-row mt-2 justify-content-between " style={{ height: '100%', width: '100%' }}>
+
+                  <Card className="mx-">
+                    <h4>Expense Pie Chart</h4>
+                    <PieChart
+                      className="mt-5  "
+                      width={490}
+                      height={180}
+                      series={[
+                        {
+                          innerRadius: 50,
+                          data: pieChartData
+                        }
+                      ]}
+                    />
+                  </Card>
+                  <Card className="">
+                    <BarChart
+                      width={680}
+                      height={300}
+                      xAxis={[{ scaleType: 'band', data: categories }]}
+                      series={[
+                        { label: 'Budgeted Amount', data: seriesData.map(data => data.amount), color: '#C4D7FF' },
+                        { label: 'Spent Amount', data: seriesData.map(data => data.amountSpent), color: '#87A2FF' }
+                      ]}
+                    />
+                  </Card>
+                </div> */}
+
               </div>
 
-            </div> : <Empty />}
+
+              : <Empty />}
           </div>
         }
 

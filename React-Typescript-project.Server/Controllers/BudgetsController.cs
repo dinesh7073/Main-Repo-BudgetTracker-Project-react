@@ -54,7 +54,7 @@ namespace Budget_Tracker_Bend.Controllers
         public async Task<ActionResult<List<ExpenseLimit>>> GetExpenseLimitByUserId(string UserId)
         {
             var limits = await _budgetService.GetExpensesLimitByUserIdAsync(UserId);
-            return Ok(limits);
+            return Ok(limits[0]);
         }
 
         [HttpPost("{UserId:length(24)}CreateExpenseLimitAndUpdate")]
