@@ -241,16 +241,16 @@ const Sidebar: React.FC = () => {
                   <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName}</p>
                 </div>
               </Dropdown> */}
-
-              <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center', }}>
-                <div className=" ms-4" style={{ justifyContent: 'space-between', width: '160px', height: '150px', textAlign: 'center' }}>
+                
+              <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center',  }}>
+                <div className=" ms-5" style={{ justifyContent: 'space-between', width: '190px', height: '150px', textAlign: 'center' }}>
                   <Avatar size={25} icon={<UserOutlined />} style={{ textAlign: 'center' }} />
-                  <div className="mt-3 ">
+                  <div className="mt-2 ">
                     <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName} </p>
                     {userDetails.email}
                   </div >
 
-                  <div className="mt-2 ms-1">
+                  <div className="mt-4 ms-1">
                     <Link
                       className="itemsLink"
                       to="/account"
@@ -283,7 +283,7 @@ const Sidebar: React.FC = () => {
                 trigger="click"
                 open={open}
                 onOpenChange={handleOpenChange} >
-                <div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center' }}>
+                <div className="d-flex flex-row pe-1" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center' }}>
                   <Avatar size={30} icon={<UserOutlined />} className="align-self-center me-2" />
                   <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}></p>
                 </div>
