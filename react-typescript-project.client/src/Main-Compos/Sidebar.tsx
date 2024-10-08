@@ -34,7 +34,7 @@ const { Header, Sider, Content } = Layout;
 
 const Sidebar: React.FC = () => {
 
-  const { setUserId, userDetails } = useContext<any>(UserContext);
+  const { setUserId, userDetails, setIsSignUp, setIsLogin } = useContext<any>(UserContext);
   const userLastName = userDetails.LastName;
   const userFirstName = userDetails.FirstName;
   const [collapsed, setCollapsed] = useState(false);
@@ -162,9 +162,8 @@ const Sidebar: React.FC = () => {
       onClick: () => navigate("/help"),
     },
 
+  ];
 
-  const { isLogin, setIsLogin } = useContext<any>(UserContext);
-  const { setIsSignUp } = useContext<any>(UserContext);
 
   return (
 
@@ -228,8 +227,8 @@ const Sidebar: React.FC = () => {
                   <p style={{ margin: "0px", fontSize: '14px', fontFamily: "Open Sans" }}>{userDetails.firstName} {userDetails.lastName}</p>
                 </div>
               </Dropdown> */}
-                
-              <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center',  }}>
+
+              <Popover content={<div className="d-flex flex-row pe-3" style={{ alignItems: "center", marginRight: "10px", textAlign: 'center', }}>
                 <div className=" ms-5" style={{ justifyContent: 'space-between', width: '190px', height: '150px', textAlign: 'center' }}>
                   <Avatar size={25} icon={<UserOutlined />} style={{ textAlign: 'center' }} />
                   <div className="mt-2 ">
