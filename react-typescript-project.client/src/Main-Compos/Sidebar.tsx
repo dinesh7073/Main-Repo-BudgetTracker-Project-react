@@ -144,10 +144,10 @@ const Sidebar: React.FC = () => {
       onClick: () => navigate("/transaction"),
     },
     {
-      key: "/account",
+      key: "/profile",
       icon: <UserRound style={{ color: '#3C3D37' }} />,
-      label: "Account",
-      onClick: () => navigate("/account"),
+      label: "Profile",
+      onClick: () => navigate("/profile"),
     },
     {
       key: "/settings/account",

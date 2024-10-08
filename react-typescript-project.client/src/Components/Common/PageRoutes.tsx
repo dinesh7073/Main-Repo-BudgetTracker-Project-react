@@ -17,7 +17,7 @@ const PageRoutes = () => {
                 <Route path="/goal" element={<Goal />} />
                 <Route path="/transaction" element={<Transactions />} />
                 <Route path="/budget" element={<Budget />} />
-                <Route path="/account" element={<Account />} />
+                <Route path="/profile" element={<Account />} />
                 <Route path="/settings/account" element={<SettingsCompo />} />
                 <Route path="/help" element={<HelpCompo />} />
                 <Route path="*" element={<ErrorPage />} />

@@ -59,19 +59,22 @@ function App() {
         const parsedUser = JSON.parse(storedUser);
         // const parsedUserId = parsedUser.UserId;
         if (parsedUser.UserId) {
+
           setUserId(parsedUser.UserId);
           // setUserdata(parsedUser);
 
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
+            setLoader(false)
             setUserDetails(res.data);
             setIsLogin(true);
 
           }).catch((err) => {
+            setLoader(false)
             console.log('error', err);
           })
 
         } else {
-
+          setLoader(false)
           ShowError('failed to retrieve info')
         }
       } catch (error) {
@@ -79,6 +82,7 @@ function App() {
         alert("Failed to retrieve user information.");
       }
     } else {
+      setLoader(false);
       setIsLogin(false);
       navigate('/login');
     }
@@ -122,7 +126,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>
