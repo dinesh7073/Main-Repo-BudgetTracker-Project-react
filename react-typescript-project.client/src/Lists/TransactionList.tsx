@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps, Tooltip, Skeleton, Spin } from 'antd';
+import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps, Tooltip, Skeleton, Spin, Dropdown, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX, Plus } from 'lucide-react';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -8,7 +8,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import '../CSS/TransactionList.css';
 import axios from 'axios';
 import UserContext from '../UserContext';
-import { HomeOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, HomeOutlined, MoreOutlined, RedoOutlined, SaveOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css'
 import CountUp from 'react-countup';
@@ -387,13 +387,12 @@ const TransactionList: React.FC = () => {
 
     const columns = [
 
-        // {
-        //     title: 'Sr.No',
-        //     dataIndex: 'index',
-        //     key: 'id',
-        //     render: (id: any) => `${id+=1}`,
-
-        // },
+        {
+            width: '5%',
+            title: 'S No',
+            dataIndex: 'sr.no',
+            render: (text: any, record: any, index: any) => (index + 1),
+        },
 
         {
 
@@ -449,17 +448,42 @@ const TransactionList: React.FC = () => {
                 </span>
             ),
         },
+
         {
-            width: '12%',
+            width: '8%',
             title: 'Actions',
             key: 'actions',
             render: (text: string, record: any) => (
                 <>
+                    <Dropdown
+                        menu={{
+                            items: [
+                                {
+                                    className: 'px-3',
+                                    label: <span onClick={() => showModal(record)}><EditOutlined size={15} /> Edit</span>,
+                                    key: '0',
+                                },
+                                {
+                                    label: <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}><span><DeleteOutlined size={15} /> Delete</span> </Popconfirm>,
+                                    key: '1',
+                                },
 
-                    <Button className='mx-0 p-0' type='text' icon={<Edit size={21} />} onClick={() => showModal(record)} />
-                    <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}>
-                        <Button type='text' danger icon={<Trash2 size={18} />} />
-                    </Popconfirm>
+                            ],
+                        }}
+
+                        trigger={['click']}
+                    >
+                        <a className="text-dark fw-bold" onClick={(e) => e.preventDefault()}>
+                            <Space>
+                                <MoreOutlined size={20} />
+                            </Space>
+                        </a>
+                    </Dropdown >
+
+                    {/* <Button className='mx-0 p-0' type='text' icon={<Edit size={21} />} onClick={() => handleOpenModal(record)} />
+                <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}>
+                  <Button type='text' danger icon={<Trash2 size={18} />} />
+                </Popconfirm> */}
                 </>
             ),
         },
@@ -613,10 +637,11 @@ const TransactionList: React.FC = () => {
                     <Form.Item className='d-flex flex-column px-3'>
                         <Button type="primary" htmlType="submit" onClick={() => form.submit()} className='float-end' style={{ width: '30%' }}>
 
-                            {editingTransaction ? <RotateCcw size={16} /> : <Plus size={16} />}  {editingTransaction ? 'Update record' : 'Add record'}
+                            {editingTransaction ? <RotateCcw size={16} /> : <SaveOutlined size={16} />}  {editingTransaction ? 'Update record' : 'Save record'}
                         </Button>
-                        <Button type="dashed" htmlType="button" onClick={() => form.resetFields()} className=' text-center float-end mx-1' style={{ width: '30%' }}>
-                            <CircleX size={16} />   Reset Form
+
+                        <Button type="dashed" htmlType="button" onClick={() => form.resetFields()} className=' text-center float-end mx-3' style={{ width: '30%' }}>
+                            <RedoOutlined size={16} />   Reset Form
                         </Button>
                     </Form.Item>
                 ]}
@@ -649,7 +674,7 @@ const TransactionList: React.FC = () => {
                                         onChange={handleTypeChange}
                                         defaultValue={2}
                                         value={formData.transactionType}
-                                        style={{ width: '100%', backgroundColor: '#F3F4FA' }}
+                                        style={{ width: '100%', backgroundColor: '#F3F4FA', border: '1px solid lightgrey' }}
                                         block
                                     />
 

@@ -1,5 +1,5 @@
 
-import { Breadcrumb, Button, Card, Col, DatePicker, Empty, Form, Input, Modal, notification, Popconfirm, Progress, Row, Select, Tooltip, Typography } from 'antd'
+import { Breadcrumb, Button, Card, Col, DatePicker, Empty, Form, Input, Modal, notification, Popconfirm, Progress, Row, Select, Statistic, Tooltip, Typography } from 'antd'
 import axios from 'axios';
 import { Edit, FilePenLine, Plus, Trash2 } from 'lucide-react';
 import dayjs, { Dayjs } from 'dayjs';
@@ -40,8 +40,8 @@ const Goal = () => {
     marginRight: "auto",
     marginLeft: "auto",
     lineHeight: 1,
-    marginTop:'50px',
-    width:'300px'
+    marginTop: '50px',
+    width: '300px'
   }
   const transformData = (goals: GoalData[]): GoalData[] => {
     return goals.map((goal) => ({
@@ -50,7 +50,7 @@ const Goal = () => {
   };
 
   const { Search } = Input;
- 
+
 
   useEffect(() => {
 
@@ -84,7 +84,7 @@ const Goal = () => {
     setIsModalVisible(true);
   }
 
-  const handleDateRangeChange = (dates: [Dayjs, Dayjs] |any) => {
+  const handleDateRangeChange = (dates: [Dayjs, Dayjs] | any) => {
     console.log(dates);
     // console.log(dateStrings)
     setSelectedDateRange(dates);
@@ -143,7 +143,7 @@ const Goal = () => {
   };
 
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const handleSearch = (value: string) => {
     setSearchTerm(value);
   };
@@ -154,154 +154,161 @@ const Goal = () => {
       const matchesSearch = goal.goal.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesDateRange = selectedDateRange
         ? goal.targetDate?.isSameOrAfter(selectedDateRange[0], 'day') &&
-          goal.targetDate?.isSameOrBefore(selectedDateRange[1], 'day')
+        goal.targetDate?.isSameOrBefore(selectedDateRange[1], 'day')
         : goals
         ;
-      return matchesSearch && matchesDateRange ;
+      return matchesSearch && matchesDateRange;
     });
 
     return (
 
       <div className='d-flex flex-wrap my-2 '>
 
-        {filteredGoals.length > 0?(
-        filteredGoals.map((goal: GoalData, index: number) => {
+        {filteredGoals.length > 0 ? (
+          filteredGoals.map((goal: GoalData, index: number) => {
 
-          const percent = (goal.savedAmount / goal.targetAmount) * 100;
-          const isComplete = goal.savedAmount >= goal.targetAmount;
-          const color =
-            percent <= 20 ? '#ff4d4f' :
-              percent <= 40 ? '#ffa940' :
-                percent <= 70 ? 'blue' :
-                  '#52c41a';
-          return (
-            <div>
-              <Card
-                className='total-cards-background'
-                hoverable
-                key={goal.id}
-                // ={[
-
-
-                // ]}
-
-                style={{
-                  width: 290,
-                  height:'74%',
-                   margin:'10px 15px 10px 0px',
-                  // margin:10,
-                  padding:3,
-                  backgroundColor: isComplete ? '#dff0d8' : '#e1e8f5'
-                }}>
-                <Card.Meta
+            const percent = (goal.savedAmount / goal.targetAmount) * 100;
+            const isComplete = goal.savedAmount >= goal.targetAmount;
+            const color =
+              percent <= 20 ? '#ff4d4f' :
+                percent <= 40 ? '#ffa940' :
+                  percent <= 70 ? 'blue' :
+                    '#52c41a';
+            return (
+              <div>
+                <Card
+                  className='total-cards-background'
+                  hoverable
+                  key={goal.id}
+                  style={{
+                    width: 290,
+                    height: '74%',
+                    margin: '10px 15px 10px 0px',
+                    // margin:10,
+                    padding: 3,
+                    backgroundColor: isComplete ? '#dff0d8' : '#e1e8f5'
+                  }}>
+                  <Card.Meta
 
 
-                  description={
-                    <div className='d-flex flex-column '>
-                      <div className='d-flex justify-content-between'>
-                        <p className='text-dark' style={{ fontSize: '17px', marginLeft: '6px' }}>{goal.goal}</p>
-                        <div>
-                          <small className='pe-2'>
+                    description={
+                      <div className='d-flex flex-column '>
+                        <div className='d-flex justify-content-between'>
+                          <p className='text-dark' style={{ fontSize: '17px', marginLeft: '6px' }}>{goal.goal}</p>
+                          <div>
+                            <small className='pe-2'>
 
-                            <Edit
-                              size={19}
-                              key="edit"
-                              onClick={() => handleEdit(goal)}
-                              style={{ cursor: "pointer" }} />
+                              <Edit
+                                size={19}
+                                key="edit"
+                                onClick={() => handleEdit(goal)}
+                                style={{ cursor: "pointer" }} />
 
-                          </small>
-                          <small>
+                            </small>
+                            <small>
 
-                            <Trash2
-                              size={19}
-                              key="delete"
-                              style={{ cursor: "pointer", color: 'red', opacity: 0.5 }}
-                              onClick={() => handleDelete(goal.id)} />
+                              <Trash2
+                                size={19}
+                                key="delete"
+                                style={{ cursor: "pointer", color: 'red', opacity: 0.5 }}
+                                onClick={() => handleDelete(goal.id)} />
 
-                          </small>
+                            </small>
+                          </div>
+                        </div>
+                        <div className='d-flex progressBar '>
+                          <Progress
+                            type="circle"
+                            width={60}
+                            percent={(goal.savedAmount / goal.targetAmount) * 100}
+                            strokeColor={isComplete ? '#52c41a' : color}
+                            format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
+
+                            style={{ marginRight: '19px', paddingLeft: '8px', paddingTop: '3px', color: 'black' }}
+                          />
+                          <div className='d-flex flex-column '>
+
+                            <small className='text-dark'>Target amount - ₹{Utils.getFormattedNumber(goal.targetAmount)}</small>
+                            <small className='text-dark'>Saved amount - ₹{Utils.getFormattedNumber(goal.savedAmount)}</small>
+                            <small className='text-dark'>Target date - {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
+                          </div>
+
+
+
                         </div>
                       </div>
-                      <div className='d-flex progressBar '>
-                        <Progress
-                          type="circle"
-                          width={60}
-                          percent={(goal.savedAmount / goal.targetAmount) * 100}
-                          strokeColor={isComplete ? '#52c41a' : color}
-                          format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
+                    }
+                    style={{ height: '100%' }}
 
-                          style={{ marginRight: '19px', paddingLeft: '8px', paddingTop: '3px' , color:'black'}}
-                        />
-                        <div className='d-flex flex-column '>
+                  />
+                  <Button className='sub1-buttons'
+                    style={{ width: '130px', fontSize: '10px', marginLeft: '60px', marginTop: '17px' }}
+                    color='blue'
+                    onClick={() => { handleEdit(goal) }}>
+                    ADD SAVED AMOUNT
+                  </Button>
+                </Card>
 
-                          <small className='text-dark'>Target amount - ₹{Utils.getFormattedNumber(goal.targetAmount)}</small>
-                          <small className='text-dark'>Saved amount - ₹{Utils.getFormattedNumber(goal.savedAmount)}</small>
-                          <small className='text-dark'>Target date - {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
-                        </div>
-
-
-
-                      </div>
-                    </div>
-                  }
-                  style={{height:'100%'}}
-
-                />
-                <Button className='sub1-buttons'
-                style={{ width: '130px', fontSize: '10px', marginLeft: '60px', marginTop:'17px' }}
-                color='blue'
-                onClick={() => { handleEdit(goal) }}>
-                ADD SAVED AMOUNT
-              </Button>
-              </Card>
-
-            </div>
+              </div>
+            )
+          }
           )
-        }
-        )
-      ):(
-      '')}
+        ) : (
+          '')}
       </div>
-      )
-    
+    )
+
   }
 
   return (
     <>
-      <Card style={{ width: '100%', height: '87vh', overflow:'auto' }}>
-        <div className='mb-3'>
-          <Breadcrumb
-            items={[
-              {
-                title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
-              },
-              {
-                title: 'Goals',
-              },
-            ]}
-          />
+      <div style={{
+        padding: "10px 16px 16px 16px",
+        backgroundColor: 'white',
 
-        </div>
-        <Row gutter={18} className='d-flex flex-row  justify-between' style={{width:'100%'}}>
+      }}>
 
 
-          <Col span={10} style={{width:'100%'}}>
-            <Button className='main-buttons p-2 ' type="primary" onClick={() => setIsModalVisible(true)}>Add Goal</Button>
+        <Row gutter={24} className="d-flex flex-row justify-content-between mb-2">
+          <Col span={10}>
+            <Breadcrumb
+              className='pb-2'
+              items={[
+                {
+                  title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
+                },
+                {
+                  title: 'Goals',
+                },
+              ]}
+            />
           </Col>
-            <Col span={6} style={{width:'100%', display:'flex'}}>
+
+        </Row>
+
+
+        <Row gutter={24} className='d-flex flex-row  justify-between '>
+
+
+          <Col span={3.5} >
+            <Button className='p-2 text-center' type="primary" onClick={() => setIsModalVisible(true)}> <Plus size={19} />Add Goal</Button>
+          </Col>
+
+          <Col span={6} style={{ width: '100%', display: 'flex' }}>
             <p className='pt-1 ' style={{ width: '82px' }}>Search goal</p>
             <Search placeholder="Search goal" style={{ width: 200 }} onSearch={handleSearch} />
-            </Col>
-          <Col lg={{span:8}} className='d-flex '  >
+          </Col>
+          <Col lg={{ span: 8 }} className='d-flex '  >
 
-                <p className='align-content-center ' style={{ width: '85px' }}> Sort by date </p>
-                
-                <RangePicker
-                  onChange={ handleDateRangeChange}
-                  value={selectedDateRange}
-                  format='DD-MM-YYYY'
-                style={{height:'32px'}}
-                />
-              
+            <p className='align-content-center' style={{ width: '85px' }}> Sort by date </p>
+
+            <RangePicker
+              onChange={handleDateRangeChange}
+              value={selectedDateRange}
+              format='DD-MM-YYYY'
+              style={{ height: '32px' }}
+            />
+
           </Col>
         </Row>
         <Modal
@@ -396,21 +403,21 @@ const Goal = () => {
               // imageStyle={{ height: 200, width: 500, marginLeft: "auto", marginRight: "auto" }}
               image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
               imageStyle={{ height: 150 }}
-               style={cardStyle}
-              // description={
-              //   <Typography.Text
-              //     style={{
-              //       lineHeight: 1,
-              //     }}>
-              //     No goals set. Start by creating a financial goal to stay on track!
-              //   </Typography.Text>
-              // }
+              style={cardStyle}
+            // description={
+            //   <Typography.Text
+            //     style={{
+            //       lineHeight: 1,
+            //     }}>
+            //     No goals set. Start by creating a financial goal to stay on track!
+            //   </Typography.Text>
+            // }
             >
               {/* <Button type="primary" onClick={() => setIsModalVisible(true)}>Add a goal</Button> */}
             </Empty>
         }
 
-      </Card>
+      </div >
     </>
 
   )

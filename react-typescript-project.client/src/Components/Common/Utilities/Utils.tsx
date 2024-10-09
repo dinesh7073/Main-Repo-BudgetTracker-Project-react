@@ -38,37 +38,37 @@ class UtilsBase {
    * Get number from any type/value
    * @param num Value to get number
    */
-//   getNumber = (num?: string | number): number => {
-//     if (!num || num === "") return 0;
-//     if (typeof num === "number") return isNaN(num) ? 0 : num;
-//     return this.getNumber(parseFloat(num.replaceAll(",", "")));
-//   };
+  //   getNumber = (num?: string | number): number => {
+  //     if (!num || num === "") return 0;
+  //     if (typeof num === "number") return isNaN(num) ? 0 : num;
+  //     return this.getNumber(parseFloat(num.replaceAll(",", "")));
+  //   };
   /**
    * Get formatted date in DD/MM/YYYY hh:mm A or DD/MM/YYYY
    * @param date Date to be formatted
    * @param emptyValue Value to return if date is empty or null
    * @param withTime Return date with time
    */
-//   getFormattedDate = (
-//     date: string | number | Date | Dayjs | undefined,
-//     emptyValue?: string,
-//     withTime?: boolean,
-//     timeZone: string = "Europe/London"
-//   ) => {
-//     if (!date || date === "") return emptyValue;
-//     const dt =
-//       typeof date === "string" &&
-//         /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[./-]([0]?[1-9]|[1][0-2])[./-]([0-9]{4}|[0-9]{2})$/.test(
-//           date
-//         )
-//         ? dayjs(date, "DD/MM/YYYY")
-//         : dayjs(date);
-//     return dt.isValid()
-//       ? withTime
-//         ? dt.tz(timeZone).format(`DD/MM/YYYY hh:mm A`)
-//         : dt.format(`DD/MM/YYYY`)
-//       : emptyValue;
-//   };
+  //   getFormattedDate = (
+  //     date: string | number | Date | Dayjs | undefined,
+  //     emptyValue?: string,
+  //     withTime?: boolean,
+  //     timeZone: string = "Europe/London"
+  //   ) => {
+  //     if (!date || date === "") return emptyValue;
+  //     const dt =
+  //       typeof date === "string" &&
+  //         /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[./-]([0]?[1-9]|[1][0-2])[./-]([0-9]{4}|[0-9]{2})$/.test(
+  //           date
+  //         )
+  //         ? dayjs(date, "DD/MM/YYYY")
+  //         : dayjs(date);
+  //     return dt.isValid()
+  //       ? withTime
+  //         ? dt.tz(timeZone).format(`DD/MM/YYYY hh:mm A`)
+  //         : dt.format(`DD/MM/YYYY`)
+  //       : emptyValue;
+  //   };
   /**
    * Get formatted number
    * @param number Number to format
@@ -97,6 +97,7 @@ class UtilsBase {
       isNegative = true;
       number = Math.abs(number);
     }
+
     var t = parseFloat(number)
       .toFixed(
         decimalPlaces !== null && decimalPlaces !== undefined
@@ -105,6 +106,7 @@ class UtilsBase {
       )
       .split(".");
     var str = number;
+
     if (t.length >= 1) {
       str = "";
       //var r = t[0].slice('');
@@ -445,11 +447,11 @@ class UtilsBase {
     return u;
   };
 
-//   getKeyByValue(value: any) {
-//     const indexOfS = Object.values(FMonth).indexOf(value);
-//     // const key = Object.keys(FMonth)[indexOfS];
-//     return key;
-//   }
+  //   getKeyByValue(value: any) {
+  //     const indexOfS = Object.values(FMonth).indexOf(value);
+  //     // const key = Object.keys(FMonth)[indexOfS];
+  //     return key;
+  //   }
 
   /**
    * Get Dates difference in years month and day format
