@@ -207,7 +207,7 @@ const Sidebar: React.FC = () => {
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <h5 className="align-self-center ps-4 my-1" style={{ fontSize: '14px', fontFamily: "Open Sans" }}>
+            <h5 className="align-self-center ps-4 my-1" style={{  color: 'rgb(105, 114, 122)' , fontSize: '14px', fontFamily: "Open Sans" }}>
               Hello, {userDetails.firstName}{" "}
             </h5>
             <div style={{ cursor: 'pointer' }} className="d-flex flex-row justify-content-between  align-item-center">
@@ -239,10 +239,10 @@ const Sidebar: React.FC = () => {
                   <div className="mt-4 ms-1">
                     <Link
                       className="itemsLink"
-                      to="/account"
+                      to="/profile"
                       style={{ display: "flex", alignItems: "center" }}
                     >
-                      <UserRound size={15} style={{ marginRight: "8px", fontWeight: 100 }} /> Account{" "}
+                      <UserRound size={15} style={{ marginRight: "8px", fontWeight: 100 }} /> Profile{" "}
                     </Link>
 
                   </div>

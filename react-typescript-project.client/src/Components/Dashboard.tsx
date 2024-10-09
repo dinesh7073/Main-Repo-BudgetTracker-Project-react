@@ -343,7 +343,7 @@ const Dashboard = () => {
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: "5px" }}>
               <div className='d-flex '>
-                <h6 className='pe-2 mb-1'><PieChartOutlined /></h6>
+                <h6 className='pe-2 mb-1'><PieChartOutlined  style={{ color: 'rgb(105, 114, 122)' }}/></h6>
                 <p style={{ marginBottom: 5, }}> Expenses Structure</p>
               </div>
               <div className="top-one-cards" >
@@ -386,7 +386,7 @@ const Dashboard = () => {
           <Col xs={{ span: 10, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: '0px 5px 10px 5px', }}>
               <p>
-                <BiCoin className="recent-transactions-icon" color="#3C3D37" size={20} />
+                <BiCoin style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon" color="#3C3D37" size={20} />
                 Budget
               </p>
 
@@ -443,7 +443,7 @@ const Dashboard = () => {
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: '0px 5px', }}>
               <p >
-                <Goal className="recent-transactions-icon" color="#3C3D37" size={18} />
+                <Goal  style={{ color: 'rgb(105, 114, 122)' }}className="recent-transactions-icon" color="#3C3D37" size={18} />
                 Recent Goals
               </p>
 
@@ -502,7 +502,7 @@ const Dashboard = () => {
           <Col xs={{ span: 5 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "95%", padding: '0px 5px', }}>
               <p style={{ margin: 0, paddingBottom: "6px" }} >
-                <ArrowLeftRight className="recent-transactions-icon " color="#3C3D37" size={20} />
+                <ArrowLeftRight style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon " color="#3C3D37" size={20} />
                 Recent Transactions
               </p>
 

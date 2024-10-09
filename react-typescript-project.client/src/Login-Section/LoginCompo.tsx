@@ -180,8 +180,11 @@ const LoginCompo = () => {
                                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '430px' }}>
 
                                             <div>
-                                                <p style={{ marginTop: '3px', }} onClick={() => { setIsSignUp(true); navigate('/signup'); }}><p style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> SignUp</p> </p>
+                                                <p style={{ marginTop: '3px', }} >Don't have an account?</p>
+                                           
                                             </div>
+                                            <div style={{marginRight:'120px', marginTop:'3px'}}><p onClick={() => { setIsSignUp(true); navigate('/signup'); }} style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> SignUp</p> </div>
+
                                             <div>
                                                 <p style={{ marginTop: '3px', }} onClick={() => { navigate("/forgotPassword") }}><p style={{ cursor: "pointer", color: "blue", fontSize: '13.5px', textDecorationLine: 'underline', }} className='signup-text'> Forgot Password</p> </p>
 
