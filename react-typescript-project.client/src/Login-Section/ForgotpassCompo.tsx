@@ -26,7 +26,7 @@ const ForgotpassCompo = () => {
 
     const [form] = Form.useForm();
     const [inputValue, setInputValue] = useState('');
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
 
 
@@ -50,40 +50,46 @@ const ForgotpassCompo = () => {
 
                     </div>
                 </div>
-                
+
 
                 <div style={{ width: '61%', backgroundColor: '#FFFFFF', borderTopLeftRadius: '55px', borderBottomLeftRadius: '55px' }}>
+
                     <div style={{ width: '100%', minHeight: '100vh' }}>
-                    <span style={{ marginLeft: '830px',}} onClick={() => navigate('/login')}> <Button icon={<MoveLeft/>}/> </span>
-                        <div style={{  alignContent: 'center', alignItems: 'center', padding: '15% 18%', width:'80%', marginLeft:'12%' }}>
+
+                        <div style={{ alignContent: 'center', alignItems: 'center', padding: '15% 18%', width: '80%', marginLeft: '12%' }}>
+                            {/* <div style={{ marginLeft: '-180px', marginTop:'-50px' }}> <span onClick={() => navigate('/login')}> <Button style={{ width: '60px' }} icon={<MoveLeft />} /> </span></div> */}
 
                             <h3 style={{ textAlign: 'center' }}>Forgot Password</h3>
 
                             <Form.Item
-                              label="Email"
+                                label="Email"
                                 name="email"
-                               
-                                style={{ marginBottom: '18px' }}    
+
+                                style={{ marginBottom: '18px' }}
                                 rules={[{ required: false, message: 'Please input your email!' },
                                 {
                                     type: 'email',
                                     message: 'Enter a valid email'
                                 }
                                 ]}
-                          />
+                            />
                             <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
 
 
                             <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px', marginTop: '24px', }}>     Submit        </Button>
-                                
-                           
-                        
-                        {/* <Button  style={{color:'#B1D9DB',left:'1%', backgroundColor:'#FFFFFF', top:'20px'}} onClick={() => navigate('/login')} size="large" >Back to Login</Button> */}
+
+                            {/* <span onClick={() => navigate('/login')}><Button className='ps-3 pe-3'>Back</Button>  </span> */}
+                            {/* <span className='ms-3' style={{ color: 'blue' }} onClick={() => navigate('/login')}>Back  </span> */}
+                            <p onClick={() => { navigate("/login") }}><p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', textDecorationLine: 'underline', }}>    Back to login</p> </p>
+
+
+                            {/* <Button  style={{color:'#B1D9DB',left:'1%', backgroundColor:'#FFFFFF', top:'20px'}} onClick={() => navigate('/login')} size="large" >Back to Login</Button> */}
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
+
         </div>
     )
 }

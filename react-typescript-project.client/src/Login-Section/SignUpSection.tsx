@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { message, Form, Input, Button, Spin } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { KeyOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import '../CSS/LoginSignUp.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../images/logo.png';
@@ -215,14 +215,18 @@ const SignUpSection = () => {
                                     ]}
                                     style={{ height: '65px' }}
                                 >
-                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' />
+                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}  type='password' prefix={<LockOutlined />} placeholder="Confirm Password" />
                                 </Form.Item>
 
                                 <Form.Item>
                                     <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
                                         Sign Up
                                     </Button>
-                                    <p style={{ marginTop: '3px' }} onClick={() => { setIsSignUp(false); navigate('/login'); }}>Already have an account? <b style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text'> Login</b> </p>
+                                    <div className='d-flex '>
+                                    <p style={{ marginTop: '3px' }} >Already have an account? </p>
+                                    
+                                    <p   onClick={() => { setIsSignUp(false); navigate('/login'); }} style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text mt-1 ms-1'> Login</p> 
+                                    </div>
                                 </Form.Item>
                             </Form>
 
