@@ -12,14 +12,14 @@ const App: React.FC = () => {
 
   return <Card style={{ height: '100vh', fontFamily: 'open Snas' }}>
 
-    <h2 className='text-center' style={{ backgroundColor: ' rgb(236, 236, 236) ', fontFamily: 'Open Sans' }}><CircleHelp size={37} /> Welcome to the Budget Tracker Help Center</h2>
+    {/* <h2 className='text-center' style={{ backgroundColor: ' rgb(236, 236, 236) ', fontFamily: 'Open Sans' }}><CircleHelp size={37} /> Welcome to the Budget Tracker Help Center</h2>
     <div className='text-center '><h6> Here, you’ll find all the information you need to make the most
     </h6>
             <h6> out of our app. Whether you’re new to budgeting or just need a</h6>
             
             <h6>refresher, this guide will walk you through each feature of the app,{" "}</h6>
            
-           <h6>  from setting up your account to tracking your financial goals.</h6></div>
+           <h6>  from setting up your account to tracking your financial goals.</h6></div> */}
     <Collapse items={items} className='pt-4' defaultActiveKey={['1']} onChange={onChange} />
   </Card>
 };
@@ -34,35 +34,36 @@ const text5 = ` Navigate to the "Goals" section. Click on "Add Goal" to set up a
 const items: CollapseProps['items'] = [
   {
     key: '1',
-    label: <h6><Navigation size={15} className='ms-3' />   Navigating the Dashboard</h6>,
+  
+    label: <h6  style={{ color: 'rgb(105, 114, 122)' }}     ><Navigation size={15} className='ms-3'   />   Navigating the Dashboard</h6>,
     children: <p>{text}</p>,
 
   },
   {
     key: '2',
-    label: <h6>  <Settings size={15} className='ms-3' />    Creating and Managing Budgets Setting Up a Budget</h6>,
+    label: <h6   style={{ color: 'rgb(105, 114, 122)' }}  >  <Settings size={15} className='ms-3' />    Creating and Managing Budgets Setting Up a Budget</h6>,
     children: <p>{text1}</p>,
   },
   {
     key: '3',
-    label: <h6> <Pencil size={15} className='ms-3' />    Editing a Budget</h6>,
+    label: <h6  style={{ color: 'rgb(105, 114, 122)' }}  > <Pencil size={15} className='ms-3' />    Editing a Budget</h6>,
     children: <p>{text2}</p>,
   },
 
   {
     key: '4',
-    label: <h6><BadgeDollarSign size={15} className='ms-3' />    Tracking Transactions Adding Transactions</h6>,
+    label: <h6  style={{ color: 'rgb(105, 114, 122)' }}  ><BadgeDollarSign size={15} className='ms-3' />    Tracking Transactions Adding Transactions</h6>,
     children: <p>{text3}</p>,
   },
   {
     key: '5',
-    label: <h6><History size={15} className='ms-3' />    Viewing Transaction History</h6>,
+    label: <h6  style={{ color: 'rgb(105, 114, 122)' }}  ><History size={15} className='ms-3' />    Viewing Transaction History</h6>,
     children: <p>{text4}</p>,
   },
 
   {
     key: '6',
-    label: <h6> <Goal size={15} className='ms-3' />  Setting Financial Goals Creating a Goal</h6>,
+    label: <h6  style={{ color: 'rgb(105, 114, 122)' }}  > <Goal size={15} className='ms-3' />  Setting Financial Goals Creating a Goal</h6>,
     children: <p>{text5}</p>,
   },
 ];
