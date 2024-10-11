@@ -7,7 +7,8 @@
         SavingAccount = 2,
         General = 3,
         CreditCard = 4,
-        CurrentAccoun = 5
+        SalaryAccount = 5,
+        CurrentAccount =6,
 
     }
 }

@@ -24,6 +24,12 @@ namespace Budget_Tracker_Bend.Services
         public async Task<Users> GetUserByIdAsync(string id) =>
             await usersModal.Find(user => user.Id == id).FirstOrDefaultAsync();
 
+        public async Task<Users> GetUserByEmailAsync(string email)
+        {
+            var filter = Builders<Users>.Filter.Eq(user => user.Email, email);
+            return await usersModal.Find(filter).FirstOrDefaultAsync();
+        }
+
         public async Task<Users> SaveUserAsync(Users users)
         {
             var existingUser = await usersModal.Find(u => u.Id == users.Id).FirstOrDefaultAsync();
