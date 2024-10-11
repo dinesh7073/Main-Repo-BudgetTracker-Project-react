@@ -1,11 +1,11 @@
 
-import { Breadcrumb, Button, Card, Col, DatePicker, Empty, Form, Input, Modal, notification, Popconfirm, Progress, Row, Select, Statistic, Tooltip, Typography } from 'antd'
+import { Breadcrumb, Button, Card, Col, DatePicker, Empty, Form, Input, Modal, notification, Popconfirm, Progress, Row, Select, Statistic, Table, Tooltip, Typography } from 'antd'
 import axios from 'axios';
 import { Edit, FilePenLine, Plus, Trash2 } from 'lucide-react';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../UserContext';
-import { HomeOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
@@ -43,6 +43,7 @@ const Goal = () => {
     marginTop: '50px',
     width: '300px'
   }
+
   const transformData = (goals: GoalData[]): GoalData[] => {
     return goals.map((goal) => ({
       ...goal,
@@ -88,6 +89,7 @@ const Goal = () => {
     console.log(dates);
     // console.log(dateStrings)
     setSelectedDateRange(dates);
+
   };
 
   const handleSubmit = (values: GoalData) => {
@@ -147,118 +149,170 @@ const Goal = () => {
   const handleSearch = (value: string) => {
     setSearchTerm(value);
   };
-  const GoalCard = () => {
 
-    const filteredGoals = goals.filter((goal) => {
+  const filteredGoals = goals.filter((goal) => {
 
-      const matchesSearch = goal.goal.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesDateRange = selectedDateRange
-        ? goal.targetDate?.isSameOrAfter(selectedDateRange[0], 'day') &&
-        goal.targetDate?.isSameOrBefore(selectedDateRange[1], 'day')
-        : goals
-        ;
-      return matchesSearch && matchesDateRange;
-    });
+    const matchesSearch = goal.goal.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDateRange = selectedDateRange
+      ? goal.targetDate?.isSameOrAfter(selectedDateRange[0], 'day') &&
+      goal.targetDate?.isSameOrBefore(selectedDateRange[1], 'day')
+      : goals
+      ;
+    return matchesSearch && matchesDateRange;
 
-    return (
+  });
 
-      <div className='d-flex flex-wrap my-2 '>
+  const columns=[
 
-        {filteredGoals.length > 0 ? (
-          filteredGoals.map((goal: GoalData, index: number) => {
-
-            const percent = (goal.savedAmount / goal.targetAmount) * 100;
-            const isComplete = goal.savedAmount >= goal.targetAmount;
-            const color =
-              percent <= 20 ? '#ff4d4f' :
-                percent <= 40 ? '#ffa940' :
-                  percent <= 70 ? 'blue' :
-                    '#52c41a';
-            return (
-              <div>
-                <Card
-                  className='total-cards-background'
-                  hoverable
-                  key={goal.id}
-                  style={{
-                    width: 290,
-                    height: '74%',
-                    margin: '10px 15px 10px 0px',
-                    // margin:10,
-                    padding: 3,
-                    backgroundColor: isComplete ? '#dff0d8' : '#e1e8f5'
-                  }}>
-                  <Card.Meta
-
-
-                    description={
-                      <div className='d-flex flex-column '>
-                        <div className='d-flex justify-content-between'>
-                          <p className='text-dark' style={{ fontSize: '17px', marginLeft: '6px' }}>{goal.goal}</p>
-                          <div>
-                            <small className='pe-2'>
-
-                              <Edit
-                                size={19}
-                                key="edit"
-                                onClick={() => handleEdit(goal)}
-                                style={{ cursor: "pointer" }} />
-
-                            </small>
-                            <small>
-
-                              <Trash2
-                                size={19}
-                                key="delete"
-                                style={{ cursor: "pointer", color: 'red', opacity: 0.5 }}
-                                onClick={() => handleDelete(goal.id)} />
-
-                            </small>
-                          </div>
-                        </div>
-                        <div className='d-flex progressBar '>
-                          <Progress
-                            type="circle"
-                            width={60}
-                            percent={(goal.savedAmount / goal.targetAmount) * 100}
-                            strokeColor={isComplete ? '#52c41a' : color}
-                            format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
-
-                            style={{ marginRight: '19px', paddingLeft: '8px', paddingTop: '3px', color: 'black' }}
-                          />
-                          <div className='d-flex flex-column '>
-
-                            <small className='text-dark'>Target amount - ₹{Utils.getFormattedNumber(goal.targetAmount)}</small>
-                            <small className='text-dark'>Saved amount - ₹{Utils.getFormattedNumber(goal.savedAmount)}</small>
-                            <small className='text-dark'>Target date - {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
-                          </div>
-
-
-
-                        </div>
-                      </div>
-                    }
-                    style={{ height: '100%' }}
-
-                  />
-                  <Button className='sub1-buttons'
-                    style={{ width: '130px', fontSize: '10px', marginLeft: '60px', marginTop: '17px' }}
-                    color='blue'
-                    onClick={() => { handleEdit(goal) }}>
-                    ADD SAVED AMOUNT
-                  </Button>
-                </Card>
-
-              </div>
-            )
-          }
-          )
-        ) : (
-          '')}
+    {
+      width : '8%',
+      title:'S.No',
+      render : (text:any, data: any,index : number)=> (index + 1),
+    },
+    {
+      title : 'Goal',
+      dataIndex : 'goal',
+      key : 'goal',
+      render: (goal : string)=> goal
+    
+    },
+    {
+      title : 'Target amount',
+      dataIndex : 'targetAmount',
+      key : 'targetAmount',
+      render: (text: string)=><span>{`₹${Utils.getFormattedNumber(text)}`}</span>
+    },
+    {
+      title : 'Saved amount',
+      dataIndex : 'savedAmount',
+      key : 'savedAmount',
+      render : (text:string)=><span>{`₹ ${Utils.getFormattedNumber(text)}`}</span>
+    },
+    {
+      title : 'Target date',
+      dataIndex : 'targetDate',
+      key : 'targetDate',
+      render : (targetDate:string)=> dayjs(targetDate).format('DD-MM-YYYY')
+    },
+    {
+      title : 'Actions',
+      dataIndex : 'action',
+      key : 'action',
+      render:(text:string, data : any)=>(
+        <div>
+        <span className='pe-4'style={{fontSize:'18px'}}>
+        <EditOutlined  onClick={()=>handleEdit(data)}/></span>
+       <span style={{fontSize:'18px'}} > <DeleteOutlined size={18} onClick={()=>handleDelete(data.id)}  style={{color:'red'}} />
+      </span>
       </div>
-    )
+      )
+    }
 
-  }
+  ]
+
+  // const GoalCard = () => {
+
+    
+
+  //   return (
+
+  //     <div className='d-flex flex-wrap my-2 '>
+
+  //       {filteredGoals.length > 0 ? (
+  //         filteredGoals.map((goal: GoalData, index: number) => {
+
+  //           const percent = (goal.savedAmount / goal.targetAmount) * 100;
+  //           const isComplete = goal.savedAmount >= goal.targetAmount;
+  //           const color =
+  //             percent <= 20 ? '#ff4d4f' :
+  //               percent <= 40 ? '#ffa940' :
+  //                 percent <= 70 ? 'blue' :
+  //                   '#52c41a';
+  //           return (
+  //             <div>
+  //               <Card
+  //                 className='total-cards-background'
+  //                 hoverable
+  //                 key={goal.id}
+  //                 style={{
+  //                   width: 290,
+  //                   height: '74%',
+  //                   margin: '10px 15px 10px 0px',
+  //                   // margin:10,
+  //                   padding: 3,
+  //                   backgroundColor: isComplete ? '#dff0d8' : '#e1e8f5'
+  //                 }}>
+  //                 <Card.Meta
+
+
+  //                   description={
+  //                     <div className='d-flex flex-column '>
+  //                       <div className='d-flex justify-content-between'>
+  //                         <p className='text-dark' style={{ fontSize: '17px', marginLeft: '6px' }}>{goal.goal}</p>
+  //                         <div>
+  //                           <small className='pe-2'>
+
+  //                             <Edit
+  //                               size={19}
+  //                               key="edit"
+  //                               onClick={() => handleEdit(goal)}
+  //                               style={{ cursor: "pointer" }} />
+
+  //                           </small>
+  //                           <small>
+
+  //                             <Trash2
+  //                               size={19}
+  //                               key="delete"
+  //                               style={{ cursor: "pointer", color: 'red', opacity: 0.5 }}
+  //                               onClick={() => handleDelete(goal.id)} />
+
+  //                           </small>
+  //                         </div>
+  //                       </div>
+  //                       <div className='d-flex progressBar '>
+  //                         <Progress
+  //                           type="circle"
+  //                           width={60}
+  //                           percent={(goal.savedAmount / goal.targetAmount) * 100}
+  //                           strokeColor={isComplete ? '#52c41a' : color}
+  //                           format={(percent: any) => `${Math.round(percent).toLocaleString()}%`}
+
+  //                           style={{ marginRight: '19px', paddingLeft: '8px', paddingTop: '3px', color: 'black' }}
+  //                         />
+  //                         <div className='d-flex flex-column '>
+
+  //                           <small className='text-dark'>Target amount - ₹{Utils.getFormattedNumber(goal.targetAmount)}</small>
+  //                           <small className='text-dark'>Saved amount - ₹{Utils.getFormattedNumber(goal.savedAmount)}</small>
+  //                           <small className='text-dark'>Target date - {dayjs(goal.targetDate).format('DD-MM-YYYY')}</small>
+  //                         </div>
+
+
+
+  //                       </div>
+  //                     </div>
+  //                   }
+  //                   style={{ height: '100%' }}
+
+  //                 />
+  //                 <Button className='sub1-buttons'
+  //                   style={{ width: '130px', fontSize: '10px', marginLeft: '60px', marginTop: '17px' }}
+  //                   color='blue'
+  //                   onClick={() => { handleEdit(goal) }}>
+  //                   ADD SAVED AMOUNT
+  //                 </Button>
+  //               </Card>
+
+  //             </div>
+  //           )
+  //         }
+  //         )
+  //       ) : (
+  //         '')}
+  //     </div>
+  //   )
+
+  // }
 
   return (
     <>
@@ -311,6 +365,34 @@ const Goal = () => {
 
           </Col>
         </Row>
+        <Table
+                  size='small'
+                  dataSource={goals}
+                 columns={columns}
+                  rowKey="id"
+                  scroll={{ y: 445 }}
+
+                   summary={(data: any) => {
+                    let totalAmount = 0;
+                    data.forEach(({ savedAmount }: any) => {
+                      totalAmount += savedAmount;
+                    }); 
+                    
+                    return (
+                      <Table.Summary fixed>
+                        <Table.Summary.Row>
+                          <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={3}>
+                            <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
+                          </Table.Summary.Cell>
+                          <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )
+                  }}
+                  />
         <Modal
           title={editGoal ? "Edit Goal" : "Add Goal"}
           visible={isModalVisible}
@@ -394,28 +476,18 @@ const Goal = () => {
             </div>
           </Form>
         </Modal>
-        {
+        {/* {
           goalExists ?
             <GoalCard />
             :
             <Empty
-              // image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlR-KpSAQDBPRVK8PNFcjjtGw0G8Gx89CKBScwQr_vr6DsurTBLXyhQIfFX-dRMxQT5T8&usqp=CAU"
-              // imageStyle={{ height: 200, width: 500, marginLeft: "auto", marginRight: "auto" }}
+              
               image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
               imageStyle={{ height: 150 }}
               style={cardStyle}
-            // description={
-            //   <Typography.Text
-            //     style={{
-            //       lineHeight: 1,
-            //     }}>
-            //     No goals set. Start by creating a financial goal to stay on track!
-            //   </Typography.Text>
-            // }
-            >
-              {/* <Button type="primary" onClick={() => setIsModalVisible(true)}>Add a goal</Button> */}
-            </Empty>
-        }
+            />
+           
+        } */}
 
       </div >
     </>

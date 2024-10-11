@@ -7,7 +7,7 @@
 
 
 .ant-card .ant-card-body{
-    padding: 15px;
+    padding: 12px;
 }
 
 .expenseCard{
@@ -168,4 +168,8 @@
     padding: 3px 1px 3px 1px;
     margin-bottom: 5px;
     
+}
+
+.budgetCard .ant-card .ant-card-body{
+    padding:0;
 }
