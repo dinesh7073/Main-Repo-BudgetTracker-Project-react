@@ -34,15 +34,27 @@ namespace Budget_Tracker_Bend.Controllers
         [HttpPost("CreateUsersAndUpdate")]
         public async Task<IActionResult> SaveUser(Users user)
         {
-            try
+            var alreadyExists = await _usersServices.GetUserByEmailAsync(user.Email);
+            if (alreadyExists != null && alreadyExists.Id != user.Id)
             {
-                //user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password, 13);
-                var savedUser = await _usersServices.SaveUserAsync(user);
-                return Ok(savedUser);
+                return StatusCode(409, "A user with this email already exists.");
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                try
+                {
+                    if (user.Id != null)
+                    {
+                        user.Id = alreadyExists?.Id ?? user.Id; 
+                    }
+                    //user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password, 13);
+                    var savedUser = await _usersServices.SaveUserAsync(user);
+                    return Ok(savedUser); 
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
             }
         }
 
@@ -54,20 +66,16 @@ namespace Budget_Tracker_Bend.Controllers
                 Users newuser = new();
 
                 if (user.UserName != null)
-
+                {
                     newuser = await _usersServices.GetUserAsync(user.UserName);
-
-                //var validPassword = BCrypt.Net.BCrypt.EnhancedVerify(user.Password, newuser.Password);
-
-                if (newuser != null )
-
-
-
+                    //var validPassword = BCrypt.Net.BCrypt.EnhancedVerify(user.Password, newuser.Password);
                     return Ok(newuser);
-
-                else return
+                }
+                else
+                {
+                    return
                         StatusCode(404, "Un-Authrization access denied");
-
+                }
             }
             catch (Exception ex)
             {

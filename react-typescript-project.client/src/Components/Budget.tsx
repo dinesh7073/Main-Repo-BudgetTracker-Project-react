@@ -461,59 +461,59 @@ const Budget = () => {
   }
 
 
-  const [open, setOpen] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  // const [open, setOpen] = useState(false);
+  // const [validationError, setValidationError] = useState<string | null>(null);
 
-  useEffect(() => {
-    axios
-      .get(
-        `${REACT_APP_BASE_URL}BudgetsController/${UserId}GetExpenseLimitById`
-      )
-      .then((res) => {
-        if (res.status === 200) {
-          setexpensesLimit(res.data);
-        }
-      })
-      .catch(() => {
-        notification.error({
-          message: "Failed to fetch expense limit",
-          description: "Something went wrong!",
-        });
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       `${REACT_APP_BASE_URL}BudgetsController/${UserId}GetExpenseLimitById`
+  //     )
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         setexpensesLimit(res.data);
+  //       }
+  //     })
+  //     .catch(() => {
+  //       notification.error({
+  //         message: "Failed to fetch expense limit",
+  //         description: "Something went wrong!",
+  //       });
+  //     });
+  // }, []);
 
-  const handleSetLimit = (e: any) => {
-    e.preventDefault();
-    const amount = Number(e.target.elements.limitInput.value);
-    if (!amount || amount <= 0) {
-      setValidationError("Please enter a valid amount!");
-      return;
-    }
-    setValidationError(null);
-    const ExpenseLimitData = { amount, UserId, id: expensesLimit?.id };
-    axios
-      .post(
-        `${REACT_APP_BASE_URL}BudgetsController/${UserId}CreateExpenseLimitAndUpdate`,
-        ExpenseLimitData
-      )
-      .then((response) => {
-        setexpensesLimit(response.data.amount);
-        notification.success({
-          message: editingLimit
-            ? "Expense Limit updated successfully"
-            : "Expense Limit added successfully",
-        });
-        setEditingLimit(false);
-        setOpen(false);
-      })
-      .catch((e) => {
-        console.log(e.message);
-        notification.error({
-          message: "Failed to set expense limit",
-          description: "Something went wrong!",
-        });
-      });
-  };
+  // const handleSetLimit = (e: any) => {
+  //   e.preventDefault();
+  //   const amount = Number(e.target.elements.limitInput.value);
+  //   if (!amount || amount <= 0) {
+  //     setValidationError("Please enter a valid amount!");
+  //     return;
+  //   }
+  //   setValidationError(null);
+  //   const ExpenseLimitData = { amount, UserId, id: expensesLimit?.id };
+  //   axios
+  //     .post(
+  //       `${REACT_APP_BASE_URL}BudgetsController/${UserId}CreateExpenseLimitAndUpdate`,
+  //       ExpenseLimitData
+  //     )
+  //     .then((response) => {
+  //       setexpensesLimit(response.data.amount);
+  //       notification.success({
+  //         message: editingLimit
+  //           ? "Expense Limit updated successfully"
+  //           : "Expense Limit added successfully",
+  //       });
+  //       setEditingLimit(false);
+  //       setOpen(false);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e.message);
+  //       notification.error({
+  //         message: "Failed to set expense limit",
+  //         description: "Something went wrong!",
+  //       });
+  //     });
+  // };
 
   const columns = [
     {
@@ -527,7 +527,7 @@ const Budget = () => {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      render: (text: any, budget: Budget) => getCategoryLabel(budget.category),
+      render: (text: any, budget: Budget) => (getCategoryLabel(budget.category))
     },
     {
       title: "Budget",
@@ -651,7 +651,7 @@ const Budget = () => {
           gutter={24}
           className="d-flex flex-row justify-content-between mb-2"
         >
-          <Col span={10}>
+          <Col span={14}>
             <Breadcrumb
               items={[
                 {
@@ -666,8 +666,8 @@ const Budget = () => {
             />
           </Col>
 
-          <Col span={12} className="d-flex flex-row justify-content-between">
-            <Statistic
+          <Col span={8} className="d-flex flex-row justify-content-between">
+            {/* <Statistic
               className="d-flex mx-2  py-1"
               style={{
                 backgroundColor: "",
@@ -690,7 +690,7 @@ const Budget = () => {
                 </span>
               }
               value={Utils.getFormattedNumber(expensesLimit?.amount)}
-            />
+            /> */}
             <Statistic
               className="d-flex mx-2  py-1 "
               style={{ backgroundColor: "", borderRadius: "5px" }}
@@ -740,7 +740,7 @@ const Budget = () => {
             </Button>
           </Col>
           <Col span={11}>
-            <Space direction="horizontal" size="middle">
+            {/* <Space direction="horizontal" size="middle">
               <Popover
                 content={
                   <form onSubmit={handleSetLimit}>
@@ -793,8 +793,9 @@ const Budget = () => {
                   </Button>
                 )}
               </Popover>
-            </Space>
+            </Space> */}
           </Col>
+
           <Col span={10}>
             {parseInt(expensesLimit) < totalexpense ? (
               <Alert
@@ -808,6 +809,7 @@ const Budget = () => {
               ""
             )}
           </Col>
+
         </Row>
         {/* <hr className='mt-2 mb-2' /> */}
         {loader ? (

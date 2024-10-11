@@ -480,10 +480,6 @@ const TransactionList: React.FC = () => {
                         </a>
                     </Dropdown >
 
-                    {/* <Button className='mx-0 p-0' type='text' icon={<Edit size={21} />} onClick={() => handleOpenModal(record)} />
-                <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record.id)}>
-                  <Button type='text' danger icon={<Trash2 size={18} />} />
-                </Popconfirm> */}
                 </>
             ),
         },
@@ -608,15 +604,15 @@ const TransactionList: React.FC = () => {
                         return (
                             <Table.Summary fixed>
                                 <Table.Summary.Row>
-                                    <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
-                                    <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={1}><h6>Total</h6></Table.Summary.Cell>
                                     <Table.Summary.Cell index={2}></Table.Summary.Cell>
                                     <Table.Summary.Cell index={3}></Table.Summary.Cell>
                                     <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                                    <Table.Summary.Cell index={5}>
+                                    <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                                    <Table.Summary.Cell index={6}>
                                         <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
                                     </Table.Summary.Cell>
-                                    <Table.Summary.Cell index={6}></Table.Summary.Cell>
                                 </Table.Summary.Row>
                             </Table.Summary>
                         )

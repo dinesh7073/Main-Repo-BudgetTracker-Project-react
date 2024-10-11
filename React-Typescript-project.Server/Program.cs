@@ -2,6 +2,10 @@
 using Budget_Tracker_Bend;
 using Budget_Tracker_Bend.Modals;
 using Budget_Tracker_Bend.Services;
+using React_Typescript_project.Server.Modals;
+using React_Typescript_project.Server.Services;
+
+
 //using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -50,6 +54,7 @@ builder.Services.AddSingleton<BudgetsServices>();
 builder.Services.AddSingleton<SavingsServices>();
 builder.Services.AddSingleton<UsersServices>();
 builder.Services.AddSingleton<TransactionsServices>();
+builder.Services.AddSingleton<AccountsServices>();
 
 
 
