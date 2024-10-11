@@ -527,7 +527,7 @@ const Budget = () => {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      render: (text: any, budget: Budget) => getCategoryLabel(budget.category),
+      render: (text: any, budget: Budget) => (getCategoryLabel(budget.category))
     },
     {
       title: "Budget",
@@ -795,6 +795,7 @@ const Budget = () => {
               </Popover>
             </Space>
           </Col>
+
           <Col span={10}>
             {parseInt(expensesLimit) < totalexpense ? (
               <Alert
@@ -808,6 +809,7 @@ const Budget = () => {
               ""
             )}
           </Col>
+
         </Row>
         {/* <hr className='mt-2 mb-2' /> */}
         {loader ? (

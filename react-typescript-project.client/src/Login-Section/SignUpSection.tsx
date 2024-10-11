@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { message, Form, Input, Button, Spin } from 'antd';
+import { message, Form, Input, Button, Spin, notification } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
 import { KeyOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
@@ -51,11 +51,14 @@ const SignUpSection = () => {
                 contact: updatedData.contact
             }).then(
                 (response: any) => {
+
+
+
                     setLoader(false);
                     setIsLogin(true);
                     navigate('/dashboard');
                     setUserDetails(response.data)
-                    
+
                     console.log("UserId", response.data.id, "userData", response.data);
                     localStorage.setItem(
                         'isUser',
@@ -69,14 +72,33 @@ const SignUpSection = () => {
                                 // contact: response?.data?.contact
                             })
                     );
+
                     form.resetFields();
-
                 }
-            ).catch(
 
+
+            ).catch(
                 (error) => {
-                    console.log("error", error)
                     setLoader(false);
+                    if (error.status === 409) {
+                        form.setFieldsValue({
+                            firstName: updatedData.firstName,
+                            lastName: updatedData.lastName,
+                            email: updatedData.email,
+                            password: updatedData.password,
+                            contact: updatedData.contact
+
+                        })
+                        notification.warning({
+                            message: "An account with this email address already exists. Please try logging in or use a different email."
+                        })
+
+                    } else {
+                        console.log("error", error)
+                        notification.error({
+                            message: "Something went wrong! Please try again later"
+                        })
+                    }
                 }
 
             )
@@ -135,7 +157,7 @@ const SignUpSection = () => {
                                         style={{ width: '49%', height: '65px' }}
                                         rules={[{ required: true, message: 'First name is required' }
                                         ]}
-                                    required={false}>
+                                        required={false}>
                                         <Input
                                             style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
                                             prefix={<UserOutlined />}
@@ -150,7 +172,7 @@ const SignUpSection = () => {
                                         label="Last name"
                                         style={{ width: '49%', height: '65px' }}
                                         rules={[{ required: true, message: 'Last name is required' }]}
-                                    required={false}>
+                                        required={false}>
                                         <Input
                                             style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}
                                             prefix={<UserOutlined />}
@@ -171,7 +193,7 @@ const SignUpSection = () => {
                                         message: 'Enter a valid email'
                                     }
                                     ]}
-                                required={false}>
+                                    required={false}>
                                     <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<MailOutlined />} placeholder="Email" />
                                 </Form.Item>
                                 <Form.Item
@@ -179,14 +201,14 @@ const SignUpSection = () => {
                                     name="contact"
                                     style={{ height: '65px' }}
                                     rules={[{ required: true, message: 'Contact is required' },
-                                        {
-                                            pattern:RegExp("[1-9]{1}[0-9]{9}"),
-                                            message:'Invalid input',
-                                            validateTrigger:'onFinish'
-                                        }
+                                    {
+                                        pattern: RegExp("[1-9]{1}[0-9]{9}"),
+                                        message: 'Invalid input',
+                                        validateTrigger: 'onFinish'
+                                    }
                                     ]}
 
-                                required={false}>
+                                    required={false}>
                                     <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix="+91 " placeholder="Contact" maxLength={10} />
 
                                 </Form.Item>
@@ -194,8 +216,8 @@ const SignUpSection = () => {
                                     label="Password"
                                     name="password"
                                     style={{ height: '65px' }}
-                                    rules={[{ required: true, message: 'Password is required' }, {  min: 8, validateTrigger:'onFinish', message:'Password must be at least 8 characters!'}]}
-                               required={false} >
+                                    rules={[{ required: true, message: 'Password is required' }, { min: 8, validateTrigger: 'onFinish', message: 'Password must be at least 8 characters!' }]}
+                                    required={false} >
                                     <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                 </Form.Item>
                                 <Form.Item
@@ -203,7 +225,7 @@ const SignUpSection = () => {
                                     name="confirmPassword"
                                     dependencies={['password']}
                                     rules={[
-                                       
+
                                         ({ getFieldValue }) => ({
                                             validator(_, value) {
                                                 if (!value || getFieldValue('password') === value) {
@@ -215,7 +237,7 @@ const SignUpSection = () => {
                                     ]}
                                     style={{ height: '65px' }}
                                 >
-                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }}  type='password' prefix={<LockOutlined />} placeholder="Confirm Password" />
+                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' prefix={<LockOutlined />} placeholder="Confirm Password" />
                                 </Form.Item>
 
                                 <Form.Item>
@@ -223,9 +245,9 @@ const SignUpSection = () => {
                                         Sign Up
                                     </Button>
                                     <div className='d-flex '>
-                                    <p style={{ marginTop: '3px' }} >Already have an account? </p>
-                                    
-                                    <p   onClick={() => { setIsSignUp(false); navigate('/login'); }} style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text mt-1 ms-1'> Login</p> 
+                                        <p style={{ marginTop: '3px' }} >Already have an account? </p>
+
+                                        <p onClick={() => { setIsSignUp(false); navigate('/login'); }} style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text mt-1 ms-1'> Login</p>
                                     </div>
                                 </Form.Item>
                             </Form>

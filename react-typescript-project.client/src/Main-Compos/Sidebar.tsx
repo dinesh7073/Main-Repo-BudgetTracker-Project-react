@@ -171,7 +171,7 @@ const Sidebar: React.FC = () => {
     <>
       <Layout style={{ height: "100vh" }}>
         <Sider className="" collapsible collapsed={collapsed} onCollapse={(value: any) => setCollapsed(value)} style={{
-          overflow: "auto", height: "100vh", scrollbarWidth: "thin", position: "fixed", left: 0, top: 0, bottom: 0, borderRight: "#D2D6D9", backgroundColor: "white",
+        transition:"0.5s", overflow: "auto", height: "100vh", scrollbarWidth: "thin", position: "fixed", left: 0, top: 0, bottom: 0, borderRight: "#D2D6D9", backgroundColor: "white",
         }}
         >
           <div className="demo-logo-vertical" />
@@ -191,7 +191,7 @@ const Sidebar: React.FC = () => {
             items={siderMenuItems} />
         </Sider>
         <Layout
-          style={{ marginLeft: collapsed ? 80 : 200, height: "100vh", overflow: "auto", background: '#f3f4fa' }}>
+          style={{ marginLeft: collapsed ? 80 : 200, height: "100vh", overflow: "auto", background: '#f3f4fa',transition:"0.5s" }}>
 
           <Header className='headernav-background'
             style={{
