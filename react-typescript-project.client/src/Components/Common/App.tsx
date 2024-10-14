@@ -11,6 +11,7 @@ import LoginCompo from "../../Login-Section/LoginCompo";
 import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
 import { REACT_APP_BASE_URL } from "./Url";
 import axios from "axios";
+import Welcome from "../../Login-Section/Welcome";
 
 
 export interface TransactionType {  // the final fileds for frontend and backend 
@@ -72,7 +73,8 @@ function App() {
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
             setLoader(false)
             setUserDetails(res.data);
-            setIsLogin(true);
+             setIsLogin(true);
+            
 
           }).catch((err) => {
             setLoader(false)
@@ -142,12 +144,17 @@ function App() {
   return (
     <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader, accounts, setAccounts }}>
       <div>
-        {isLogin && <Sidebar />}
+         {isLogin && <Sidebar />} 
+        
+
         <Routes>
           {/* <Route path='/home' element={<Home />}/> */}
           <Route path='/login' element={<LoginCompo />} />
           <Route path='/signup' element={<SignUpSection />} />
           <Route path='/forgotPassword' element={<ForgotpassCompo />} />
+          <Route path='/welcome' element={<Welcome/>}/>
+          
+
         </Routes>
       </div>
     </UserContext.Provider>

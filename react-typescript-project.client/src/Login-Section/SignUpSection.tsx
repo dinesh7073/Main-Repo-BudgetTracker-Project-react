@@ -52,14 +52,9 @@ const SignUpSection = () => {
             }).then(
                 (response: any) => {
 
-
-
                     setLoader(false);
-                    setIsLogin(true);
-                    navigate('/dashboard');
+                     navigate('/welcome');
                     setUserDetails(response.data)
-
-                    console.log("UserId", response.data.id, "userData", response.data);
                     localStorage.setItem(
                         'isUser',
                         JSON.stringify(
@@ -241,13 +236,10 @@ const SignUpSection = () => {
                                 </Form.Item>
 
                                 <Form.Item>
-                                    <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>
-                                        Sign Up
-                                    </Button>
-                                    <div className='d-flex '>
-                                        <p style={{ marginTop: '3px' }} >Already have an account? </p>
-
-                                        <p onClick={() => { setIsSignUp(false); navigate('/login'); }} style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text mt-1 ms-1'> Login</p>
+                                    <Button block type="primary" htmlType="submit" style={{ borderRadius: '15px', backgroundColor: '#37B7C3' }}>  Sign Up   </Button>   <div className='d-flex '>
+                                    <p style={{ marginTop: '3px' }} >Already have an account? </p>
+                                    
+                                    <p   onClick={() => { setIsSignUp(false); navigate('/login'); }} style={{ cursor: "pointer", color: "blue", fontSize: '13px', textDecorationLine: 'underline' }} className='signup-text mt-1 ms-1'> Login</p> 
                                     </div>
                                 </Form.Item>
                             </Form>
