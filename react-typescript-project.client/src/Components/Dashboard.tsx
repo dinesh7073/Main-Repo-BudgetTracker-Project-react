@@ -370,7 +370,7 @@ const Dashboard = () => {
     series: [
       {
         type: 'pie',
-        radius: ['50%', '100%'],
+        radius: ['45%', '90%'],
         avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 1,
@@ -412,7 +412,7 @@ const Dashboard = () => {
                 
                     <EChartsReact 
                       option={option}
-                      style={{width:'200px', height:'150px',marginRight:'auto', marginLeft:'auto'}}
+                      style={{width:'200px', height:'165px',marginRight:'auto', marginLeft:'auto'}}
                     />
 
                     {/* <Card style={{height:'40px', alignContent:'center'}} > */}
@@ -546,7 +546,7 @@ const Dashboard = () => {
                 
                     </Card>
                   )
-                })):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                })):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{position:'absolute' , left:'80px', width:'100px',top:'10px'}} />}
               </div>
                 {sortedGoals.length > 0 ? <Button className="view-all-transactions-button " onClick={() => navigate("/goal")} style={{ marginLeft: '50px', position:'absolute', top:'86%' }}>
                 View all goals
