@@ -48,7 +48,7 @@ const initialFormValues: FormData = {
     currency: 'INR',
     label: '',
     amount: null,
-    date: null,
+    date: dayjs(new Date),
     time: null,
 };
 
@@ -62,7 +62,7 @@ const transformData = (records: FormData[]): FormData[] => {
 const TransactionList: React.FC = () => {
 
 
-    const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet } = useContext<any>(UserContext);
+    const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet, accounts, setAccounts } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -202,9 +202,12 @@ const TransactionList: React.FC = () => {
 
     const getAccountTypeLabel = (value: number | null) => {
         switch (value) {
-            case 2: return 'Saving Account';
-            case 4: return 'Credit Card';
-            case 5: return 'Current Account';
+            case 1: return "Cash";
+            case 2: return "SavingAccount";
+            case 3: return "General";
+            case 4: return "CreditCard";
+            case 5: return "SalaryAccount";
+            case 6: return "CurrentAccount";
         }
 
     }
@@ -290,80 +293,68 @@ const TransactionList: React.FC = () => {
     };
 
     const handleSubmit = (values: FormData) => {
+        debugger
 
-        if (expensesLimit < totalExpenses) {
-
-            notification.warning({
-                message: "You have reached the expenses limit!!",
-            })
-
-            const amount = Number(values.amount);
-            const userId = UserId;
-            const categoryType = values.categoryType.value;
-            const accountType = values.accountType.value;
-            const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
-
-
-
-            const transactionData = { ...values, amount, userId, categoryType, accountType };
-
-            if (editingTransaction) {
-                transactionData.id = editingTransaction.id;
-            }
-            axios.post(apiUrl, transactionData)
-                .then((response) => {
-                    const updatedRecords = editingTransaction
-                        ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
-                        : [...records, response.data];
-
-                    setRecords(updatedRecords);
-                    updateUserWallet(updatedRecords);
-                    notification.success({
-                        message: editingTransaction ? 'Transaction updated successfully' : 'Record added successfully',
-                    });
-                })
-                .catch(err => notification.error({
-                    message: editingTransaction ? 'Failed to update transaction' : 'Failed to add record',
-                    description: err.message,
-                }));
-            form.resetFields();
-            setIsModalVisible(false);
-
-
-        } else {
-            const amount = Number(values.amount);
-            const userId = UserId;
-            const categoryType = values.categoryType.value;
-            const accountType = values.accountType.value;
-            const apiUrl = `${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`;
-
-
-
-            const transactionData = { ...values, amount, userId, categoryType, accountType };
-            if (editingTransaction) {
-                transactionData.id = editingTransaction.id;
-            }
-            axios.post(apiUrl, transactionData)
-                .then((response) => {
-                    const updatedRecords = editingTransaction
-                        ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
-                        : [...records, response.data];
-
-                    setRecords(updatedRecords);
-                    updateUserWallet(updatedRecords);
-                    notification.success({
-                        message: editingTransaction ? 'Transaction updated successfully' : 'Record added successfully',
-                    });
-                })
-                .catch(err => notification.error({
-                    message: editingTransaction ? 'Failed to update transaction' : 'Failed to add record',
-                    description: err.message,
-                }));
-            form.resetFields();
-            setIsModalVisible(false);
-
+        const filteredAccount = accounts.find((a: any) => a.accountType === values.accountType.value);
+        if (!filteredAccount) {
+            notification.error({
+                message: 'Account not found',
+                description: 'The selected account type does not exist.',
+            });
+            return;
         }
+        const transactionAmount = Number(values.amount);
+        let calAmount = values.transactionType === 2
+            ? (filteredAccount.amount - transactionAmount)
+            : (filteredAccount.amount + transactionAmount);
+
+        const updatedAccountData = { ...filteredAccount, amount: calAmount };
+
+        axios.post(`${REACT_APP_BASE_URL}AccountsController/${UserId}CreateAccountsAndUpdate`, updatedAccountData)
+            .then(() => {
+                setAccounts(accounts.map((a: any) => a.accountType === updatedAccountData.accountType ? updatedAccountData : a));
+            })
+            .catch(err => notification.error({
+                message: 'Failed to update account balance',
+                description: err.message,
+            }));
+
+
+
+
+        const transactionData = {
+            ...values,
+            amount: transactionAmount,
+            userId: UserId,
+            categoryType: values.categoryType.value,
+            accountType: values.accountType.value,
+        };
+
+        if (editingTransaction) {
+            transactionData.id = editingTransaction.id;
+        }
+
+        axios.post(`${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`, transactionData)
+            .then((response) => {
+                const updatedRecords = editingTransaction
+                    ? records.map(record => record.id === editingTransaction.id ? { ...record, ...response.data } : record)
+                    : [...records, response.data];
+
+                setRecords(updatedRecords);
+                updateUserWallet(updatedRecords);
+                notification.success({
+                    message: editingTransaction ? 'Transaction updated successfully' : 'Record added successfully',
+                });
+            })
+            .catch(err => notification.error({
+                message: editingTransaction ? 'Failed to update transaction' : 'Failed to add record',
+                description: err.message,
+            }));
+
+        form.resetFields();
+        setIsModalVisible(false);
     };
+
 
     const handleCancel = () => {
         setIsModalVisible(false);
@@ -627,7 +618,7 @@ const TransactionList: React.FC = () => {
             <Modal
                 style={{ width: '700px' }}
                 title={editingTransaction ? 'Edit Record' : 'Add Record'}
-                visible={isModalVisible}
+                open={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
                     <Form.Item className='d-flex flex-column px-3'>
@@ -648,7 +639,7 @@ const TransactionList: React.FC = () => {
                     className='p-3 rounded'
                     style={{ maxWidth: '100%', backgroundColor: '', minWidth: '100%' }}
                     onFinish={handleSubmit}
-                    initialValues={formData || { categoryType: '', amount: 0, transactionType: null, accountType: '', currency: 'INR' }}
+                    initialValues={formData || { categoryType: '', amount: 0, transactionType: 2, accountType: '', currency: 'INR' }}
                 >
                     <Col span={24} >
 
@@ -661,6 +652,7 @@ const TransactionList: React.FC = () => {
                                     name="transactionType"
                                     rules={[{ required: true, message: 'Please select a transactiontype!' }]}
                                     style={{ width: '100%' }}
+
                                 >
 
                                     <Segmented size='middle' options={[
@@ -668,7 +660,7 @@ const TransactionList: React.FC = () => {
                                         { label: 'Expense', value: 2, },
                                     ]}
                                         onChange={handleTypeChange}
-                                        defaultValue={2}
+
                                         value={formData.transactionType}
                                         style={{ width: '100%', backgroundColor: '#F3F4FA', border: '1px solid lightgrey' }}
                                         block
@@ -687,9 +679,9 @@ const TransactionList: React.FC = () => {
                                         className='w-100'
                                         labelInValue
                                     >
-                                        {(formData.transactionType === 2 ? expenseAccountType : incomeAccountType).map((accountType) => (
-                                            <Option key={accountType.value} value={accountType.value}>
-                                                {getAccountTypeLabel(accountType.value)}
+                                        {(formData.transactionType === 2 ? accounts : incomeAccountType).map((e: any) => (
+                                            <Option key={e.accountType} value={e.accountType}>
+                                                {getAccountTypeLabel(e.accountType)}
                                             </Option>
                                         ))}
 
@@ -773,12 +765,13 @@ const TransactionList: React.FC = () => {
                                     label="Date & Time"
                                     name="date"
                                     rules={[{ required: true, message: 'Please select a date !' }]}
+
                                 >
 
                                     <DatePicker
                                         className='w-100'
                                         placeholder='Select date & time'
-                                        defaultValue={dayjs(new Date)}
+
                                         showTime
                                         format={"DD-MM-YYYY HH:mm:ss"}
                                         value={dayjs()}

@@ -29,6 +29,12 @@ interface ExpenseLimitTypes {
   id: string;
   userId: string;
   amount: number | 0;
+}interface AccountTypes {
+  id: string;
+  userId: string;
+  bankName: string;
+  accountType: number;
+  amount: number;
 }
 
 function App() {
@@ -38,7 +44,7 @@ function App() {
 
   // console.log(import.meta.env.VITE_SOME_KEY) // 123
   // console.log(import.meta.env.VITE_REACT_APP_BASE_URL,'base url') // 123
-
+  const [accounts, setAccounts] = useState<AccountTypes[]>([]);
 
   const [userWallet, setUserWallet] = useState<number>()
   const [expensesLimit, setexpensesLimit] = useState<ExpenseLimitTypes[]>([])
@@ -86,6 +92,14 @@ function App() {
       setIsLogin(false);
       navigate('/login');
     }
+    setLoader(true)
+    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
+      setAccounts(response.data);
+      // setLoader(false);
+    }).catch(() => {
+      setLoader(false);
+    });
+
   }, [isLogin]);
 
   useEffect(() => {
@@ -126,7 +140,7 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader, accounts, setAccounts }}>
       <div>
         {isLogin && <Sidebar />}
         <Routes>
