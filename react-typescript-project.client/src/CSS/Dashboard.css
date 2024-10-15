@@ -134,12 +134,14 @@
     margin: 0 10px 0 0;
 }
 
-.transactions-list-container {}
+
 
 .view-all-transactions-button {
     width: 60%;
     font-size: 12px;
-  
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 25px;
 
 }
@@ -172,4 +174,8 @@
 
 .budgetCard .ant-card .ant-card-body{
     padding:0;
+}
+
+.accountCard .ant-card .ant-card-body{
+    padding: 17px;
 }
