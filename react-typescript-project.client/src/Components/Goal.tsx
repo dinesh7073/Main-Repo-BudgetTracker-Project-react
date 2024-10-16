@@ -1,11 +1,11 @@
 
-import { Breadcrumb, Button, Card, Col, DatePicker, Empty, Form, Input, Modal, notification, Popconfirm, Progress, Row, Select, Statistic, Table, Tooltip, Typography } from 'antd'
+import { Breadcrumb, Button, Card, Col, DatePicker, Dropdown, Empty, Form, Input, Modal, notification, Popconfirm, Progress, Row, Select, Space, Spin, Statistic, Table, Tooltip, Typography } from 'antd'
 import axios from 'axios';
 import { Edit, FilePenLine, Plus, Trash2 } from 'lucide-react';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../UserContext';
-import { DeleteOutlined, EditOutlined, HomeOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, HomeOutlined, MoreOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
@@ -33,6 +33,7 @@ const Goal = () => {
   const [form] = Form.useForm();
   const { userDetails, baseUrl, UserId } = useContext<any>(UserContext);
   const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
+  const [loader, setLoader] = useState<boolean>(false)
 
 
   const cardStyle = {
@@ -54,6 +55,7 @@ const Goal = () => {
 
 
   useEffect(() => {
+    setLoader(true);
 
     axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
@@ -67,9 +69,15 @@ const Goal = () => {
             savedAmount: Number(goal.savedAmount),
             targetDate: dayjs(goal.targetDate)
           })));
+        setLoader(false);
+
         }
       })
-      .catch((err) => console.log("Error from server", err));
+      .catch((err) => {
+        console.log("Error from server", err)
+        setLoader(false);
+
+      });
   }, []);
 
   const handleCancel = () => {
@@ -200,10 +208,39 @@ const Goal = () => {
       key : 'action',
       render:(text:string, data : any)=>(
         <div>
-        <span className='pe-4'style={{fontSize:'18px'}}>
-        <EditOutlined  onClick={()=>handleEdit(data)}/></span>
-       <span style={{fontSize:'18px'}} > <DeleteOutlined size={18} onClick={()=>handleDelete(data.id)}  style={{color:'red'}} />
-      </span>
+        <Dropdown
+            menu={{
+              items: [
+                {
+                  className: "px-2",
+                  label: (
+                    <span onClick={() => handleEdit(data)}>
+                      <EditOutlined size={15} className='pe-2'/> Edit
+                    </span>
+                  ),
+                  key: "0",
+                },
+                      {
+                        className: "px-2",
+                         label:
+                      (<span onClick={()=>handleDelete(data.id)}>
+                        <DeleteOutlined size={15} className= "pe-2"/> Delete
+                      </span>), key: "1",}
+                    
+                 
+              ],
+            }}
+            trigger={["click"]}
+          >
+            <a
+              className="text-dark fw-bold"
+              onClick={(e) => e.preventDefault()}
+            >
+              <Space>
+                <MoreOutlined size={20} />
+              </Space>
+            </a>
+          </Dropdown>
       </div>
       )
     }
@@ -344,13 +381,13 @@ const Goal = () => {
         <Row gutter={24} className='d-flex flex-row  justify-between '>
 
 
-          <Col span={3.5} >
+          <Col span={10} >
             <Button className='p-2 text-center' type="primary" onClick={() => setIsModalVisible(true)}> <Plus size={19} />Add Goal</Button>
           </Col>
 
           <Col span={6} style={{ width: '100%', display: 'flex' }}>
-            <p className='pt-1 ' style={{ width: '82px' }}>Search goal</p>
-            <Search placeholder="Search goal" style={{ width: 200 }} onSearch={handleSearch} />
+            <p className='py-1 align-content-center' style={{ width: '82px' }}>Search goal</p>
+            <Search placeholder="Search goal" style={{ width: 200 }} onSearch={()=>handleSearch} />
           </Col>
           <Col lg={{ span: 8 }} className='d-flex '  >
 
@@ -365,9 +402,12 @@ const Goal = () => {
 
           </Col>
         </Row>
-        <Table
+
+       {loader?(
+        <Spin spinning={loader} size='large' className='d-flex justify-content-center py-5'/>
+       ) : (<Table
                   size='small'
-                  dataSource={goals}
+                  dataSource={filteredGoals}
                  columns={columns}
                   rowKey="id"
                   scroll={{ y: 445 }}
@@ -381,8 +421,8 @@ const Goal = () => {
                     return (
                       <Table.Summary fixed>
                         <Table.Summary.Row>
-                          <Table.Summary.Cell index={0}><h6>Total</h6></Table.Summary.Cell>
-                          <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                          <Table.Summary.Cell index={1}><h6>Total</h6></Table.Summary.Cell>
                           <Table.Summary.Cell index={2}></Table.Summary.Cell>
                           <Table.Summary.Cell index={3}>
                             <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
@@ -392,7 +432,7 @@ const Goal = () => {
                       </Table.Summary>
                     )
                   }}
-                  />
+                  />)}
         <Modal
           title={editGoal ? "Edit Goal" : "Add Goal"}
           visible={isModalVisible}
@@ -440,7 +480,7 @@ const Goal = () => {
             </Form.Item>
 
             <Form.Item
-              label="Saved amount"
+              label="Save amount"
               name="savedAmount"
               rules={[{ required: true, message: 'Please enter an amount to save!' }]}
             >

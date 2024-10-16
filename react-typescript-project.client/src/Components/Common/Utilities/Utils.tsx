@@ -105,18 +105,38 @@ class UtilsBase {
           : 2
       )
       .split(".");
-    var str = number;
+    var str = t[0].toString();
 
-    if (t.length >= 1) {
-      str = "";
-      //var r = t[0].slice('');
-      var r = t[0].slice(0);
-      for (var i = r.length - 1, j = 1; i >= 0; i--, j++) {
-        str = r[i] + str;
-        if (withComma && j % 3 === 0 && i > 0) str = "," + str;
+    // if (t.length >= 1) {
+    //   str = "";
+    //   //var r = t[0].slice('');
+    //   var r = t[0].slice(0);
+    //   for (var i = r.length - 1, j = 1; i >= 0; i--, j++) {
+    //     str = r[i] + str;
+    //     if (withComma && j % 2 === 1 && i > 0 && j > 1) str = "," + str;
+
+    //     if (withComma && j === 3 && i > 0)   str = "," + str;
+        
+    //   }
+    //   if (t.length > 1) str += "." + t[1];
+    // }
+
+    if (withComma) {
+      // Extract the last 3 digits and the rest of the digits
+      let lastThree = str.slice(-3);
+      let otherNumbers = str.slice(0, -3);
+  
+      // Add commas every two digits in the rest of the number
+      if (otherNumbers !== '') {
+        otherNumbers = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+        str = otherNumbers + "," + lastThree;
+      } else {
+        str = lastThree; // If there are no other numbers, just the last three digits
       }
-      if (t.length > 1) str += "." + t[1];
     }
+
+    if (t.length > 1) str += "." + t[1];
+
     return (withCurrency ? "₹ " : "") + (isNegative ? `(-${str})` : str);
   };
   /**

@@ -129,7 +129,7 @@ const Budget = () => {
   const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
 
   const [loader, setLoader] = useState<boolean>(false);
-  const [editingLimit, setEditingLimit] = useState(false);
+  // const [editingLimit, setEditingLimit] = useState(false);
 
   const {
     userDetails,
@@ -430,6 +430,8 @@ const Budget = () => {
     }
     setIsModalVisible(true);
   };
+
+
 
   const handleCancel = () => {
     setIsModalVisible(false);

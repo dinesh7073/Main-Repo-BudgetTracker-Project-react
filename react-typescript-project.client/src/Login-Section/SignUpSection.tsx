@@ -52,13 +52,9 @@ const SignUpSection = () => {
             }).then(
                 (response: any) => {
 
-
-
                     setLoader(false);
                      navigate('/welcome');
                     setUserDetails(response.data)
-
-                    console.log("UserId", response.data.id, "userData", response.data);
                     localStorage.setItem(
                         'isUser',
                         JSON.stringify(
