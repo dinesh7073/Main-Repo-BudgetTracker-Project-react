@@ -18,6 +18,7 @@ import buddhistEra from 'dayjs/plugin/buddhistEra';
 import 'dayjs/locale/en';
 import buddhistLocale from 'antd/es/date-picker/locale/en_US';
 
+import { AccountTypes } from '../Components/Settings-children\'s/AccountsCompo';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(buddhistEra);
@@ -25,7 +26,7 @@ dayjs.extend(buddhistEra);
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-interface FormData {
+export interface FormData {
     id: string;
     userId: string;
     transactionType: number | null;
@@ -62,7 +63,7 @@ const transformData = (records: FormData[]): FormData[] => {
 const TransactionList: React.FC = () => {
 
 
-    const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet, accounts, setAccounts } = useContext<any>(UserContext);
+    const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet, } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -73,7 +74,7 @@ const TransactionList: React.FC = () => {
     const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
     const [transactiontransactionType, setTransactiontransactionType] = useState<'Income' | 'Expense' | 'All'>('All');
     const [loader, setLoader] = useState<boolean>(false)
-
+    const [accounts, setAccounts] = useState<AccountTypes[]>([]);
 
     const navigate = useNavigate();
 
@@ -98,6 +99,13 @@ const TransactionList: React.FC = () => {
                 console.log("Error from server", err);
                 setLoader(false)
             });
+
+        axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
+            setAccounts(response.data);
+            setLoader(false);
+        }).catch(() => {
+            setLoader(false);
+        });
     }, [UserId, setTransactionData]);
 
     const updateUserWallet = (records: FormData[]) => {
@@ -127,6 +135,8 @@ const TransactionList: React.FC = () => {
         { label: 'Business', value: 3 },
         { label: 'Other Income', value: 4 },
     ];
+
+
 
     const incomeAccountType = [
         { label: 'Saving Account', value: 2 },
@@ -233,7 +243,8 @@ const TransactionList: React.FC = () => {
             case 2: return "Saving Account";
             case 3: return "General";
             case 4: return "Credit Card";
-            case 5: return "Current Account";
+            case 5: return "Salary Account";
+            case 6: return "Current Account";
             default: return "Unknown";
         }
     };
@@ -293,8 +304,8 @@ const TransactionList: React.FC = () => {
     };
 
     const handleSubmit = (values: FormData) => {
-        debugger
 
+        const transactionAmount = Number(values.amount);
         const filteredAccount = accounts.find((a: any) => a.accountType === values.accountType.value);
         if (!filteredAccount) {
             notification.error({
@@ -303,10 +314,39 @@ const TransactionList: React.FC = () => {
             });
             return;
         }
-        const transactionAmount = Number(values.amount);
-        let calAmount = values.transactionType === 2
-            ? (filteredAccount.amount - transactionAmount)
-            : (filteredAccount.amount + transactionAmount);
+
+        const transactionData = {
+            ...values,
+            amount: transactionAmount,
+            userId: UserId,
+            categoryType: values.categoryType.value,
+            accountType: values.accountType.value,
+        };
+
+        // if (editingTransaction) {
+        //     transactionData.id = editingTransaction.id;
+        // }
+        let calAmount;
+
+        if (editingTransaction) {
+            transactionData.id = editingTransaction.id;
+            // const getrecord: any = records.find((t) => t.id === editingTransaction.id);
+            // if (getrecord) {
+
+            let removeAmount = transactionData.amount - Number(editingTransaction.amount);
+
+            calAmount = values.transactionType === 2
+                ? (filteredAccount.amount - removeAmount)
+                : (filteredAccount.amount + removeAmount);
+            // }
+
+        } else {
+            calAmount = values.transactionType === 2
+                ? (filteredAccount.amount - transactionAmount)
+                : (filteredAccount.amount + transactionAmount);
+        }
+
+
 
         const updatedAccountData = { ...filteredAccount, amount: calAmount };
 
@@ -320,19 +360,6 @@ const TransactionList: React.FC = () => {
             }));
 
 
-
-
-        const transactionData = {
-            ...values,
-            amount: transactionAmount,
-            userId: UserId,
-            categoryType: values.categoryType.value,
-            accountType: values.accountType.value,
-        };
-
-        if (editingTransaction) {
-            transactionData.id = editingTransaction.id;
-        }
 
         axios.post(`${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`, transactionData)
             .then((response) => {
@@ -473,7 +500,7 @@ const TransactionList: React.FC = () => {
 
                 </>
             ),
-        },
+        }
     ];
 
 
@@ -483,7 +510,7 @@ const TransactionList: React.FC = () => {
         <div style={{ padding: '10px 16px 16px 16px', backgroundColor: 'white' }}>
             <Col span={24}>
                 <Row gutter={24} className='d-flex flex-row justify-content-between mb-3'>
-                    <Col span={14}>
+                    <Col span={17}>
                         <Breadcrumb
                             items={[
                                 {
@@ -495,8 +522,8 @@ const TransactionList: React.FC = () => {
                             ]}
                         />
                     </Col>
-                    <Col span={10} className='d-flex flex-row justify-content-between'>
-                        <Statistic className='d-flex mx-1' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'goldenrod', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>} value={Utils.getFormattedNumber(userWallet)} />
+                    <Col span={7} className='d-flex flex-row justify-content-between'>
+                        {/* <Statistic className='d-flex mx-1' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'goldenrod', marginRight: '5px', fontWeight: '500' }}>My Wallet : ₹ </span>} value={Utils.getFormattedNumber(userWallet)} /> */}
                         <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'green', marginRight: '5px', fontWeight: '500' }}>Incomes  : ₹</span>} value={Utils.getFormattedNumber(totalIncome)} />
                         <Statistic className='d-flex' valueStyle={{ fontSize: '14px', fontWeight: '500' }} title={<span style={{ color: 'red', marginRight: '5px', fontWeight: '500' }}>Expenses  : ₹ </span>} value={Utils.getFormattedNumber(totalExpenses)} />
                     </Col>
@@ -585,6 +612,7 @@ const TransactionList: React.FC = () => {
                     rowKey="id"
                     scroll={{ y: 445 }}
 
+
                     pagination={false}
 
                     summary={(data: any) => {
@@ -604,6 +632,7 @@ const TransactionList: React.FC = () => {
                                     <Table.Summary.Cell index={6}>
                                         <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
                                     </Table.Summary.Cell>
+                                    <Table.Summary.Cell index={7}></Table.Summary.Cell>
                                 </Table.Summary.Row>
                             </Table.Summary>
                         )
@@ -634,6 +663,7 @@ const TransactionList: React.FC = () => {
                 ]}
             >
                 <Form
+                    requiredMark={false}
                     form={form}
                     layout="vertical"
                     className='p-3 rounded'
@@ -679,9 +709,13 @@ const TransactionList: React.FC = () => {
                                         className='w-100'
                                         labelInValue
                                     >
-                                        {(formData.transactionType === 2 ? accounts : incomeAccountType).map((e: any) => (
+                                        {(formData.transactionType === 2 ? accounts : accounts).map((e: any) => (
                                             <Option key={e.accountType} value={e.accountType}>
-                                                {getAccountTypeLabel(e.accountType)}
+
+                                                <Tooltip placement="right" title={e.name}>
+                                                    {getAccountTypeLabel(e.accountType)}{` [ ${e.name} ]`}
+
+                                                </Tooltip>
                                             </Option>
                                         ))}
 

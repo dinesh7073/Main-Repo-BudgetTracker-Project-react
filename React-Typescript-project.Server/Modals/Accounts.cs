@@ -14,8 +14,8 @@ namespace React_Typescript_project.Server.Modals
         [BsonRepresentation(BsonType.ObjectId), BsonElement("userId")]
         public string UserId { get; set; }
 
-        [BsonElement("bankName")]
-        public string BankName { get; set; }
+        [BsonElement("name")]
+        public string Name { get; set; }
 
         [BsonElement("accountType")]
         public AccountType AccountType { get; set; }
