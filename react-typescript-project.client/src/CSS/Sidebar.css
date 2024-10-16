@@ -24,3 +24,16 @@
     background-color: #f3eeff !important;
     border-right: 3px solid #6439FF !important;
 }
+
+:where(.css-dev-only-do-not-override-blynoi).ant-layout .ant-layout-sider-trigger {
+    position: fixed;
+    bottom: 0;
+    z-index: 1;
+    height: 48px;
+    color: #69727A;
+    line-height: 48px;
+    text-align: center;
+    background: #e0d6f9;
+    cursor: pointer;
+    transition: all 0.5s;
+}

@@ -45,7 +45,7 @@ function App() {
 
   // console.log(import.meta.env.VITE_SOME_KEY) // 123
   // console.log(import.meta.env.VITE_REACT_APP_BASE_URL,'base url') // 123
-  const [accounts, setAccounts] = useState<AccountTypes[]>([]);
+
 
   const [userWallet, setUserWallet] = useState<number>()
   const [expensesLimit, setexpensesLimit] = useState<ExpenseLimitTypes[]>([])
@@ -73,8 +73,8 @@ function App() {
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
             setLoader(false)
             setUserDetails(res.data);
-             setIsLogin(true);
-            
+            setIsLogin(true);
+
 
           }).catch((err) => {
             setLoader(false)
@@ -95,12 +95,8 @@ function App() {
       navigate('/login');
     }
     setLoader(true)
-    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
-      setAccounts(response.data);
-      // setLoader(false);
-    }).catch(() => {
-      setLoader(false);
-    });
+
+
 
   }, [isLogin]);
 
@@ -142,18 +138,18 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader, accounts, setAccounts }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader }}>
       <div>
-         {isLogin && <Sidebar />} 
-        
+        {isLogin && <Sidebar />}
+
 
         <Routes>
           {/* <Route path='/home' element={<Home />}/> */}
           <Route path='/login' element={<LoginCompo />} />
           <Route path='/signup' element={<SignUpSection />} />
           <Route path='/forgotPassword' element={<ForgotpassCompo />} />
-          <Route path='/welcome' element={<Welcome/>}/>
-          
+          <Route path='/welcome' element={<Welcome />} />
+
 
         </Routes>
       </div>
