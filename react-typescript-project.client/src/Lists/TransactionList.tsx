@@ -64,7 +64,7 @@ const TransactionList: React.FC = () => {
 
 
     const { setTransactionData, userDetails, expensesLimit, userWallet, setUserWallet, accounts, setAccounts } = useContext<any>(UserContext);
-    const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet, } = useContext<any>(UserContext);
+    // const { setTransactionData, userDetails, expensesLimit, userWallet, setUserWallet, } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
     const [records, setRecords] = useState<FormData[]>([]);
@@ -75,7 +75,7 @@ const TransactionList: React.FC = () => {
     const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
     const [transactiontransactionType, setTransactiontransactionType] = useState<'Income' | 'Expense' | 'All'>('All');
     const [loader, setLoader] = useState<boolean>(false)
-    const [accounts, setAccounts] = useState<AccountTypes[]>([]);
+   
 
     const navigate = useNavigate();
     const UserId = userDetails?.id;

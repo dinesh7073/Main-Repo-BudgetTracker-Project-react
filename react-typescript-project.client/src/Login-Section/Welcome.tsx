@@ -60,7 +60,7 @@ const Welcome = () => {
 
     return (
         <div style={{ height: '' }}>
-            <p className='mt-3' onClick={() => { navigate("/dashboard"); }}>
+            <p className='mt-3' onClick={() => { navigate("/dashboard"); window.location.reload(); }}>
                 <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>Skip</p>
             </p>
 
