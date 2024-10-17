@@ -462,7 +462,7 @@ const TransactionList: React.FC = () => {
             key: 'amount',
             render: (amount: number, record: any) => (
                 <span style={{ color: record.transactionType === 1 ? 'green' : 'red', }} >
-                    {record.transactionType === 1 ?` ₹ +${Utils.getFormattedNumber(amount)}` : `₹ -${Utils.getFormattedNumber(amount)}`}
+                    {record.transactionType === 1 ? `₹ +${Utils.getFormattedNumber(amount)}` : `₹ -${Utils.getFormattedNumber(amount)}`}
                 </span>
             ),
         },
