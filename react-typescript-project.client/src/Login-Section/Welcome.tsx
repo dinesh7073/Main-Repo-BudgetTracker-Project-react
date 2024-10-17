@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../UserContext';
-import { Button, Form, Input } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Button, Form, FormProps, Input, Segmented, Select, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
-
 
 const Welcome = () => {
     const { setAccounts, UserId,userDetails,setLoader } = useContext<any>(UserContext);
@@ -41,22 +39,71 @@ const Welcome = () => {
     }
 
     return (
-        <div style={{ textAlign: 'center', marginTop: '13%', }}>
-            <div>
-                <img src='https://images.pond5.com/gold-coins-cartoon-style-are-footage-276090183_iconl.jpeg' style={{ borderRadius: '50%', height: '90px', width: '100px', }}></img>
-            </div>
-            <div style={{ fontFamily: 'open sans' }}>
-                <b><h4 className='mt-4'>Set up your cash balance</h4></b>
-            </div>
-            <div>
-                <h6 className='mt-4 ' style={{ fontSize: '12px', marginLeft: '-260px' }}>Cash balance</h6>
-                <Input placeholder='0' style={{ width: '22%', borderRadius: 'px' }} onChange={handleChange} value={inputValue} type='number'></Input>
-                <p className='mt-2' style={{ fontSize: '12px', marginLeft: '-60px' }}>How much cash do you have  in your   physical wallet</p>
+        <div style={{ height: '' }}>
+
+            <p className='mt-3' onClick={() => { navigate("/dashboard"); window.location.reload(); }}><p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>    Skip</p> </p>
+
+            {/* <Button className=' ps-3 pe-3' onClick={() => { navigate('/dashboard'); window.location.reload(); }} style={{ marginLeft: '94%',  }}>Skip</Button> */}
+            <div style={{ textAlign: 'center', marginTop: '11%' }}>
+
+                <div className="mt-4">
+                    <img
+                        src="https://images.pond5.com/gold-coins-cartoon-style-are-footage-276090183_iconl.jpeg"
+                        alt="Coins"
+                        style={{ borderRadius: '50%', height: '90px', width: '100px' }}
+                    />
+                </div>
+                <div style={{ fontFamily: 'Open Sans' }}>
+                    <b>
+                        <h4 className="mt-4">Set up your cash balance</h4>
+                    </b>
+                </div>
+                <div>
+                    <h6 className="mt-4" style={{ fontSize: '12px', marginLeft: '-260px' }}>
+                        Cash balance
+                    </h6>
+                    {/* <Form.Item
+                    
+                    rules={[{ required: true, message: 'Please input!' }]}
+                    
+                   style={{ width: '22%', borderRadius: '5px', marginLeft:'39%'}}>
+                     <Input   />
+
+
+                    </Form.Item> */}
+
+                    <Form>
+                        <Form.Item name="email"
+
+                            rules={[{ required: true, message: 'Please input your Input!' },
+
+                            ]}
+                            style={{ width: '22%', borderRadius: '5px', marginLeft: '39%' }} >
+                            <Input />
+                        </Form.Item>
+                    </Form>
+
+                    <p className="mt-2" style={{ fontSize: '12px', marginLeft: '-60px' }}>
+                        How much cash do you have in your physical wallet?
+                    </p>
+                </div>
+                <Button type='primary'
+                    onClick={() => {
+                        navigate('/dashboard');
+                        window.location.reload();
+                        // const htmlType="submit" 
+                    }}
+                    className="mt-5"
+                    style={{ width: '23%', borderRadius: '19px', height: '37px', color: 'white',  }} >
+                    Confirm Cash Balance
+                </Button>
+
 
             </div>
-            <Button className='mt-5' style={{ width: '23%', borderRadius: '19px', height: '37px', color: 'white', backgroundColor: '#37B7C3' }} onClick={onSave}>Confirm cash balance</Button>
         </div>
-    )
-}
+    );
+};
 
-export default Welcome
+export default Welcome;
+
+

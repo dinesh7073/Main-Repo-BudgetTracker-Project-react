@@ -212,6 +212,7 @@ const Budget = () => {
       .get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
+          setLoader(false);
           setBudgetExists(true);
 
           let totalAmountSpent = 0;
@@ -580,14 +581,14 @@ const Budget = () => {
       render: (date: string) => dayjs(date).format("DD-MM-YYYY"),
     },
     {
-      title: "Completion",
+      title: "Used",
       dataIndex: "completion",
       key: "completion",
       render: (text: any, budget: any) => (
         <span>
           <Progress
-            strokeColor={"#FF5A29"}
-            steps={3}
+            strokeColor={"primary"}
+            steps={4}
             percent={Math.round((budget.amountSpent / budget.amount) * 100)}
             status="normal"
           />
@@ -655,7 +656,7 @@ const Budget = () => {
           gutter={24}
           className="d-flex flex-row justify-content-between mb-2"
         >
-          <Col span={14}>
+          <Col span={19}>
             <Breadcrumb
               items={[
                 {
@@ -670,7 +671,7 @@ const Budget = () => {
             />
           </Col>
 
-          <Col span={8} className="d-flex flex-row justify-content-between">
+          <Col span={5} className="d-flex flex-row justify-content-between">
             {/* <Statistic
               className="d-flex mx-2  py-1"
               style={{
@@ -712,7 +713,7 @@ const Budget = () => {
               }
               value={Utils.getFormattedNumber(totalexpense)}
             />
-            <Statistic
+            {/* <Statistic
               className="d-flex mx-2  py-1 "
               style={{ backgroundColor: "", borderRadius: "5px" }}
               valueStyle={{ fontSize: "15px", fontWeight: "500" }}
@@ -728,7 +729,7 @@ const Budget = () => {
                 </span>
               }
               value={Utils.getFormattedNumber(userWallet)}
-            />
+            /> */}
           </Col>
         </Row>
 
