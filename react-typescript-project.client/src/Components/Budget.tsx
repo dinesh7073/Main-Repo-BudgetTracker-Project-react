@@ -137,7 +137,7 @@ const Budget = () => {
     setUserWallet,
     expensesLimit,
     setexpensesLimit,
-    UserId,
+    
   } = useContext<any>(UserContext);
 
   const getCategoryLabel = (category: number | null) => {
@@ -187,6 +187,8 @@ const Budget = () => {
         return <HelpCircle size={20} />;
     }
   };
+
+  const UserId = userDetails?.id;
 
   useEffect(() => {
     axios

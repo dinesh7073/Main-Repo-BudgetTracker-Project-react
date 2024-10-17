@@ -29,18 +29,18 @@ namespace Budget_Tracker_Bend.Modals
         public decimal AmountSpent { get; set; } = 0;
     }
 
-    public class ExpenseLimit
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId), BsonElement("_id")]
-        public string? Id { get; set; }
-
-        [BsonRepresentation(BsonType.ObjectId), BsonElement("userId")]
-        public string UserId { get; set; }
-
-        [BsonElement("Amount")]
-        public decimal Amount { get; set; }
-    }
+ //  public class ExpenseLimit
+ //  {
+ //      [BsonId]
+ //      [BsonRepresentation(BsonType.ObjectId), BsonElement("_id")]
+ //      public string? Id { get; set; }
+ //
+ //      [BsonRepresentation(BsonType.ObjectId), BsonElement("userId")]
+ //      public string UserId { get; set; }
+ //
+ //      [BsonElement("Amount")]
+ //      public decimal Amount { get; set; }
+ //  }
 
 
 }

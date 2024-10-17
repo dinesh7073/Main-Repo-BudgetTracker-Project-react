@@ -55,6 +55,7 @@ builder.Services.AddSingleton<SavingsServices>();
 builder.Services.AddSingleton<UsersServices>();
 builder.Services.AddSingleton<TransactionsServices>();
 builder.Services.AddSingleton<AccountsServices>();
+builder.Services.AddSingleton<CategoriesServices>();
 
 
 

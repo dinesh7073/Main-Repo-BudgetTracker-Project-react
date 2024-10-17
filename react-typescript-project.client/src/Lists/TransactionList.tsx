@@ -63,6 +63,7 @@ const transformData = (records: FormData[]): FormData[] => {
 const TransactionList: React.FC = () => {
 
 
+    const { setTransactionData, userDetails, expensesLimit, userWallet, setUserWallet, accounts, setAccounts } = useContext<any>(UserContext);
     const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet, } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
@@ -77,7 +78,7 @@ const TransactionList: React.FC = () => {
     const [accounts, setAccounts] = useState<AccountTypes[]>([]);
 
     const navigate = useNavigate();
-
+    const UserId = userDetails?.id;
 
     useEffect(() => {
         setLoader(true);
@@ -690,7 +691,6 @@ const TransactionList: React.FC = () => {
                                         { label: 'Expense', value: 2, },
                                     ]}
                                         onChange={handleTypeChange}
-
                                         value={formData.transactionType}
                                         style={{ width: '100%', backgroundColor: '#F3F4FA', border: '1px solid lightgrey' }}
                                         block
@@ -805,7 +805,7 @@ const TransactionList: React.FC = () => {
                                     <DatePicker
                                         className='w-100'
                                         placeholder='Select date & time'
-
+                                        type='primary'
                                         showTime
                                         format={"DD-MM-YYYY HH:mm:ss"}
                                         value={dayjs()}
@@ -824,6 +824,7 @@ const TransactionList: React.FC = () => {
                                     name="label"
                                 >
                                     <Input
+                                        type='primary'
                                         onInput={(e: any) => e.target.value = e.target.value.length > 1 ? e.target.value : e.target.value.toUpperCase()}
                                         placeholder="Enter label"
                                     />

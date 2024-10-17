@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../UserContext';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -9,22 +9,35 @@ import Dashboard from '../Components/Dashboard';
 const Welcome = () => {
     const { userDetails, setUserDetails } = useContext<any>(UserContext); // Make sure to provide setter in context
     const [form] = Form.useForm(); // Create form instance
+    const { setAccounts, UserId,userDetails,setLoader } = useContext<any>(UserContext);
+    const [inputValue, setInputValue] = useState();
     const navigate = useNavigate();
 
-    const onSave = (values: any) => {
-        const account = {
-            userId: userDetails.id,
+    const handleChange = (e: any) => {
+        setInputValue(e.target.value);
+    }
+
+    
+    const onSave = () => {
+
+        const userId = userDetails?.id;
+
+        const accountdata = {
+            userId : userId,
             bankName: 'Cash',
             accountType: 1,
-            amount: values.cashAmount, // Use form value
-        };
-        axios.post(`${REACT_APP_BASE_URL}AccountsController/${userDetails.id}CreateAccountsAndUpdate`, account)
-            .then((res) => {
-                navigate('/dashboard');
-                console.log(res.data);
-            })
-            .catch((err) => console.log("error", err));
-    };
+            amount: inputValue == null ? 0 : Number(inputValue)
+        }
+        axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
+            navigate('/');
+            setLoader(true);
+            window.location.reload();
+            setAccounts(res.data);
+           
+        }).catch((err) => {
+            setLoader(false);
+            console.log("error", err,)})
+
 
     const ondata = (values: any) => {
         axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
