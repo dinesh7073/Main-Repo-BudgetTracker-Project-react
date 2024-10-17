@@ -7,9 +7,9 @@ import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 import Dashboard from '../Components/Dashboard';
 
 const Welcome = () => {
-    const { userDetails, setUserDetails } = useContext<any>(UserContext); // Make sure to provide setter in context
+   
     const [form] = Form.useForm(); // Create form instance
-    const { setAccounts, UserId,userDetails,setLoader } = useContext<any>(UserContext);
+    const { setAccounts, UserId,userDetails,setLoader ,setUserDetails} = useContext<any>(UserContext);
     const [inputValue, setInputValue] = useState();
     const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ const Welcome = () => {
             setLoader(false);
             console.log("error", err,)})
 
-
+        }
     const ondata = (values: any) => {
         axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
             UserName: values.email,
