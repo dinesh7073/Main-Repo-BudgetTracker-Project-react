@@ -140,7 +140,7 @@ function App() {
   return (
     <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader }}>
       <div>
-        {isLogin && <Sidebar />}
+        {/* {isLogin && <Sidebar />} */}
 
 
         <Routes>
