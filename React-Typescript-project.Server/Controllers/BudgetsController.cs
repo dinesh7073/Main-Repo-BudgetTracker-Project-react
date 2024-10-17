@@ -50,27 +50,27 @@ namespace Budget_Tracker_Bend.Controllers
             return NoContent();
         }
 
-        [HttpGet("{UserId:length(24)}GetExpenseLimitById")]
-        public async Task<ActionResult<List<ExpenseLimit>>> GetExpenseLimitByUserId(string UserId)
-        {
-            var limits = await _budgetService.GetExpensesLimitByUserIdAsync(UserId);
-            return Ok(limits[0]);
-        }
-
-        [HttpPost("{UserId:length(24)}CreateExpenseLimitAndUpdate")]
-        public async Task<IActionResult> SaveLimit(ExpenseLimit limit)
-        {
-            try
-            {
-                var savelimit = await _budgetService.SaveExpensesLimitAsync(limit);
-                return Ok(savelimit);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
+    //    [HttpGet("{UserId:length(24)}GetExpenseLimitById")]
+    //    public async Task<ActionResult<List<ExpenseLimit>>> GetExpenseLimitByUserId(string UserId)
+    //    {
+    //        var limits = await _budgetService.GetExpensesLimitByUserIdAsync(UserId);
+    //        return Ok(limits[0]);
+    //    }
+    //
+    //    [HttpPost("{UserId:length(24)}CreateExpenseLimitAndUpdate")]
+    //    public async Task<IActionResult> SaveLimit(ExpenseLimit limit)
+    //    {
+    //        try
+    //        {
+    //            var savelimit = await _budgetService.SaveExpensesLimitAsync(limit);
+    //            return Ok(savelimit);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            return StatusCode(500, $"Internal server error: {ex.Message}");
+    //        }
+    //    }
+    //
 
 
 
