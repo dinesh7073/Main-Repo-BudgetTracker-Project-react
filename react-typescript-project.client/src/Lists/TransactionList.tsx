@@ -63,6 +63,7 @@ const transformData = (records: FormData[]): FormData[] => {
 const TransactionList: React.FC = () => {
 
 
+    const { setTransactionData, userDetails, expensesLimit, userWallet, setUserWallet, accounts, setAccounts } = useContext<any>(UserContext);
     const { setTransactionData, userDetails, expensesLimit, UserId, userWallet, setUserWallet, } = useContext<any>(UserContext);
     const [formData, setFormData] = useState<FormData>(initialFormValues);
     const [form] = Form.useForm();
@@ -77,7 +78,7 @@ const TransactionList: React.FC = () => {
     const [accounts, setAccounts] = useState<AccountTypes[]>([]);
 
     const navigate = useNavigate();
-
+    const UserId = userDetails?.id;
 
     useEffect(() => {
         setLoader(true);

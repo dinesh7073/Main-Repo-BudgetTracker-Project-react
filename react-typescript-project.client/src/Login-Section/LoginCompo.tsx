@@ -86,7 +86,7 @@ const LoginCompo = () => {
 
                     setIsLogin(true);
                     setLoader(false)
-                    navigate('/dashboard');
+                    navigate('/');
                     message.success('Login successful!');
                 } else {
                     setLoader(false);

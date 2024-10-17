@@ -62,24 +62,27 @@ function App() {
     const storedUser = localStorage.getItem('isUser');
     if (storedUser) {
       try {
-
         const parsedUser = JSON.parse(storedUser);
         // const parsedUserId = parsedUser.UserId;
         if (parsedUser.UserId) {
 
-          setUserId(parsedUser.UserId);
           // setUserdata(parsedUser);
 
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
+
             setLoader(false)
             setUserDetails(res.data);
+            setUserId(userDetails?.id);
             setIsLogin(true);
-
+            const lastRoute = localStorage.getItem('lastRoute') || '/dashboard';
+            navigate(lastRoute);
 
           }).catch((err) => {
             setLoader(false)
             console.log('error', err);
           })
+
+
 
         } else {
           setLoader(false)
@@ -96,16 +99,14 @@ function App() {
     }
     setLoader(true)
 
-
-
   }, [isLogin]);
 
   useEffect(() => {
 
-    const locationName = location.pathname;
+    // const locationName = location.pathname;
 
-    if (locationName) {
-      navigate(locationName);
+    if (location.pathname !== '/login' && location.pathname !== '/welcome') {
+      localStorage.setItem('lastRoute', location.pathname);  // Save the current route in localStorage
     }
 
   }, []);

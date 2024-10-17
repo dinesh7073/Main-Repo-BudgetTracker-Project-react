@@ -179,3 +179,20 @@
 .accountCard .ant-card .ant-card-body{
     padding: 17px;
 }
+
+/* .scroll-container{
+    overflow-x: scroll;
+    overflow-y: hidden ;
+    white-space: nowrap;
+} */
+
+/* .scroll-container {
+    white-space: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
+  } */
+  
+.scrollCard{
+    display: inline-block;
+  margin-right: 16px;
+}
