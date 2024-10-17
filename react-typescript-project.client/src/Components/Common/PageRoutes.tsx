@@ -8,11 +8,13 @@ import Transactions from '../Transactions'
 import Goal from '../Goal'
 import SettingsCompo from '../SettingsCompo'
 import ErrorPage from '../ErrorPage'
+import Home from '../Home'
 
 const PageRoutes = () => {
     return (
         <div>
             <Routes>
+                {/* <Route path='/'element={<Home/>}/> */}
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/goal" element={<Goal />} />
                 <Route path="/transaction" element={<Transactions />} />

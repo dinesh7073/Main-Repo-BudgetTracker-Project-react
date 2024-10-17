@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Card, List, Select, Typography, Statistic, StatisticProps, Flex, Progress, ProgressProps, Row, Col, Tag, Empty } from 'antd';
-import { ArrowLeftRight, CircleArrowDown, CircleArrowUp, Goal, } from 'lucide-react';
+import { ArrowLeftRight, CircleArrowDown, CircleArrowUp, Goal, Plus, } from 'lucide-react';
 import dayjs, { Dayjs } from 'dayjs';
 import CountUp from 'react-countup';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,8 @@ import { fontSize } from '@mui/system';
 import { FaCoins, FaCreditCard } from 'react-icons/fa';
 import { MdAccountBalance, MdAccountBalanceWallet, MdSavings } from 'react-icons/md';
 import { GiReceiveMoney } from 'react-icons/gi';
+import Link from 'antd/es/typography/Link';
+import ScrollContainer from 'react-indiana-drag-scroll'
 
 const formatter: StatisticProps['formatter'] = (value) => (
   <CountUp end={value as number} separator="," />
@@ -64,7 +66,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData, UserId, expensesLimit, setexpensesLimit } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData, expensesLimit, setexpensesLimit, accounts, setAccounts, setLoader } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -80,6 +82,8 @@ const Dashboard = () => {
     <CountUp end={value as number} separator="," />
   );
 
+  const UserId = userDetails?.id;
+
   useEffect(() => {
     axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
@@ -93,15 +97,16 @@ const Dashboard = () => {
           setTransactionData(transformedRecords)
         }
       })
-      .catch((err) => console.log("Error from server", err));
+      .catch((err) => console.log("Error from server", err, UserId)
+      );
 
-    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((res) => {
+    // axios.get(`${REACT_APP_BASE_URL}AccountsController/${userDetails?.id}GetAccountsByUserId`).then((res) => {
 
-      setAccountData(res.data);
-      console.log(res.data);
-    }).catch((err) => console.log('error', err));
+    //   setAccountData(res.data);
+    //   console.log(res.data);
+    // }).catch((err) => console.log('error', err));
 
-  }, [UserId]);
+  }, []);
 
 
   useEffect(() => {
@@ -126,9 +131,33 @@ const Dashboard = () => {
         }
       })
       .catch((err) => console.log("Error from server", err));
-  }, [UserId, transactionData]);
+  }, []);
 
+  useEffect(() => {
+    axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
+      .then((res) => {
+        if (res.status === 200) {
+          const transformedGoal = transformData(res.data);
+          setGoalExists(res.data.length > 0);
+          setGoals(transformedGoal.map(goal => ({
+            ...goal,
+            targetAmount: Number(goal.targetAmount),
+            savedAmount: Number(goal.savedAmount),
+            targetDate: dayjs(goal.targetDate)
 
+          })));
+        }
+      })
+      .catch((err) => console.log("Error from server", err));
+  }, [UserId]);
+
+  useEffect(() => {
+
+    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
+      setAccounts(response.data);
+      // setLoader(false);
+    }).catch(() => setLoader(false))
+  }, [])
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 1: return 'Salary';
@@ -280,12 +309,12 @@ const Dashboard = () => {
     return expenses.reduce((total, expense) => total + expense.amount, 0);
   };
 
-  const getTotalBudget = (budget:Budget[])=>{
-    return  budget.reduce((total, budget)=> total + budget.amount , 0)
+  const getTotalBudget = (budget: Budget[]) => {
+    return budget.reduce((total, budget) => total + budget.amount, 0)
   }
-  
-    // return  
-  
+
+  // return  
+
   const getTotalIncome = (income: TransactionType[]) => {
     return income.reduce((total, income) => total + income.amount, 0);
   };
@@ -308,23 +337,7 @@ const Dashboard = () => {
   };
 
 
-  useEffect(() => {
-    axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
-      .then((res) => {
-        if (res.status === 200) {
-          const transformedGoal = transformData(res.data);
-          setGoalExists(res.data.length > 0);
-          setGoals(transformedGoal.map(goal => ({
-            ...goal,
-            targetAmount: Number(goal.targetAmount),
-            savedAmount: Number(goal.savedAmount),
-            targetDate: dayjs(goal.targetDate)
 
-          })));
-        }
-      })
-      .catch((err) => console.log("Error from server", err));
-  }, [UserId]);
 
   let searchTerm: string = '';
 
@@ -346,7 +359,7 @@ const Dashboard = () => {
 
   const Incomepercent = (totalExpenses / totalIncome) * 100;
 
-  const Expensepercent = (totalExpenses / (expensesLimit.amount)) * 100;
+  const Expensepercent = (totalExpenses / totalBudget) * 100;
 
   const progressColor = (percent: number) => {
 
@@ -417,17 +430,17 @@ const Dashboard = () => {
 
   const getAccountLabel = (type: number) => {
     switch (type) {
-        case 1: return "Cash";
-        case 2: return "Saving account";
-        case 3: return "General";
-        case 4: return "Credit card";
-        case 5: return "Salary account";
-        case 6: return "Current account";
+      case 1: return "Cash";
+      case 2: return "Saving account";
+      case 3: return "General";
+      case 4: return "Credit card";
+      case 5: return "Salary account";
+      case 6: return "Current account";
     }
-}
+  }
 
-const getAccountIcon = (type: number) => {
-  switch (type) {
+  const getAccountIcon = (type: number) => {
+    switch (type) {
       case 1: return <FaCoins size={22} color='#FFB300' />
       case 2: return <MdSavings size={22} color='#26C6DA' />
       case 3: return <MdAccountBalanceWallet size={22} color='#D32F2F' />
@@ -435,37 +448,86 @@ const getAccountIcon = (type: number) => {
       case 5: return <GiReceiveMoney size={22} color='#FFB300' />
       case 6: return <MdAccountBalance size={22} color='#039BE5' />
       default: return 'unknown';
+    }
   }
-}
 
   return (
     <>
+      {/* <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
+              <Row gutter={[16, 24]} style={{ marginBottom: '15px' }}> */}
+      {/* {accounts.length == 0? (
+          <Col xs={24} sm={12} md={5}>
 
-      <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
-        <Row gutter={[16, 24]} style={{ marginBottom: ' 15px' }}>
          
-         
-         {accountData.slice(0,4).map((obj:any, i:number) => (
-            <Col xs={24} sm={12} md={5}>
               <Card style={{ height: '100%', width: '100%' }}>
 
                 <div className='d-flex flex-row px-3 py-1' style={{ gap: '25px' }}>
-                 <p className='my-1'> {getAccountIcon(obj.accountType)}</p>
+                 <p className='my-1'> {getAccountIcon(1)}</p>
                   <div className='lh-1'>
-                    <h6> ₹ {Utils.getFormattedNumber(obj.amount)}</h6>
-                    <span>{getAccountLabel(obj.accountType)} </span>
+                    <h6> ₹ {Utils.getFormattedNumber(0)}</h6>
+                    <span>{getAccountLabel(1)} </span>
+
+
                   </div>
                 </div>
               </Card>
-            </Col>))}
+            </Col>):
+          ( */}
+      {/* ) */}
+      {/* } */}
 
-          <Col xs={24} sm={12} md={4}><Card className='p-4' style={{ height: '100%', width: '100%' }}></Card></Col>
+      {/* <Col xs={24} sm={12} md={4} >
+                  <Button style={{ width: '90%', height: '70%', border: '1px dashed', color: 'blue', background: 'none' }} onClick={() => navigate('/settings/account')} >
+                    <div style={{ display: 'flex ', flexDirection: 'column' }}>
+                     
+                      <span className='align-items-center'><Plus /> Add Account</span>
+                    </div>
+                  </Button>
+                </Col>
+              </Row> */}
+
+
+      <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
+        <Row gutter={[16, 24]} style={{ marginBottom: '10px' }}>
+          <Col xs={24} sm={12} md={21}>
+            {/* ScrollContainer to hold multiple cards */}
+            <ScrollContainer className="scroll-container" horizontal={true} style={{ height: '80px', width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: ' 0' }}>
+              <Row gutter={[16, 24]} wrap={false}>
+                {accounts.map((obj: any, i: number) => (
+                  <Col xs={24} sm={12} md={6} key={i} style={{ flex: '0 0 auto' }}> 
+                    <Card style={{ height: '100%', width: '270px' }} className="scrollCard">
+                      <div className="d-flex flex-row py-1 px-2" style={{ gap: '25px' }}>
+                        <p className="my-1">{getAccountIcon(obj.accountType)}</p>
+                        <div className="lh-1">
+                          <h6>₹ {Utils.getFormattedNumber(obj.amount)}</h6>
+                          <span>{getAccountLabel(obj.accountType)}({obj.bankName})</span>
+                          
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </ScrollContainer>
+          </Col>
+
+          <Col xs={24} sm={12} md={3}>
+            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop:'15px' }} onClick={() => navigate('/settings/account')} >
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className='align-items-center'><Plus /> Add Account</span>
+              </div>
+            </Button>
+          </Col>
         </Row>
+
+
+
+
         <Row gutter={[16, 24]}>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "92%", }}>
               <div className='d-flex '>
-                <h6 className='pe-2 '><PieChartOutlined  color="#3C3D37" /></h6>
+                <h6 className='pe-2 '><PieChartOutlined color="#3C3D37" /></h6>
                 <p style={{ marginBottom: 5, }}> Expenses Structure</p>
               </div>
 
@@ -496,7 +558,7 @@ const getAccountIcon = (type: number) => {
           <Col xs={{ span: 10, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "92%", position: 'relative' }}>
               <p style={{ position: 'absolute', top: '3%' }}>
-                <BiCoin className="recent-transactions-icon" color="#3C3D37" size={20}  />
+                <BiCoin className="recent-transactions-icon" color="#3C3D37" size={20} />
                 Budget
               </p>
 
@@ -541,7 +603,7 @@ const getAccountIcon = (type: number) => {
 
                   </div>
                 </div>
-                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight:500 }}>₹{Utils.getFormattedNumber(totalBudget)}</span></p>
+                <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Target <span style={{ fontWeight: 500 }}>₹{Utils.getFormattedNumber(totalBudget)}</span></p>
                 <Flex vertical gap="middle">
                   <Progress percent={Expensepercent} strokeColor={progressColor(Expensepercent)} />
                 </Flex>
@@ -553,11 +615,11 @@ const getAccountIcon = (type: number) => {
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "92%", padding: '0px 5px', position: 'relative' }}>
               <p style={{ position: 'absolute', top: '3%' }}>
-                <Goal style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon" color="#3C3D37" size={18}  />
+                <Goal style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon" color="#3C3D37" size={18} />
                 Recent Goals
               </p>
 
-              <div className="top-one-cards" onClick={() => navigate("/goal")} style={{ position: 'absolute', top: '15%' , width:'90%'}}>
+              <div className="top-one-cards" onClick={() => navigate("/goal")} style={{ position: 'absolute', top: '15%', width: '90%' }}>
                 {sortedGoals.length > 0 ?
                   (sortedGoals.map((goal: GoalData, index: number) => {
 
@@ -609,7 +671,7 @@ const getAccountIcon = (type: number) => {
                     )
                   })) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ position: 'absolute', left: '80px', width: '100px', top: '10px' }} />}
               </div>
-              {sortedGoals.length > 0 ? <Button className="view-all-transactions-button" onClick={() => navigate("/goal")} style={{ position: 'absolute', top: '87%', left:'20%' }}>
+              {sortedGoals.length > 0 ? <Button className="view-all-transactions-button" onClick={() => navigate("/goal")} style={{ position: 'absolute', top: '87%', left: '20%' }}>
                 View all goals
               </Button> : ''}
             </Card>
@@ -642,7 +704,7 @@ const getAccountIcon = (type: number) => {
                   )}
                 />
               </div>
-              {sortedTransactions.length > 0 ? <Button className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{ position: 'absolute', top: '85%', marginTop: '5px', left:'20%' }}>
+              {sortedTransactions.length > 0 ? <Button className="view-all-transactions-button " onClick={() => navigate("/transaction")} style={{ position: 'absolute', top: '85%', marginTop: '5px', left: '20%' }}>
                 View all transactions
               </Button> : ''}
               {/* <Tag color="default"> View All Transaction</Tag> */}

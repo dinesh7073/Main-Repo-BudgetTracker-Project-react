@@ -62,24 +62,27 @@ function App() {
     const storedUser = localStorage.getItem('isUser');
     if (storedUser) {
       try {
-
         const parsedUser = JSON.parse(storedUser);
         // const parsedUserId = parsedUser.UserId;
         if (parsedUser.UserId) {
 
-          setUserId(parsedUser.UserId);
           // setUserdata(parsedUser);
 
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
+
             setLoader(false)
             setUserDetails(res.data);
-             setIsLogin(true);
-            
+            setUserId(userDetails?.id);
+            setIsLogin(true);
+            const lastRoute = localStorage.getItem('lastRoute') || '/dashboard';
+            navigate(lastRoute);
 
           }).catch((err) => {
             setLoader(false)
             console.log('error', err);
           })
+
+
 
         } else {
           setLoader(false)
@@ -95,21 +98,15 @@ function App() {
       navigate('/login');
     }
     setLoader(true)
-    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
-      setAccounts(response.data);
-      // setLoader(false);
-    }).catch(() => {
-      setLoader(false);
-    });
 
   }, [isLogin]);
 
   useEffect(() => {
 
-    const locationName = location.pathname;
+    // const locationName = location.pathname;
 
-    if (locationName) {
-      navigate(locationName);
+    if (location.pathname !== '/login' && location.pathname !== '/welcome') {
+      localStorage.setItem('lastRoute', location.pathname);  // Save the current route in localStorage
     }
 
   }, []);
@@ -144,16 +141,16 @@ function App() {
   return (
     <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader, accounts, setAccounts }}>
       <div>
-         {isLogin && <Sidebar />} 
-        
+        {isLogin && <Sidebar />}
+
 
         <Routes>
           {/* <Route path='/home' element={<Home />}/> */}
           <Route path='/login' element={<LoginCompo />} />
           <Route path='/signup' element={<SignUpSection />} />
           <Route path='/forgotPassword' element={<ForgotpassCompo />} />
-          <Route path='/welcome' element={<Welcome/>}/>
-          
+          <Route path='/welcome' element={<Welcome />} />
+
 
         </Routes>
       </div>

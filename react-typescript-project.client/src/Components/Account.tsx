@@ -23,7 +23,7 @@ interface ISignUp {
 const Account = () => {
 
   const [visible, setVisible] = useState<boolean>(true);
-  const { UserId, userDetails, setUserDetails, loader, setLoader } = useContext<any>(UserContext)
+  const {  userDetails, setUserDetails, loader, setLoader } = useContext<any>(UserContext)
 
   const [profiledata, setProfiledata] = useState<ISignUp>({
     id: '',
@@ -45,6 +45,7 @@ const Account = () => {
   const onSave = (values: ISignUp) => {
 
     console.log(userDetails);
+    const UserId = userDetails.id
     const profileData = { ...values, id: UserId, password: userDetails.password };
 
     if (editProfile) {

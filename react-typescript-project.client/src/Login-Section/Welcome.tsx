@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import UserContext from '../UserContext';
 import { Button, Form, Input } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -8,7 +8,7 @@ import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 
 const Welcome = () => {
-    const { userDetails, UserId } = useContext<any>(UserContext);
+    const { setAccounts, UserId,userDetails,setLoader } = useContext<any>(UserContext);
     const [inputValue, setInputValue] = useState();
     const navigate = useNavigate();
 
@@ -16,19 +16,26 @@ const Welcome = () => {
         setInputValue(e.target.value);
     }
 
+    
     const onSave = () => {
-        const account = {
-            userId: userDetails.id,
+
+        const userId = userDetails?.id;
+
+        const accountdata = {
+            userId : userId,
             bankName: 'Cash',
             accountType: 1,
-            amount: inputValue
+            amount: inputValue == null ? 0 : Number(inputValue)
         }
-        axios.post(`${REACT_APP_BASE_URL}AccountsController/${userDetails.id}CreateAccountsAndUpdate`, account).then((res) => {
-            navigate('/dashboard');
+        axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
+            navigate('/');
+            setLoader(true);
             window.location.reload();
-            console.log(res.data);
+            setAccounts(res.data);
            
-        }).catch((err) => console.log("error", err))
+        }).catch((err) => {
+            setLoader(false);
+            console.log("error", err,)})
 
 
     }
@@ -43,7 +50,7 @@ const Welcome = () => {
             </div>
             <div>
                 <h6 className='mt-4 ' style={{ fontSize: '12px', marginLeft: '-260px' }}>Cash balance</h6>
-                <Input placeholder='0' style={{ width: '22%', borderRadius: 'px' }} onChange={handleChange} value={inputValue} ></Input>
+                <Input placeholder='0' style={{ width: '22%', borderRadius: 'px' }} onChange={handleChange} value={inputValue} type='number'></Input>
                 <p className='mt-2' style={{ fontSize: '12px', marginLeft: '-60px' }}>How much cash do you have  in your   physical wallet</p>
 
             </div>

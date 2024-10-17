@@ -14,14 +14,14 @@ const root = ReactDOM.createRoot(
 );
 root.render(
 
-  <React.StrictMode>
+   <React.Fragment>
     <BrowserRouter>
       <ConfigProvider theme={{ token: { colorPrimary: "#6439FF" } }}>
         <App />
       </ConfigProvider>
     </BrowserRouter>
 
-  </React.StrictMode>
+   </React.Fragment>
 
 );
 

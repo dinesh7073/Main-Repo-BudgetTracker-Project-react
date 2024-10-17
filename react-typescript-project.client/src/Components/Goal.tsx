@@ -31,7 +31,7 @@ const Goal = () => {
   const [goals, setGoals] = useState<GoalData[]>([]);
   const [editGoal, setEditGoal] = useState<GoalData | null>(null);
   const [form] = Form.useForm();
-  const { userDetails, baseUrl, UserId } = useContext<any>(UserContext);
+  const { userDetails } = useContext<any>(UserContext);
   const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
   const [loader, setLoader] = useState<boolean>(false)
 
@@ -53,6 +53,7 @@ const Goal = () => {
 
   const { Search } = Input;
 
+  const UserId = userDetails?.id;
 
   useEffect(() => {
     setLoader(true);
@@ -366,7 +367,7 @@ const Goal = () => {
               className='pb-2'
               items={[
                 {
-                  title: < HomeOutlined onClick={() => navigate('/dashboard')} />,
+                  title: < HomeOutlined onClick={() => navigate('/')} />,
                 },
                 {
                   title: 'Goals',
