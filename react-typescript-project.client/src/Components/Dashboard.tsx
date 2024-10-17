@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Card, List, Select, Typography, Statistic, StatisticProps, Flex, Progress, ProgressProps, Row, Col, Tag, Empty } from 'antd';
+import { Button, Card, List, Typography, Statistic, StatisticProps, Flex, Progress, ProgressProps, Row, Col, Tag, Empty } from 'antd';
 import { ArrowLeftRight, CircleArrowDown, CircleArrowUp, Goal, Plus, } from 'lucide-react';
 import dayjs, { Dayjs } from 'dayjs';
 import CountUp from 'react-countup';
@@ -16,17 +16,15 @@ import '../Common_CSS_Class/commonCss.css';
 import { PieChartOutlined } from '@ant-design/icons';
 import { Utils } from './Common/Utilities/Utils';
 import EChartsReact from "echarts-for-react";
-import { fontSize } from '@mui/system';
 import { FaCoins, FaCreditCard } from 'react-icons/fa';
 import { MdAccountBalance, MdAccountBalanceWallet, MdSavings } from 'react-icons/md';
 import { GiReceiveMoney } from 'react-icons/gi';
-import Link from 'antd/es/typography/Link';
 import ScrollContainer from 'react-indiana-drag-scroll'
 
-const formatter: StatisticProps['formatter'] = (value) => (
-  <CountUp end={value as number} separator="," />
-);
-const { Title, Text } = Typography;
+// const formatter: StatisticProps['formatter'] = (value) => (
+//   <CountUp end={value as number} separator="," />
+// );
+const { Text } = Typography;
 interface TransactionType {  // the final fileds for frontend and backend 
   id: string;
   userId: string;
@@ -66,7 +64,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData, expensesLimit, setexpensesLimit, accounts, setAccounts, setLoader } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData, expensesLimit, setexpensesLimit, setLoader } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -75,16 +73,17 @@ const Dashboard = () => {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [goalExists, setGoalExists] = useState(false);
   const [goals, setGoals] = useState<GoalData[]>([]);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [accountData, setAccountData] = useState<[]>([]);
+  // const [isExpanded, setIsExpanded] = useState(false);
+   const [accountData, setAccountData] = useState<[]>([]);
 
-  const formatter: StatisticProps['formatter'] = (value) => (
-    <CountUp end={value as number} separator="," />
-  );
+  // const formatter: StatisticProps['formatter'] = (value) => (
+  //   <CountUp end={value as number} separator="," />
+  // );
 
   const UserId = userDetails?.id;
 
   useEffect(() => {
+    
     axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
@@ -154,7 +153,7 @@ const Dashboard = () => {
   useEffect(() => {
 
     axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
-      setAccounts(response.data);
+      setAccountData(response.data);
       // setLoader(false);
     }).catch(() => setLoader(false))
   }, [])
@@ -175,6 +174,7 @@ const Dashboard = () => {
       case 13: return 'Income';
     }
   }
+  
   const categories = budgets.map(budget => getCategoryLabel(budget.category));
   const seriesData = budgets.map(budget => ({
     amount: budget.amount,
@@ -490,10 +490,10 @@ const Dashboard = () => {
       <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
         <Row gutter={[16, 24]} style={{ marginBottom: '10px' }}>
           <Col xs={24} sm={12} md={21}>
-            {/* ScrollContainer to hold multiple cards */}
+           
             <ScrollContainer className="scroll-container" horizontal={true} style={{ height: '80px', width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: ' 0' }}>
               <Row gutter={[16, 24]} wrap={false}>
-                {accounts.map((obj: any, i: number) => (
+                {accountData.map((obj: any, i: number) => (
                   <Col xs={24} sm={12} md={6} key={i} style={{ flex: '0 0 auto' }}> 
                     <Card style={{ height: '100%', width: '270px' }} className="scrollCard">
                       <div className="d-flex flex-row py-1 px-2" style={{ gap: '25px' }}>

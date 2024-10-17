@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Account from '../Account'
 import Budget from '../Budget'
-import Dashboard from '../Dashboard'
+import Dashboard from '../Dashboard';
 import HelpCompo from '../HelpCompo'
 import Transactions from '../Transactions'
 import Goal from '../Goal'

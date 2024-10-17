@@ -86,7 +86,7 @@ const LoginCompo = () => {
 
                     setIsLogin(true);
                     setLoader(false)
-                    navigate('/');
+                    navigate('/dashboard');
                     message.success('Login successful!');
                 } else {
                     setLoader(false);
@@ -118,6 +118,7 @@ const LoginCompo = () => {
                             <h1 style={{ fontWeight: '600', color: '#071952', fontFamily: 'sans-serif' }}>
                                 Track your spending, <br />secure your future.
                             </h1>
+                            
                         </div>
                         <div style={{ position: 'absolute' }}>
                             <img style={{ width: '540px', height: '495px', marginLeft: '10px', marginTop: '-10px' }} src={pic6} alt="" />

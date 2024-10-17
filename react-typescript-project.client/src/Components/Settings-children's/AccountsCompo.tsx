@@ -327,7 +327,7 @@ const AccountsCompo = () => {
                 <Divider />
 
 
-                <Text strong>Your accounts</Text>
+                <h6>Your accounts</h6>
                 <Spin spinning={loader} size="large" />
                 <Table
                     columns={columns}
@@ -342,7 +342,7 @@ const AccountsCompo = () => {
 
 
             <Modal
-                title="ADD ACCOUNT"
+                title="Add Account"
                 open={isModalOpen}
                 onCancel={handleCancel}
                 footer={''}

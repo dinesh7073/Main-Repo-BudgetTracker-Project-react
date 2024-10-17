@@ -6,7 +6,7 @@ import axios from 'axios';
 import { REACT_APP_BASE_URL } from '../Components/Common/Url';
 
 const Welcome = () => {
-    const { setAccounts, UserId,userDetails,setLoader } = useContext<any>(UserContext);
+    const { setAccounts,userDetails,setLoader } = useContext<any>(UserContext);
     const [inputValue, setInputValue] = useState();
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const Welcome = () => {
             amount: inputValue == null ? 0 : Number(inputValue)
         }
         axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
-            navigate('/');
+            navigate("/dashboard");
             setLoader(true);
             window.location.reload();
             setAccounts(res.data);
