@@ -17,6 +17,7 @@ const Settings = () => {
             key: '/categorries',
             label: 'Categories',
             children: <CategoriesCompo />,
+
         },
         {
             key: '/personal',
