@@ -70,7 +70,7 @@ const Goal = () => {
             savedAmount: Number(goal.savedAmount),
             targetDate: dayjs(goal.targetDate)
           })));
-        setLoader(false);
+          setLoader(false);
 
         }
       })
@@ -171,64 +171,65 @@ const Goal = () => {
 
   });
 
-  const columns=[
+  const columns = [
 
     {
-      width : '8%',
-      title:'S.No',
-      render : (text:any, data: any,index : number)=> (index + 1),
+      width: '8%',
+      title: 'S.No',
+      render: (text: any, data: any, index: number) => (index + 1),
     },
     {
-      title : 'Goal',
-      dataIndex : 'goal',
-      key : 'goal',
-      render: (goal : string)=> goal
-    
+      title: 'Goal',
+      dataIndex: 'goal',
+      key: 'goal',
+      render: (goal: string) => goal
+
     },
     {
-      title : 'Target amount',
-      dataIndex : 'targetAmount',
-      key : 'targetAmount',
-      render: (text: string)=><span>{`₹${Utils.getFormattedNumber(text)}`}</span>
+      title: 'Target amount',
+      dataIndex: 'targetAmount',
+      key: 'targetAmount',
+      render: (text: string) => <span>{`₹${Utils.getFormattedNumber(text)}`}</span>
     },
     {
-      title : 'Saved amount',
-      dataIndex : 'savedAmount',
-      key : 'savedAmount',
-      render : (text:string)=><span>{`₹ ${Utils.getFormattedNumber(text)}`}</span>
+      title: 'Saved amount',
+      dataIndex: 'savedAmount',
+      key: 'savedAmount',
+      render: (text: string) => <span>{`₹ ${Utils.getFormattedNumber(text)}`}</span>
     },
     {
-      title : 'Target date',
-      dataIndex : 'targetDate',
-      key : 'targetDate',
-      render : (targetDate:string)=> dayjs(targetDate).format('DD-MM-YYYY')
+      title: 'Target date',
+      dataIndex: 'targetDate',
+      key: 'targetDate',
+      render: (targetDate: string) => dayjs(targetDate).format('DD-MM-YYYY')
     },
     {
-      title : 'Actions',
-      dataIndex : 'action',
-      key : 'action',
-      render:(text:string, data : any)=>(
+      title: 'Actions',
+      dataIndex: 'action',
+      key: 'action',
+      render: (text: string, data: any) => (
         <div>
-        <Dropdown
+          <Dropdown
             menu={{
               items: [
                 {
                   className: "px-2",
                   label: (
                     <span onClick={() => handleEdit(data)}>
-                      <EditOutlined size={15} className='pe-2'/> Edit
+                      <EditOutlined size={15} className='pe-2' /> Edit
                     </span>
                   ),
                   key: "0",
                 },
-                      {
-                        className: "px-2",
-                         label:
-                      (<span onClick={()=>handleDelete(data.id)}>
-                        <DeleteOutlined size={15} className= "pe-2"/> Delete
-                      </span>), key: "1",}
-                    
-                 
+                {
+                  className: "px-2",
+                  label:
+                    (<span onClick={() => handleDelete(data.id)}>
+                      <DeleteOutlined size={15} className="pe-2" /> Delete
+                    </span>), key: "1",
+                }
+
+
               ],
             }}
             trigger={["click"]}
@@ -242,7 +243,7 @@ const Goal = () => {
               </Space>
             </a>
           </Dropdown>
-      </div>
+        </div>
       )
     }
 
@@ -250,7 +251,7 @@ const Goal = () => {
 
   // const GoalCard = () => {
 
-    
+
 
   //   return (
 
@@ -388,7 +389,7 @@ const Goal = () => {
 
           <Col span={6} style={{ width: '100%', display: 'flex' }}>
             <p className='py-1 align-content-center' style={{ width: '82px' }}>Search goal</p>
-            <Search placeholder="Search goal" style={{ width: 200 }} onSearch={()=>handleSearch} />
+            <Search placeholder="Search goal" style={{ width: 200 }} onSearch={() => handleSearch} />
           </Col>
           <Col lg={{ span: 8 }} className='d-flex '  >
 
@@ -404,36 +405,36 @@ const Goal = () => {
           </Col>
         </Row>
 
-       {loader?(
-        <Spin spinning={loader} size='large' className='d-flex justify-content-center py-5'/>
-       ) : (<Table
-                  size='small'
-                  dataSource={filteredGoals}
-                 columns={columns}
-                  rowKey="id"
-                  scroll={{ y: 445 }}
+        {loader ? (
+          <Spin spinning={loader} size='large' className='d-flex justify-content-center py-5' />
+        ) : (<Table
+          size='small'
+          dataSource={filteredGoals}
+          columns={columns}
+          rowKey="id"
+          scroll={{ y: 445 }}
 
-                   summary={(data: any) => {
-                    let totalAmount = 0;
-                    data.forEach(({ savedAmount }: any) => {
-                      totalAmount += savedAmount;
-                    }); 
-                    
-                    return (
-                      <Table.Summary fixed>
-                        <Table.Summary.Row>
-                          <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={1}><h6>Total</h6></Table.Summary.Cell>
-                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                          <Table.Summary.Cell index={3}>
-                            <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={6}></Table.Summary.Cell>
-                        </Table.Summary.Row>
-                      </Table.Summary>
-                    )
-                  }}
-                  />)}
+          summary={(data: any) => {
+            let totalAmount = 0;
+            data.forEach(({ savedAmount }: any) => {
+              totalAmount += savedAmount;
+            });
+
+            return (
+              <Table.Summary fixed>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={1}><h6>Total</h6></Table.Summary.Cell>
+                  <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                  <Table.Summary.Cell index={3}>
+                    <Statistic className='d-flex' valueStyle={{ fontSize: '15px', fontWeight: '500', marginLeft: '5px' }} title=' ₹ ' value={(Utils.getFormattedNumber(totalAmount))} />
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell index={6}></Table.Summary.Cell>
+                </Table.Summary.Row>
+              </Table.Summary>
+            )
+          }}
+        />)}
         <Modal
           title={editGoal ? "Edit Goal" : "Add Goal"}
           visible={isModalVisible}

@@ -149,10 +149,10 @@ const Sidebar: React.FC = () => {
       onClick: () => navigate("/profile"),
     },
     {
-      key: "/settings/account",
+      key: "/settings",
       icon: <Settings style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Settings",
-      onClick: () => navigate("/settings/account"),
+      onClick: () => navigate("/settings"),
     },
     // ================== help compo on=====================
     {
@@ -171,7 +171,7 @@ const Sidebar: React.FC = () => {
     <>
       <Layout style={{ height: "100vh" }}>
         <Sider className="" collapsible collapsed={collapsed} onCollapse={(value: any) => setCollapsed(value)} style={{
-        transition:"0.5s", overflow: "auto", height: "100vh", scrollbarWidth: "thin", position: "fixed", left: 0, top: 0, bottom: 0, borderRight: "#D2D6D9", backgroundColor: "white",
+          transition: "0.5s", overflow: "auto", height: "100vh", scrollbarWidth: "thin", position: "fixed", left: 0, top: 0, bottom: 0, borderRight: "#D2D6D9", backgroundColor: "white",
         }}
         >
           <div className="demo-logo-vertical" />
@@ -191,7 +191,7 @@ const Sidebar: React.FC = () => {
             items={siderMenuItems} />
         </Sider>
         <Layout
-          style={{ marginLeft: collapsed ? 80 : 200, height: "100vh", overflow: "auto", background: '#f3f4fa',transition:"0.5s" }}>
+          style={{ marginLeft: collapsed ? 80 : 200, height: "100vh", overflow: "auto", background: '#f3f4fa', transition: "0.5s" }}>
 
           <Header className='headernav-background'
             style={{
@@ -207,7 +207,7 @@ const Sidebar: React.FC = () => {
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <h5 className="align-self-center ps-4 my-1" style={{  color: 'rgb(105, 114, 122)' , fontSize: '14px', fontFamily: "Open Sans" }}>
+            <h5 className="align-self-center ps-4 my-1" style={{ color: 'rgb(105, 114, 122)', fontSize: '14px', fontFamily: "Open Sans" }}>
               Hello, {userDetails.firstName}{" "}
             </h5>
             <div style={{ cursor: 'pointer' }} className="d-flex flex-row justify-content-between  align-item-center">

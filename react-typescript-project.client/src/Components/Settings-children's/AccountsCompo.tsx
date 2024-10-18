@@ -1,7 +1,7 @@
 import React, { lazy, useContext, useEffect, useState } from 'react';
 import { Layout, Input, Button, Table, Typography, Space, Divider, Modal, Select, Switch, Form, Spin, notification, Row, Col, Segmented, message, Dropdown, Popconfirm } from 'antd';
-import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
-import { Plus, Target } from 'lucide-react';
+import { EditOutlined, DeleteOutlined, MoreOutlined, SaveOutlined } from '@ant-design/icons';
+import { Plus, RotateCcw, Target } from 'lucide-react';
 import { color } from '@mui/system';
 import axios from 'axios';
 import { REACT_APP_BASE_URL } from '../Common/Url';
@@ -128,7 +128,7 @@ const AccountsCompo = () => {
 
                         setAccounts(updatedRecords);
                         notification.success({
-                            message: editingAccount ? 'Transaction updated successfully' : 'Record added successfully',
+                            message: editingAccount ? 'Account updated successfully' : 'Account added successfully',
                         });
                     }
                 );
@@ -342,7 +342,7 @@ const AccountsCompo = () => {
 
 
             <Modal
-                title="Add Account"
+                title={editingAccount ? "Edit Account" : "Add Account"}
                 open={isModalOpen}
                 onCancel={handleCancel}
                 footer={''}
@@ -354,6 +354,7 @@ const AccountsCompo = () => {
                     layout="vertical"
                     onFinish={onFinish}
                     initialValues={{ accountType: 6, name: bankNameInput }}
+                    style={{ maxWidth: '600px', margin: 'auto', padding: '20px 20px 0px 20px', borderRadius: '10px', }}
                 >
                     <Form.Item
                         name="name"
@@ -364,8 +365,8 @@ const AccountsCompo = () => {
                     >
                         <Select
                             showSearch
-
                             optionFilterProp="label"
+                            placeholder="ex: sbi,pnb etc..."
                             // onChange={onChange}
                             // onSearch={onSearch}
                             options={[
@@ -440,13 +441,13 @@ const AccountsCompo = () => {
                         />
                     </Form.Item>
 
-                    <Form.Item>
+                    <Form.Item className='w-100'>
                         <Button
                             type="primary"
                             htmlType="submit"
-                            style={{ width: '100%' }}
+                            className=' text-center float-end ' style={{ width: '30%', marginBottom: '-20px' }}
                         >
-                            {editingAccount ? "Update" : "Save"}
+                            {editingAccount ? <RotateCcw size={16} /> : <SaveOutlined size={16} />}  {editingAccount ? 'Update record' : 'Save Account'}
                         </Button>
                     </Form.Item>
 

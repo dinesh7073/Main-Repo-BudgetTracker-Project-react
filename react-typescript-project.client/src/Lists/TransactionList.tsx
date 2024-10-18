@@ -17,7 +17,7 @@ import { Utils } from '../Components/Common/Utilities/Utils';
 import buddhistEra from 'dayjs/plugin/buddhistEra';
 import 'dayjs/locale/en';
 import buddhistLocale from 'antd/es/date-picker/locale/en_US';
-
+import { CategoriesType } from '../Components/Settings-children\'s/CategoriesCompo';
 import { AccountTypes } from '../Components/Settings-children\'s/AccountsCompo';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -73,8 +73,9 @@ const TransactionList: React.FC = () => {
     const [selectedDateRange, setSelectedDateRange] = useState<[Dayjs, Dayjs] | null>(null);
     const [transactiontransactionType, setTransactiontransactionType] = useState<'Income' | 'Expense' | 'All'>('All');
     const [loader, setLoader] = useState<boolean>(false)
-    const [accounts, setAccounts] = useState<AccountTypes[]>([]);
 
+    const [accounts, setAccounts] = useState<AccountTypes[]>([]);
+    const [categoryData, setCategoryData] = useState<CategoriesType[]>([]);
     const navigate = useNavigate();
 
     const UserId = userDetails?.id
@@ -106,6 +107,17 @@ const TransactionList: React.FC = () => {
         }).catch(() => {
             setLoader(false);
         });
+
+        axios.get(`${REACT_APP_BASE_URL}CategoriesController/${UserId}GetCategoriesByUserId`).then((res) => {
+            setCategoryData(res.data);
+            setLoader(false);
+        }).catch((err) => {
+            setLoader(false);
+            notification.error({
+                message: 'Something went wrong! Please try again later'
+            })
+        });
+
     }, [UserId, setTransactionData]);
 
     const updateUserWallet = (records: FormData[]) => {
@@ -135,6 +147,8 @@ const TransactionList: React.FC = () => {
         { label: 'Business', value: 3 },
         { label: 'Other Income', value: 4 },
     ];
+
+    // const CustomExpense
 
 
 
