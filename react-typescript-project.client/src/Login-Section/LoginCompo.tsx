@@ -28,7 +28,7 @@ const LoginCompo = () => {
 
 
     const [form] = Form.useForm();
-    const { setIsLogin, setUserDetails, setIsSignUp } = useContext<any>(UserContext);
+    const { setIsLogin, setUserDetails, setIsSignUp, setBalanceExists } = useContext<any>(UserContext);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: ''
@@ -83,7 +83,7 @@ const LoginCompo = () => {
                         }));
 
                     setUserDetails({ ...setUserDetails, userData: response.data })
-
+                    setBalanceExists(true);
                     setIsLogin(true);
                     setLoader(false)
                     navigate('/dashboard');
