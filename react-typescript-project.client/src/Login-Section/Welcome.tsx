@@ -9,60 +9,42 @@ import Dashboard from '../Components/Dashboard';
 const Welcome = () => {
    
     const [form] = Form.useForm(); // Create form instance
-    const { setAccounts, UserId,userDetails,setLoader ,setUserDetails} = useContext<any>(UserContext);
+    const {userDetails,setLoader } = useContext<any>(UserContext);
     const [inputValue, setInputValue] = useState();
     const navigate = useNavigate();
 
-    const handleChange = (e: any) => {
+    const handleChange = (e:any) =>{
         setInputValue(e.target.value);
     }
 
-    
     const onSave = () => {
 
         const userId = userDetails?.id;
 
         const accountdata = {
             userId : userId,
-            bankName: 'Cash',
+            name: 'Cash',
             accountType: 1,
             amount: inputValue == null ? 0 : Number(inputValue)
         }
+        
         axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
             navigate("/dashboard");
             setLoader(true);
             window.location.reload();
-            setAccounts(res.data);
+            // setAccounts(res.data);
            
         }).catch((err) => {
             setLoader(false);
             console.log("error", err,)})
 
         }
-    const ondata = (values: any) => {
-        axios.post(`${REACT_APP_BASE_URL}UsersController/Login`, {
-            UserName: values.email,
-            password: values.password,
-        }).then((response) => {
-            if (response.data.id) {
-                localStorage.setItem('isUser', JSON.stringify({
-                    UserId: response.data.id,
-                }));
-                setUserDetails({ ...userDetails, userData: response.data });
-                navigate('/dashboard');
-                message.success(' successful!');
-            }
-        }).catch((error) => {
-            message.error('password or email is incorrect');
-            console.error('Error fetching data:', error);
-        });
-    };
 
     return (
         <div style={{ height: '' }}>
-            <p className='mt-3' onClick={() => { navigate("/dashboard"); window.location.reload(); }}>
+            <div className='mt-3' onClick={onSave}>
                 <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>Skip</p>
-            </p>
+            </div>
 
             <div style={{ textAlign: 'center', marginTop: '11%' }}>
                 <div className="mt-4">
@@ -77,9 +59,13 @@ const Welcome = () => {
                         <h4 className="mt-4"><b>Set up your cash balance</b></h4>
                     </b>
                 </div>
-                <Form form={form} onFinish={onSave}>
+                <Form 
+                form={form} 
+                onFinish={onSave}
+                >
                     <p  className='mt-4' style={{marginLeft:'-16.4%',}}>Cash Balance</p>
-                    <Form.Item name="bankName" rules={[{ required: true, message: 'Please input your cash amount!' },
+                    <Form.Item name="amount" 
+                    rules={[{ required: true, message: 'Please input your cash amount!' },
                         // {
                         //     // pattern: RegExp("[1-9]{1}[0-9]{9}"),
                         //     message: 'Invalid input',
@@ -90,7 +76,7 @@ const Welcome = () => {
 
 
                     ]} style={{ width: '22%', marginLeft: '39%' }}>
-                        <Input placeholder="Enter cash amount" type='number' />
+                        <Input placeholder="Enter cash amount" type='number' value={inputValue} onChange={handleChange}/>
                     </Form.Item>
 
                     <Button

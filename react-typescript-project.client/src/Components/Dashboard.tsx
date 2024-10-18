@@ -19,7 +19,8 @@ import EChartsReact from "echarts-for-react";
 import { FaCoins, FaCreditCard } from 'react-icons/fa';
 import { MdAccountBalance, MdAccountBalanceWallet, MdSavings } from 'react-icons/md';
 import { GiReceiveMoney } from 'react-icons/gi';
-import ScrollContainer from 'react-indiana-drag-scroll'
+import ScrollContainer from 'react-indiana-drag-scroll';
+import * as echarts from 'echarts';
 
 // const formatter: StatisticProps['formatter'] = (value) => (
 //   <CountUp end={value as number} separator="," />
@@ -48,6 +49,16 @@ interface Budget {
 
 }
 
+interface Account {
+
+  id: string,
+  userId: string,
+  name: string,
+  accountType: number,
+  amount: number
+
+}
+
 const transTransactionType = (records: TransactionType[]): TransactionType[] => {
   return records.map((transactions) => ({
     ...transactions,
@@ -64,7 +75,7 @@ interface GoalData {
 
 const Dashboard = () => {
 
-  const { userDetails, setTransactionData, transactionData, expensesLimit, setexpensesLimit, setLoader } = useContext<any>(UserContext);
+  const { userDetails, setTransactionData, transactionData, setLoader } = useContext<any>(UserContext);
   var navigate = useNavigate();
   const [records, setRecords] = useState<TransactionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -74,7 +85,7 @@ const Dashboard = () => {
   const [goalExists, setGoalExists] = useState(false);
   const [goals, setGoals] = useState<GoalData[]>([]);
   // const [isExpanded, setIsExpanded] = useState(false);
-   const [accountData, setAccountData] = useState<[]>([]);
+  const [accountData, setAccountData] = useState<Account[]>([]);
 
   // const formatter: StatisticProps['formatter'] = (value) => (
   //   <CountUp end={value as number} separator="," />
@@ -82,9 +93,22 @@ const Dashboard = () => {
 
   const UserId = userDetails?.id;
 
-  useEffect(() => {
+  // useEffect(() => {
+
     
-    axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
+
+  //   axios.get(`${REACT_APP_BASE_URL}AccountsController/${userDetails?.id}GetAccountsByUserId`).then((res) => {
+
+  //     setAccountData(res.data);
+  //     console.log(res.data);
+  //   }).catch((err) => console.log('error', err));
+
+  // }, []);
+
+
+  useEffect(() => {
+    // TransactionAPI
+        axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
       .then((res) => {
         if (res.status === 200) {
 
@@ -99,16 +123,8 @@ const Dashboard = () => {
       .catch((err) => console.log("Error from server", err, UserId)
       );
 
-    // axios.get(`${REACT_APP_BASE_URL}AccountsController/${userDetails?.id}GetAccountsByUserId`).then((res) => {
 
-    //   setAccountData(res.data);
-    //   console.log(res.data);
-    // }).catch((err) => console.log('error', err));
-
-  }, []);
-
-
-  useEffect(() => {
+      // BudgetAPI
     axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
@@ -132,6 +148,7 @@ const Dashboard = () => {
       .catch((err) => console.log("Error from server", err));
   }, []);
 
+  // SavingsAPI
   useEffect(() => {
     axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
@@ -148,15 +165,16 @@ const Dashboard = () => {
         }
       })
       .catch((err) => console.log("Error from server", err));
+
+      // AccountsAPI
+
+      axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
+        setAccountData(response.data);
+      }).catch(() => setLoader(false))
+
   }, [UserId]);
 
-  useEffect(() => {
-
-    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
-      setAccountData(response.data);
-      // setLoader(false);
-    }).catch(() => setLoader(false))
-  }, [])
+  
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 1: return 'Salary';
@@ -174,11 +192,12 @@ const Dashboard = () => {
       case 13: return 'Income';
     }
   }
-  
+
   const categories = budgets.map(budget => getCategoryLabel(budget.category));
   const seriesData = budgets.map(budget => ({
     amount: budget.amount,
-    amountSpent: budget.amountSpent
+    amountSpent: budget.amountSpent,
+    label: getCategoryLabel(budget.category)
   }));
   const filteredTransactions = records.filter(record => {
     const iscategoryTypeMatch = selectedCategories.length === 0 || selectedCategories.includes(Number(record.categoryType));
@@ -213,9 +232,9 @@ const Dashboard = () => {
 
   const [timeRange, setTimeRange] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
 
-  const handleTimeRangeChange = (value: 'weekly' | 'monthly' | 'yearly') => {
-    setTimeRange(value);
-  };
+  // const handleTimeRangeChange = (value: 'weekly' | 'monthly' | 'yearly') => {
+  //   setTimeRange(value);
+  // };
 
   const getDataForTimeRange = (range: 'weekly' | 'monthly' | 'yearly') => {
     switch (range) {
@@ -243,17 +262,17 @@ const Dashboard = () => {
   };
 
   const { pData, uData, xLabels } = getDataForTimeRange(timeRange);
-  const twoColors: ProgressProps['strokeColor'] = {
-    '0%': '#ffffff',
-    '20%': 'blue',
-    '100%': '#088395',
-  };
+  // const twoColors: ProgressProps['strokeColor'] = {
+  //   '0%': '#ffffff',
+  //   '20%': 'blue',
+  //   '100%': '#088395',
+  // };
 
 
-  const oneColors: ProgressProps['strokeColor'] = {
-    '0%': '#ffffff',
-    '100%': '#FF4D4F',
-  };
+  // const oneColors: ProgressProps['strokeColor'] = {
+  //   '0%': '#ffffff',
+  //   '100%': '#FF4D4F',
+  // };
 
   const colors = [
     '#FF6384',
@@ -319,13 +338,14 @@ const Dashboard = () => {
     return income.reduce((total, income) => total + income.amount, 0);
   };
 
-  const getExpenseBudgetAmount = (budgetAmount: Budget[]) => {
-    budgetAmount
-      .filter(budget => budget.category === 2)
-      .reduce((acc, budget) => acc + budget.amount, 0);
-    return budgetAmount
+  // const getExpenseBudgetAmount = (budgetAmount: Budget[]) => {
+  //   budgetAmount
+  //     .filter(budget => budget.category === 2)
+  //     .reduce((acc, budget) => acc + budget.amount, 0);
+  //   return budgetAmount
 
-  }
+  // }
+
   const totalIncome = getTotalExpenses(filteredIncome);
   const totalExpenses = getTotalIncome(filteredExpenses);
   const totalBudget = getTotalBudget(budgets);
@@ -357,9 +377,9 @@ const Dashboard = () => {
     .sort((a, b) => dayjs(a.targetDate).isBefore(dayjs(b.targetDate)) ? 1 : -1)
     .slice(0, 2);
 
-  const Incomepercent = (totalExpenses / totalIncome) * 100;
+  const Incomepercent = Math.round((totalExpenses / totalIncome) * 100);
 
-  const Expensepercent = (totalExpenses / totalBudget) * 100;
+  const Expensepercent = Math.round((totalExpenses / totalBudget) * 100);
 
   const progressColor = (percent: number) => {
 
@@ -380,17 +400,6 @@ const Dashboard = () => {
       textStyle: {
         fontSize: 10,
       },
-      // extraCssText: 'width: 180px; height: 30px;  line-height: 15px;display:flex;flex-direction:column',
-      //   formatter: function (params :any) {
-      //     const label = params.name;
-      //     const value = params.value;
-      //     return `
-      //         <div style="display: flex; justify-content: space-between; ">
-      //             <span>${label}</span>
-      //             <span>${value}</span>
-      //         </div>
-      //     `;
-      // }
     },
     legend: {
       top: '0',
@@ -428,6 +437,50 @@ const Dashboard = () => {
     ]
   };
 
+  const barData = {
+    grid: {
+      left: '4%',
+      right: '5%',
+      bottom: '2%',
+      top: '14%',
+      containLabel: true,  // Ensures labels don't overflow
+      show: false
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+      data: ['Budget amount', 'Amount spent'],
+      top: '0%',       // Positions the legend at the top of the graph
+      orient: 'horizontal',   // Aligns the legend items horizontally
+      itemGap: 20,     // Adds spacing between the legend items
+      textStyle: {
+        fontSize: 13,  // Sets font size for legend items
+        color: '#333'  // Sets font color
+      }
+    },
+    tooltip: {
+      textStyle: {
+        fontSize: 12,
+      },
+    },
+    dataset: {
+      source: [
+        ['category', 'Budget amount', 'Amount spent'],
+        ...seriesData.map(item => [item.label, item.amount, item.amountSpent])
+      ]
+    },
+    xAxis: [{ type: 'category' }],
+    yAxis: {},
+
+    series: [{
+      type: 'bar',
+      
+
+    }, { type: 'bar', }]
+  };
+
+
+
   const getAccountLabel = (type: number) => {
     switch (type) {
       case 1: return "Cash";
@@ -453,66 +506,35 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
-              <Row gutter={[16, 24]} style={{ marginBottom: '15px' }}> */}
-      {/* {accounts.length == 0? (
-          <Col xs={24} sm={12} md={5}>
-
-         
-              <Card style={{ height: '100%', width: '100%' }}>
-
-                <div className='d-flex flex-row px-3 py-1' style={{ gap: '25px' }}>
-                 <p className='my-1'> {getAccountIcon(1)}</p>
-                  <div className='lh-1'>
-                    <h6> ₹ {Utils.getFormattedNumber(0)}</h6>
-                    <span>{getAccountLabel(1)} </span>
-
-
-                  </div>
-                </div>
-              </Card>
-            </Col>):
-          ( */}
-      {/* ) */}
-      {/* } */}
-
-      {/* <Col xs={24} sm={12} md={4} >
-                  <Button style={{ width: '90%', height: '70%', border: '1px dashed', color: 'blue', background: 'none' }} onClick={() => navigate('/settings/account')} >
-                    <div style={{ display: 'flex ', flexDirection: 'column' }}>
-                     
-                      <span className='align-items-center'><Plus /> Add Account</span>
-                    </div>
-                  </Button>
-                </Col>
-              </Row> */}
-
-
       <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
         <Row gutter={[16, 24]} style={{ marginBottom: '10px' }}>
-          <Col xs={24} sm={12} md={21}>
+          <Col xs={24} sm={12} md={accountData.length == 1 ? 5 : 21}  >
            
-            <ScrollContainer className="scroll-container" horizontal={true} style={{ height: '80px', width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: ' 0' }}>
-              <Row gutter={[16, 24]} wrap={false}>
-                {accountData.map((obj: any, i: number) => (
-                  <Col xs={24} sm={12} md={6} key={i} style={{ flex: '0 0 auto' }}> 
-                    <Card style={{ height: '100%', width: '270px' }} className="scrollCard">
+            <ScrollContainer horizontal={true}  className='scroll-container' style={{ height: '80px', width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: ' 0' , margin:'0'}}>
+              <Row gutter={[16, 24]} wrap={false} >
+
+                {accountData.map((obj: Account, i: number) => (
+
+                  <Col xs={24} sm={12} md={6} key={i} style={{ flex: '0 0 auto', cursor:'pointer' }} className='my-1' >
+                    <Card style={{ height: '100%', width: '270px' }} className="scrollCard" >
                       <div className="d-flex flex-row py-1 px-2" style={{ gap: '25px' }}>
                         <p className="my-1">{getAccountIcon(obj.accountType)}</p>
                         <div className="lh-1">
                           <h6>₹ {Utils.getFormattedNumber(obj.amount)}</h6>
-                          <span>{getAccountLabel(obj.accountType)}({obj.bankName})</span>
-                          
+                          <span>{getAccountLabel(obj.accountType)}({obj.name})</span>
+
                         </div>
                       </div>
                     </Card>
                   </Col>
+
                 ))}
               </Row>
             </ScrollContainer>
           </Col>
 
           <Col xs={24} sm={12} md={3}>
-            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop:'15px' }} onClick={() => navigate('/settings/account')} >
+            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop: '15px' }} onClick={() => navigate('/settings/account')} >
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className='align-items-center'><Plus /> Add Account</span>
               </div>
@@ -523,19 +545,20 @@ const Dashboard = () => {
 
 
 
-        <Row gutter={[16, 24]}>
+        <Row gutter={[16, 24]} style={{ marginBottom: '0px' }}>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
-            <Card style={{ width: "100%", height: "92%", }}>
-              <div className='d-flex '>
-                <h6 className='pe-2 '><PieChartOutlined color="#3C3D37" /></h6>
-                <p style={{ marginBottom: 5, }}> Expenses Structure</p>
-              </div>
+            <Card style={{ width: "100%", height: "94%", }}>
+              <p className='lh-1  '>
+                <PieChartOutlined color="#3C3D37" className='me-2 ' />
+                Expenses Structure
+              </p>
 
               <div className='d-flex flex-column justify-center ' >
 
                 <EChartsReact
                   option={option}
-                  style={{ width: '200px', height: '150px', marginRight: 'auto', marginLeft: 'auto' }}
+                  style={{ width: '200px', height: '150px', marginRight: 'auto', marginLeft: 'auto', marginBottom: '1px' }}
+
                 />
 
                 {/* <Card style={{height:'40px', alignContent:'center'}} > */}
@@ -556,7 +579,7 @@ const Dashboard = () => {
             </Card>
           </Col>
           <Col xs={{ span: 10, offset: 0 }} lg={{ span: 6 }}>
-            <Card style={{ width: "100%", height: "92%", position: 'relative' }}>
+            <Card style={{ width: "100%", height: "94%", position: 'relative' }}>
               <p style={{ position: 'absolute', top: '3%' }}>
                 <BiCoin className="recent-transactions-icon" color="#3C3D37" size={20} />
                 Budget
@@ -613,7 +636,7 @@ const Dashboard = () => {
             </Card>
           </Col>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
-            <Card style={{ width: "100%", height: "92%", padding: '0px 5px', position: 'relative' }}>
+            <Card style={{ width: "100%", height: "94%", padding: '0px 5px', position: 'relative' }}>
               <p style={{ position: 'absolute', top: '3%' }}>
                 <Goal style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon" color="#3C3D37" size={18} />
                 Recent Goals
@@ -677,7 +700,7 @@ const Dashboard = () => {
             </Card>
           </Col>
           <Col xs={{ span: 5 }} lg={{ span: 6 }}>
-            <Card style={{ width: "100%", height: "92%", padding: '0px 5px', position: 'relative' }}>
+            <Card style={{ width: "100%", height: "94%", padding: '0px 5px', position: 'relative' }}>
               <p style={{ margin: 0, paddingBottom: "6px", position: 'absolute', top: '3%' }} >
                 <ArrowLeftRight style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon " color="#3C3D37" size={20} />
                 Recent Transactions
@@ -765,7 +788,7 @@ const Dashboard = () => {
                 </p>
 
                 <div onClick={() => navigate("/budget")}>
-                  <BarChart
+                  {/* <BarChart
                     width={630}
                     height={235}
                     series={[
@@ -773,7 +796,9 @@ const Dashboard = () => {
                       { data: seriesData.map(data => data.amountSpent), label: 'Expenses', color: '#FF8485' },
                     ]}
                     xAxis={[{ data: categories, scaleType: 'band' }]}
-                  />
+                  /> */}
+
+                  <EChartsReact option={barData} style={{ width: '100%', height: '230px', padding: '0', margin: '0' }} />
                 </div>
               </div>
             </Card>

@@ -9,19 +9,23 @@ import Goal from '../Goal'
 import SettingsCompo from '../SettingsCompo'
 import ErrorPage from '../ErrorPage'
 import Home from '../Home'
+import Welcome from '../../Login-Section/Welcome';
 
 const PageRoutes = () => {
     return (
         <div>
             <Routes>
-                {/* <Route path='/'element={<Home/>}/> */}
+                
+                <Route path='/' element={<Dashboard/>}/>
+               
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/goal" element={<Goal />} />
                 <Route path="/transaction" element={<Transactions />} />
                 <Route path="/budget" element={<Budget />} />
                 <Route path="/profile" element={<Account />} />
-                <Route path="/settings/account" element={<SettingsCompo />} />
+                <Route path="/settings/*" element={<SettingsCompo />} />
                 <Route path="/help" element={<HelpCompo />} />
+                <Route path="/addBalance" element={<Welcome />} />
                 <Route path="*" element={<ErrorPage />} />
             </Routes>
         </div>
