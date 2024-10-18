@@ -42,7 +42,7 @@ interface ExpenseLimitTypes {
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const [balanceExists, setBalanceExists] = useState<boolean>(false);
+  const [balanceExists, setBalanceExists] = useState<boolean>();
 
 
   // console.log(import.meta.env.VITE_SOME_KEY) // 123
@@ -76,7 +76,7 @@ function App() {
             
             setUserDetails(res.data);
              setIsLogin(true);
-            
+             setBalanceExists(true);
 
           }).catch((err) => {
             setLoader(false)

@@ -27,23 +27,38 @@ const Welcome = () => {
             amount: value.amount == null ? 0 : Number(value.amount)
         };
         
-        axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata)
-            .then((res) => {
-                navigate("/dashboard");
-                setLoader(true);
-                setIsLogin(true);
-                setBalanceExists(true);
-            })
-            .catch((err) => {
-                setLoader(false);
-                console.log("error", err);
-            });
-    };
+        axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
+
+            
+            navigate("/dashboard");
+            setLoader(true);
+            setIsLogin(true);
+            setBalanceExists(true);
+            localStorage.setItem(
+                'isUser',
+                JSON.stringify(
+                    {
+                        // email: response?.data?.email,
+                        // password: response?.data?.password,
+                        UserId: userDetails.id
+                        // FirstName: response?.data?.firstName,
+                        // LastName: response?.data?.lastName,
+                        // contact: response?.data?.contact
+                    })
+            );
+            //  window.location.reload();
+            // setAccounts(res.data);
+           
+        }).catch((err) => {
+            setLoader(false);
+            console.log("error", err,)})
+
+        }
 
     return (
         <div style={{ height: '' }}>
-            <div className='mt-3' onClick={() => onSave}>
-                <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline' }}>Skip</p>
+            <div className='mt-3' onClick={()=>onSave(0)}>
+                <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>Skip</p>
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '11%' }}>
