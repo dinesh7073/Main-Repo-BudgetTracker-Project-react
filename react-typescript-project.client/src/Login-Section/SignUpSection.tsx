@@ -53,7 +53,7 @@ const SignUpSection = () => {
                 (response: any) => {
 
                     setLoader(false);
-                     navigate('/welcome');
+                     navigate('/addBalance');
                     setUserDetails(response.data)
                     localStorage.setItem(
                         'isUser',
@@ -143,8 +143,8 @@ const SignUpSection = () => {
                                 style={{ width: "100%", height: '100%' }}
                                 name='validateOnly'
                             >
-                                <h4 className=' pt-3' style={{ fontWeight: '600' }}>Create Wallet Account</h4>
-                                <p style={{ marginBottom: '35px', fontSize: '16px' }}>Sign up below to create your Wallet account</p>
+                                <h4 className=' pt-3' style={{ fontWeight: '600' }}>Create wallet account</h4>
+                                <p style={{ marginBottom: '35px', fontSize: '16px' }}>Sign up below to create your wallet account</p>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '30px' }}>
                                     <Form.Item
                                         label="First name"
@@ -216,7 +216,7 @@ const SignUpSection = () => {
                                     <Input.Password style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} prefix={<LockOutlined />} type="password" placeholder="Password" />
                                 </Form.Item>
                                 <Form.Item
-                                    label="Confirm Password"
+                                    label="Confirm password"
                                     name="confirmPassword"
                                     dependencies={['password']}
                                     rules={[
@@ -232,7 +232,7 @@ const SignUpSection = () => {
                                     ]}
                                     style={{ height: '65px' }}
                                 >
-                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' prefix={<LockOutlined />} placeholder="Confirm Password" />
+                                    <Input style={{ border: 'none', borderBottom: '1px solid #B8B8B8', borderRadius: '0px', outline: 'none', boxShadow: 'none' }} type='password' prefix={<LockOutlined />} placeholder="Confirm password" />
                                 </Form.Item>
 
                                 <Form.Item>

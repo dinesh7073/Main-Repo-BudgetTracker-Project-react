@@ -14,6 +14,7 @@ import axios from "axios";
 import Welcome from "../../Login-Section/Welcome";
 
 
+
 export interface TransactionType {  // the final fileds for frontend and backend 
   id: string;
   userId: string;
@@ -116,11 +117,13 @@ function App() {
   useEffect(() => {
 
     const locationName = location.pathname;
-
+    if(isLogin || location.pathname === '/signup'){
     if (locationName) {
       navigate(locationName);
+    }else {
+      navigate('/login');
     }
-
+  }
   }, []);
 
   const ShowError = (message: string) => {
@@ -161,8 +164,8 @@ function App() {
           <Route path='/login' element={<LoginCompo />} />
           <Route path='/signup' element={<SignUpSection />} />
           <Route path='/forgotPassword' element={<ForgotpassCompo />} />
-          <Route path='/welcome' element={<Welcome />} />
-
+          <Route path='/addBalance' element={<Welcome />} />
+          
 
         </Routes>
       </div>
