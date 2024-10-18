@@ -56,18 +56,7 @@ const SignUpSection = () => {
                      navigate('/addBalance');
                     setUserDetails(response.data)
                     setBalanceExists(false)
-                    localStorage.setItem(
-                        'isUser',
-                        JSON.stringify(
-                            {
-                                // email: response?.data?.email,
-                                // password: response?.data?.password,
-                                UserId: response?.data?.id,
-                                // FirstName: response?.data?.firstName,
-                                // LastName: response?.data?.lastName,
-                                // contact: response?.data?.contact
-                            })
-                    );
+                    
 
                     form.resetFields();
                 }

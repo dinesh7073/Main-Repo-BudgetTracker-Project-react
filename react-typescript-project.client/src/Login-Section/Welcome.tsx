@@ -31,7 +31,19 @@ const Welcome = () => {
             setLoader(true);
             setIsLogin(true);
             setBalanceExists(true);
-            // window.location.reload();
+            localStorage.setItem(
+                'isUser',
+                JSON.stringify(
+                    {
+                        // email: response?.data?.email,
+                        // password: response?.data?.password,
+                        UserId: userDetails.id
+                        // FirstName: response?.data?.firstName,
+                        // LastName: response?.data?.lastName,
+                        // contact: response?.data?.contact
+                    })
+            );
+            //  window.location.reload();
             // setAccounts(res.data);
            
         }).catch((err) => {
@@ -42,7 +54,7 @@ const Welcome = () => {
 
     return (
         <div style={{ height: '' }}>
-            <div className='mt-3' onClick={()=>onSave}>
+            <div className='mt-3' onClick={()=>onSave(0)}>
                 <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>Skip</p>
             </div>
 

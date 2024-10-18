@@ -534,7 +534,7 @@ const Dashboard = () => {
           </Col>
 
           <Col xs={24} sm={12} md={3}>
-            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop: '15px' }} onClick={() => navigate('/settings/*')} >
+            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop: '15px' }} onClick={() => navigate('/settings/account')} >
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className='align-items-center'><Plus /> Add Account</span>
               </div>
