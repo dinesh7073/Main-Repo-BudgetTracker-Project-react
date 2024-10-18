@@ -92,7 +92,7 @@ const Welcome = () => {
 
 
                     ]} style={{ width: '22%', marginLeft: '39%' }}>
-                        <Input placeholder="Enter cash amount" type='number' value={inputValue} onChange={handleChange}/>
+                        <Input placeholder="Enter cash amount" type='number'/>
                     </Form.Item>
 
                     <Button
