@@ -42,6 +42,7 @@ interface ExpenseLimitTypes {
 function App() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [balanceExists, setBalanceExists] = useState<boolean>(false);
 
 
   // console.log(import.meta.env.VITE_SOME_KEY) // 123
@@ -154,9 +155,9 @@ function App() {
   // }), [isLogin])
 
   return (
-    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader }}>
+    <UserContext.Provider value={{ isLogin, setIsLogin, isSignUp, setIsSignUp, userDetails, transactionData, setTransactionData, setUserDetails, UserId, userWallet, setUserWallet, expensesLimit, setexpensesLimit, loader, setLoader, balanceExists, setBalanceExists }}>
       <div>
-        {isLogin && <Sidebar />}
+        {balanceExists && isLogin && <Sidebar />}
 
 
         <Routes>

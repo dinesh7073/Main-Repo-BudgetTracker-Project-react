@@ -9,29 +9,29 @@ import Dashboard from '../Components/Dashboard';
 const Welcome = () => {
    
     const [form] = Form.useForm(); // Create form instance
-    const {userDetails,setLoader } = useContext<any>(UserContext);
-    const [inputValue, setInputValue] = useState();
+    const {userDetails,setLoader , setIsLogin, setBalanceExists} = useContext<any>(UserContext);
     const navigate = useNavigate();
 
-    const handleChange = (e:any) =>{
-        setInputValue(e.target.value);
-    }
 
-    const onSave = () => {
+    const onSave = (value:any) => {
 
         const userId = userDetails?.id;
-
+        console.log(value.amount)
         const accountdata = {
             userId : userId,
             name: 'Cash',
             accountType: 1,
-            amount: inputValue == null ? 0 : Number(inputValue)
+            amount: value.amount == null ? 0 : Number(value.amount)
         }
         
         axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
+
+            
             navigate("/dashboard");
             setLoader(true);
-            window.location.reload();
+            setIsLogin(true);
+            setBalanceExists(true);
+            // window.location.reload();
             // setAccounts(res.data);
            
         }).catch((err) => {
@@ -42,7 +42,7 @@ const Welcome = () => {
 
     return (
         <div style={{ height: '' }}>
-            <div className='mt-3' onClick={onSave}>
+            <div className='mt-3' onClick={()=>onSave}>
                 <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>Skip</p>
             </div>
 
@@ -76,7 +76,7 @@ const Welcome = () => {
 
 
                     ]} style={{ width: '22%', marginLeft: '39%' }}>
-                        <Input placeholder="Enter cash amount" type='number' value={inputValue} onChange={handleChange}/>
+                        <Input placeholder="Enter cash amount" type='number'/>
                     </Form.Item>
 
                     <Button

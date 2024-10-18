@@ -20,7 +20,7 @@ interface ISignUp {
 }
 
 const SignUpSection = () => {
-    const { setIsSignUp, setIsLogin, setUserDetails } = useContext<any>(UserContext);
+    const { setIsSignUp, setIsLogin, setUserDetails, setBalanceExists } = useContext<any>(UserContext);
     const [form] = Form.useForm();
     const [loader, setLoader] = useState<boolean>(false);
 
@@ -55,6 +55,7 @@ const SignUpSection = () => {
                     setLoader(false);
                      navigate('/addBalance');
                     setUserDetails(response.data)
+                    setBalanceExists(false)
                     localStorage.setItem(
                         'isUser',
                         JSON.stringify(
