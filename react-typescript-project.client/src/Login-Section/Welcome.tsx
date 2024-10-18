@@ -3,50 +3,47 @@ import UserContext from '../UserContext';
 import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { REACT_APP_BASE_URL } from '../Components/Common/Url';
-import Dashboard from '../Components/Dashboard';
 
 const Welcome = () => {
-   
-    const [form] = Form.useForm(); // Create form instance
-    const {userDetails,setLoader , setIsLogin, setBalanceExists} = useContext<any>(UserContext);
+    const [form] = Form.useForm(); 
+    const { userDetails, setLoader, setIsLogin, setBalanceExists } = useContext<any>(UserContext);
     const navigate = useNavigate();
+    
+    
+    const [inputValue, setInputValue] = useState('');
 
-    const handleChange = (e:any) =>{
-        setInputValue(e.target.value);
-    }
+    const handleChange = (e: any) => {
+        setInputValue(e.target.value); 
+    };
 
-    const onSave = (value:any) => {
-
+    const onSave = (value: any) => {
         const userId = userDetails?.id;
-        console.log(value.amount)
+        console.log(value.amount);
+        
         const accountdata = {
-            userId : userId,
+            userId: userId,
             name: 'Cash',
             accountType: 1,
             amount: value.amount == null ? 0 : Number(value.amount)
-        }
+        };
         
-        axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata).then((res) => {
-
-            
-            navigate("/dashboard");
-            setLoader(true);
-            setIsLogin(true);
-            setBalanceExists(true);
-            // window.location.reload();
-            // setAccounts(res.data);
-           
-        }).catch((err) => {
-            setLoader(false);
-            console.log("error", err,)})
-
-        }
+        axios.post(`https://localhost:7054/AccountsController/${userId}CreateAccountsAndUpdate`, accountdata)
+            .then((res) => {
+                navigate("/dashboard");
+                setLoader(true);
+                setIsLogin(true);
+                setBalanceExists(true);
+            })
+            .catch((err) => {
+                setLoader(false);
+                console.log("error", err);
+            });
+    };
 
     return (
         <div style={{ height: '' }}>
-            <div className='mt-3' onClick={()=>onSave}>
-                <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline', }}>Skip</p>
+            <div className='mt-3' onClick={() => onSave}>
+                <p style={{ cursor: "pointer", color: "blue", fontSize: '15.5px', marginLeft: '94%', textDecorationLine: 'underline' }}>Skip</p>
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '11%' }}>
@@ -62,25 +59,22 @@ const Welcome = () => {
                         <h4 className="mt-4"><b>Set up your cash balance</b></h4>
                     </b>
                 </div>
-                {/* <p   className='mt-5'  style={{marginLeft:'-16.6%', fontSize:'13px'}}>Cash Balance</p> */}
-                <Form 
-                form={form} 
-                onFinish={onSave}
+                <Form
+                    form={form}
+                    onFinish={onSave}
                 >
-                   <p   className='mt-5'  style={{marginLeft:'-16.6%', fontSize:'13px'}}>Cash Balance</p>
-                    <Form.Item name="amount" 
-                    rules={[{ required: true, message: 'Please input your cash amount!' },
-                        // {
-                        //     // pattern: RegExp("[1-9]{1}[0-9]{9}"),
-                        //     message: 'Invalid input',
-                        //     validateTrigger: 'onFinish',
-                            
-                        // }
-
-
-
-                    ]} style={{ width: '22%', marginLeft: '39%' }}>
-                        <Input placeholder="Enter cash amount" type='number' value={inputValue} onChange={handleChange}/>
+                    <p className='mt-5' style={{ marginLeft: '-16.6%', fontSize: '13px' }}>Cash Balance</p>
+                    <Form.Item
+                        name="amount"
+                        rules={[{ required: true, message: 'Please input your cash amount!' }]}
+                        style={{ width: '22%', marginLeft: '39%' }}
+                    >
+                        <Input
+                            placeholder="Enter cash amount"
+                            type='number'
+                            value={inputValue} 
+                            onChange={handleChange} 
+                        />
                     </Form.Item>
 
                     <Button
@@ -88,17 +82,13 @@ const Welcome = () => {
                         htmlType="submit"
                         className="mt-3"
                         style={{ width: '23%', borderRadius: '19px', height: '37px', color: 'white' }}
-                        >
+                    >
                         Confirm Cash Balance
                     </Button>
-                        </Form>
+                </Form>
             </div>
         </div>
     );
 };
 
 export default Welcome;
-function setInputValue(value: any) {
-    throw new Error('Function not implemented.');
-}
-
