@@ -12,6 +12,9 @@ const Welcome = () => {
     const {userDetails,setLoader , setIsLogin, setBalanceExists} = useContext<any>(UserContext);
     const navigate = useNavigate();
 
+    const handleChange = (e:any) =>{
+        setInputValue(e.target.value);
+    }
 
     const onSave = (value:any) => {
 
@@ -61,7 +64,7 @@ const Welcome = () => {
             <div style={{ textAlign: 'center', marginTop: '11%' }}>
                 <div className="mt-4">
                     <img
-                        src="https://images.pond5.com/gold-coins-cartoon-style-are-footage-276090183_iconl.jpeg"
+                        src="https://cdn-icons-png.flaticon.com/512/1578/1578656.png"
                         alt="Coins"
                         style={{ borderRadius: '50%', height: '90px', width: '100px' }}
                     />
@@ -71,11 +74,12 @@ const Welcome = () => {
                         <h4 className="mt-4"><b>Set up your cash balance</b></h4>
                     </b>
                 </div>
+                {/* <p   className='mt-5'  style={{marginLeft:'-16.6%', fontSize:'13px'}}>Cash Balance</p> */}
                 <Form 
                 form={form} 
                 onFinish={onSave}
                 >
-                    <p  className='mt-4' style={{marginLeft:'-16.4%',}}>Cash Balance</p>
+                   <p   className='mt-5'  style={{marginLeft:'-16.6%', fontSize:'13px'}}>Cash Balance</p>
                     <Form.Item name="amount" 
                     rules={[{ required: true, message: 'Please input your cash amount!' },
                         // {
@@ -88,21 +92,25 @@ const Welcome = () => {
 
 
                     ]} style={{ width: '22%', marginLeft: '39%' }}>
-                        <Input placeholder="Enter cash amount" type='number'/>
+                        <Input placeholder="Enter cash amount" type='number' value={inputValue} onChange={handleChange}/>
                     </Form.Item>
 
                     <Button
                         type="primary"
                         htmlType="submit"
-                        className="mt-5"
+                        className="mt-3"
                         style={{ width: '23%', borderRadius: '19px', height: '37px', color: 'white' }}
-                    >
+                        >
                         Confirm Cash Balance
                     </Button>
-                </Form>
+                        </Form>
             </div>
         </div>
     );
 };
 
 export default Welcome;
+function setInputValue(value: any) {
+    throw new Error('Function not implemented.');
+}
+
