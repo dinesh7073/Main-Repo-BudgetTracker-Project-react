@@ -182,6 +182,9 @@ const Goal = () => {
       title: 'Goal',
       dataIndex: 'goal',
       key: 'goal',
+      ellipsis: {
+        showTitle: false,
+      },
       render: (goal: string) => goal
 
     },

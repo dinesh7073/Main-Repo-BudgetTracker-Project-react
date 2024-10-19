@@ -19,6 +19,7 @@ import 'dayjs/locale/en';
 import buddhistLocale from 'antd/es/date-picker/locale/en_US';
 import { CategoriesType } from '../Components/Settings-children\'s/CategoriesCompo';
 import { AccountTypes } from '../Components/Settings-children\'s/AccountsCompo';
+import { style } from '@mui/system';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(buddhistEra);
@@ -227,11 +228,11 @@ const TransactionList: React.FC = () => {
     const getAccountTypeLabel = (value: number | null) => {
         switch (value) {
             case 1: return "Cash";
-            case 2: return "SavingAccount";
+            case 2: return "Saving Account";
             case 3: return "General";
-            case 4: return "CreditCard";
-            case 5: return "SalaryAccount";
-            case 6: return "CurrentAccount";
+            case 4: return "Credit Card";
+            case 5: return "Salary Account";
+            case 6: return "Current Account";
         }
 
     }
@@ -241,13 +242,13 @@ const TransactionList: React.FC = () => {
             case 2: return 'Investments';
             case 3: return 'Business';
             case 4: return 'Other Income';
-            case 5: return 'Food,Drinks';
+            case 5: return 'Food & Drinks';
             case 6: return 'Clothes & Footwear';
             case 7: return 'Housing';
             case 8: return 'Vehicle';
             case 9: return 'Transportation';
             case 10: return 'Health Care';
-            case 11: return 'Communication, PC';
+            case 11: return 'Communication & Devices';
             case 12: return 'Entertainment';
         }
     }
@@ -374,7 +375,6 @@ const TransactionList: React.FC = () => {
             }));
 
 
-
         axios.post(`${REACT_APP_BASE_URL}TransactionsController/${UserId}CreateTransactionsAndUpdate`, transactionData)
             .then((response) => {
                 const updatedRecords = editingTransaction
@@ -441,11 +441,19 @@ const TransactionList: React.FC = () => {
             ellipsis: {
                 showTitle: false,
             },
-            // render: (label: string) => (
-            //     <Tooltip placement="topLeft" title={label}>
-            //         {label}
-            //     </Tooltip>
-            // ),
+           
+            render: (label: string) => (
+               
+                <div
+                style={{
+                  paddingLeft: label.length > 1 ? '0px' : '10px', 
+                }}
+              >
+                {label.length > 1 ? label : '-'}
+              </div>
+                
+            ),
+           
         },
         {
             width: '15%',
@@ -552,7 +560,7 @@ const TransactionList: React.FC = () => {
                         <Row className='d-flex flex-row mx-1' justify={'space-between'} gutter={24}  >
 
                             <Col span={4} className='d-flex' >
-                                <span className='align-content-center mx-2' style={{ width: '30px' }}>Type:</span>
+                                <span className='align-content-center mx-2' style={{ width: '30px' }}>Type</span>
                                 <Select
                                     style={{ width: '100%' }}
                                     value={transactiontransactionType}
@@ -565,7 +573,7 @@ const TransactionList: React.FC = () => {
                             </Col>
 
                             <Col span={4} className='d-flex'>
-                                <span className='align-content-center mx-2' style={{ width: '89px' }}>Sort by:</span>
+                                <span className='align-content-center mx-2' style={{ width: '89px' }}>Sort by</span>
                                 <Select
                                     onChange={(e) => setSorttransactionType(e)}
                                     style={{ width: '100%' }}
@@ -579,14 +587,14 @@ const TransactionList: React.FC = () => {
                                 </Select>
                             </Col>
                             <Col span={8} className='d-flex'>
-                                <span className='align-content-center' style={{ width: '100px' }}>Filter by date:</span>
+                                <span className='align-content-center' style={{ width: '100px' }}>Filter by date</span>
                                 <RangePicker
                                     onChange={handleDateRangeChange}
                                     value={selectedDateRange}
                                 />
                             </Col>
                             <Col span={8} className='d-flex'>
-                                <span className='align-content-center' style={{ width: '130px' }}>Filter category:</span>
+                                <span className='align-content-center' style={{ width: '130px' }}>Filter category</span>
                                 <Select
                                     mode="multiple"
                                     style={{ width: '100%' }}

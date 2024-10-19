@@ -12,6 +12,7 @@ import ForgotpassCompo from "../../Login-Section/ForgotpassCompo";
 import { REACT_APP_BASE_URL } from "./Url";
 import axios from "axios";
 import Welcome from "../../Login-Section/Welcome";
+import Dashboard from "../Dashboard";
 
 
 
@@ -73,10 +74,10 @@ function App() {
           // setUserdata(parsedUser);
 
           axios.get(`${REACT_APP_BASE_URL}UsersController/${parsedUser.UserId}GetUserById`).then((res) => {
-            
+            console.log(res.data)
             setUserDetails(res.data);
              setIsLogin(true);
-             setBalanceExists(true);
+            setBalanceExists(true);
 
           }).catch((err) => {
             setLoader(false)
@@ -166,6 +167,7 @@ function App() {
           <Route path='/signup' element={<SignUpSection />} />
           <Route path='/forgotPassword' element={<ForgotpassCompo />} />
           <Route path='/addBalance' element={<Welcome />} />
+         
           
 
         </Routes>

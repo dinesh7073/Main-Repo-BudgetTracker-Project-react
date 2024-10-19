@@ -12,11 +12,9 @@ import {
   Popconfirm,
   Breadcrumb,
   Empty,
-  Carousel,
   Col,
   Row,
   Statistic,
-  StatisticProps,
   Tag,
   Alert,
   Space,
@@ -28,7 +26,6 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import {
   Car,
-  DollarSign,
   Edit,
   HelpCircle,
   Home,
@@ -43,32 +40,22 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "../UserContext";
 import { IoFastFoodOutline } from "react-icons/io5";
 import axios from "axios";
-import { BarChart } from "@mui/x-charts";
-import { PieChart } from "@mui/x-charts/PieChart";
 import "../CSS/Budget.css";
 import {
   DeleteOutlined,
-  DownOutlined,
   EditOutlined,
-  EllipsisOutlined,
   HomeOutlined,
-  MoreOutlined,
-  PlusOutlined,
+  MoreOutlined, 
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
-
 import "../CSS/ThemeColors.css";
-
-import CountUp from "react-countup";
 import { REACT_APP_BASE_URL } from "./Common/Url";
 import { Utils } from "./Common/Utilities/Utils";
 
-const formatter: StatisticProps["formatter"] = (value) => (
-  <CountUp end={value as number} separator="," />
-);
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+
 interface Budget {
   id: string;
   userid: string;
@@ -126,8 +113,7 @@ const Budget = () => {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [transactionData, setTransactionData] = useState<FormData[]>([]);
   const [budgetExists, setBudgetExists] = useState<boolean>(false);
-  const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
-
+  // const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
   // const [editingLimit, setEditingLimit] = useState(false);
 
@@ -143,7 +129,7 @@ const Budget = () => {
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 5:
-        return "Food,Drinks";
+        return "Food & Drinks";
       case 6:
         return "Clothes & Footwear";
       case 7:
@@ -155,7 +141,7 @@ const Budget = () => {
       case 10:
         return "Health Care";
       case 11:
-        return "Communication, PC";
+        return "Communication & Devices";
       case 12:
         return "Entertainment";
       case 13:
@@ -203,7 +189,7 @@ const Budget = () => {
         }
       })
       .catch((err) => console.log("Error fetching transactions", err));
-  }, [UserId]);
+  }, []);
 
   useEffect(() => {
     setLoader(true);
@@ -214,7 +200,7 @@ const Budget = () => {
         if (res.status === 200) {
           setLoader(false);
           setBudgetExists(true);
-
+          
           let totalAmountSpent = 0;
 
           const transformedBudgets = res.data.map((budget: Budget) => {
@@ -229,22 +215,22 @@ const Budget = () => {
                 0
               );
 
-            if (budget.category !== 13) {
-              totalAmountSpent += budget.amountSpent;
-            }
+            // if (budget.category !== 13) {
+            //   totalAmountSpent += budget.amountSpent;
+            // }
             setLoader(false);
 
-            setPieChartData(
-              budgets
-                .filter((budget) => budget.category !== 13)
-                .map((budget: Budget, index) => ({
-                  id: index,
-                  value: budget.amountSpent,
-                  label:
-                    getCategoryLabel(budget.category) ||
-                    `Category ${budget.category}`,
-                }))
-            );
+            // setPieChartData(
+            //   budgets
+            //     .filter((budget) => budget.category !== 13)
+            //     .map((budget: Budget, index) => ({
+            //       id: index,
+            //       value: budget.amountSpent,
+            //       label:
+            //         getCategoryLabel(budget.category) ||
+            //         `Category ${budget.category}`,
+            //     }))
+            // );
 
             return {
               ...budget,
@@ -255,84 +241,54 @@ const Budget = () => {
             };
           });
 
-          const updatedBudget = transformedBudgets.map((budget: Budget) => {
-            if (budget.category === 13) {
-              return {
-                ...budget,
-                amountSpent: totalAmountSpent,
-              };
-            }
-            return budget;
-          });
-
-          setBudgets(updatedBudget);
-
-          budgets.map((budget: Budget) => {
-            if (budget.amountSpent > budget.amount) {
-              notification.warning({
-                message: "Budget Exceeded",
-                description: `You have exceeded your budget for the category ${getCategoryLabel(
-                  budget.category
-                )}.`,
-                placement: "topRight",
-              });
-            }
-          });
-
-          // transformedBudgets.map((budget: Budget) => {
-          //   if (budget.amountSpent > budget.amount) {
-          //     notification.warning({
-          //       message: 'Budget Exceeded',
-          //       description: `You have exceeded your budget for the category ${getCategoryLabel(budget.category)}.`,
-          //       placement: 'topRight',
-          //     });
+          // const updatedBudget = transformedBudgets.map((budget: Budget) => {
+          //   if (budget.category === 13) {
+          //     return {
+          //       ...budget,
+          //       amountSpent: totalAmountSpent,
+          //     };
           //   }
+          //   return budget;
+          // });
 
-          //   // if (budget.category === 13 && (budget.amountSpent > budget.amount)) {
-          //   //   console.log("13 budget exceed")
-          //   //   notification.warning({
-          //   //     message: 'Budget Exceeded',
-          //   //     description: `You have exceeded your budget for the category ${getCategoryLabel(budget.category)}.`,
-          //   //     placement: 'topRight',
-          //   //   });
-          //   // }
+          setBudgets(transformedBudgets);
 
-          // })
         }
-        // transformedBudgets.forEach((budget: Budget) => {
-
-        // if (ExceedsBudget) {
-
-        //   notification.warning({
-        //     message: 'Budget Exceeded',
-        //     description: `You have exceeded your budget for the category ${getCategoryLabel(budget.category)}.`,
-        //     placement: 'topRight',
-        //   });
-        // }
-
-        // if (budget.category === 13 && (totalAmountSpent > budget.amount)) {
-        //   console.log("13 budget exceed")
-        //   notification.warning({
-        //     message: 'Budget Exceeded',
-        //     description: `You have exceeded your budget for the category ${getCategoryLabel(budget.category)}.`,
-        //     placement: 'topRight',
-        //   });
-        // }
-        //   else if (budget.category !== 13 && budget.amountSpent > budget.amount) {
-        //   console.log(" budget exceed")
-        //   notification.warning({
-        //     message: 'Budget Exceeded',
-        //     description: `You have exceeded your budget for the category ${getCategoryLabel(budget.category)}.`,
-        //     placement: 'topRight',
-        //   });
-        // }
-
-        // if (budget.category !== 13 && budget.amountSpent > budget.amount) {
-        // };
       })
 
       .catch((err) => console.log("Error from server", err));
+
+      
   }, [transactionData]);
+
+  useEffect(() => {
+    
+  budgets.forEach((budget: Budget) => {
+
+    if(budget.amountSpent == budget.amount){
+      notification.warning({
+        message: "Budget Completed",
+        description: `You have completed the budget for the category ${getCategoryLabel(
+          budget.category
+        )}.`,
+        placement: "topRight",
+      });
+
+    }
+
+    if (budget.amountSpent > budget.amount) {
+      notification.warning({
+        message: "Budget Exceeded",
+        description: `You have exceeded your budget for the category ${getCategoryLabel(
+          budget.category
+        )}.`,
+        placement: "topRight",
+      });
+    }
+  });
+}, [budgets]);
+  
+
 
   const updateUserWallet = (records: FormData[]) => {
     const totalIncome = records
@@ -433,8 +389,6 @@ const Budget = () => {
     }
     setIsModalVisible(true);
   };
-
-
 
   const handleCancel = () => {
     setIsModalVisible(false);

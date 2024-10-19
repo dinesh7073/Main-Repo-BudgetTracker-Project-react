@@ -12,10 +12,7 @@ const Welcome = () => {
     const {userDetails,setLoader , setIsLogin, setBalanceExists} = useContext<any>(UserContext);
     const navigate = useNavigate();
 
-    const handleChange = (e:any) =>{
-        setInputValue(e.target.value);
-    }
-
+   
     const onSave = (value:any) => {
 
         const userId = userDetails?.id;
@@ -110,7 +107,5 @@ const Welcome = () => {
 };
 
 export default Welcome;
-function setInputValue(value: any) {
-    throw new Error('Function not implemented.');
-}
+
 

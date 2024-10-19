@@ -80,7 +80,6 @@ const AccountsCompo = () => {
 
     const onFinish = (values: AccountTypes) => {
 
-
         if (editingAccount != null) {
             const amount = Number(values.amount);
             const userId = UserId;
@@ -98,7 +97,7 @@ const AccountsCompo = () => {
 
                     setAccounts(updatedRecords);
                     notification.success({
-                        message: editingAccount ? 'Transaction updated successfully' : 'Record added successfully',
+                        message: editingAccount ? 'Account updated successfully' : 'Account added successfully',
                     });
                 }
             );
@@ -175,6 +174,7 @@ const AccountsCompo = () => {
         setIsModalOpen(false);
         form.resetFields();
     };
+
     const handleDelete = (id: any, acc: any) => {
 
         const associatedTransaction = transactionData.filter((t: any) => t.accountType === acc.accountType);
@@ -199,21 +199,22 @@ const AccountsCompo = () => {
 
     };
     const accounttypes = [
-        { label: 'SavingAccount', value: 2 },
+        { label: 'Saving account', value: 2 },
         { label: 'General', value: 3 },
-        { label: 'CreditCard', value: 4 },
-        { label: 'SalaryAccount', value: 5 },
-        { label: 'CurrentAccount', value: 6 },
+        { label: 'Credit card', value: 4 },
+        { label: 'Salary account', value: 5 },
+        { label: 'Current account', value: 6 },
     ];
+
 
     const getAccountLabel = (type: number) => {
         switch (type) {
             case 1: return "Cash";
-            case 2: return "SavingAccount";
+            case 2: return "Saving account";
             case 3: return "General";
-            case 4: return "CreditCard";
-            case 5: return "SalaryAccount";
-            case 6: return "CurrentAccount";
+            case 4: return "Credit card";
+            case 5: return "Salary account";
+            case 6: return "Current account";
         }
     }
 
@@ -228,6 +229,47 @@ const AccountsCompo = () => {
             default: return 'unknown';
         }
     }
+
+    const bankName = [
+        { value: 'AXIS_BANK', label: 'Axis Bank' },
+        { value: 'ICICI_BANK', label: 'ICICI Bank' },
+        { value: 'HDFC_BANK', label: 'HDFC Bank' },
+        { value: 'BANK_OF_BARODA', label: 'Bank of Baroda' },
+        { value: 'INDUSIND_BANK', label: 'IndusInd Bank' },
+        { value: 'PNB', label: 'Punjab National Bank' },
+        { value: 'KOTAK_MAHINDRA_BANK', label: 'Kotak Mahindra Bank' },
+        { value: 'SBI', label: 'State Bank of India' },
+        { value: 'CANARA_BANK', label: 'Canara Bank' },
+        { value: 'UNION_BANK_OF_INDIA', label: 'Union Bank of India' },
+        { value: 'BANK_OF_INDIA', label: 'Bank Of India' },
+        { value: 'YES_BANK', label: 'YES BANK' },
+        { value: 'FEDERAL_BANK', label: 'Federal Bank' },
+        { value: 'IDBI_BANK', label: 'IDBI Bank' },
+        { value: 'INDIAN_OVERSEAS_BANK', label: 'Indian Overseas Bank' },
+        { value: 'INDIAN_BANK', label: 'Indian Bank' },
+        { value: 'IDFC_FIRST_BANK', label: 'IDFC FIRST Bank' },
+        { value: 'JAMMU_AND_KASHMIR_BANK', label: 'Jammu & Kashmir Bank' },
+        { value: 'RBL_BANK', label: 'RBL Bank' },
+        { value: 'BANK_OF_MAHARASHTRA', label: 'Bank of Maharashtra' },
+        { value: 'CITY_UNION_BANK', label: 'City Union Bank' },
+        { value: 'PUNJAB_AND_SIND_BANK', label: 'Punjab and Sind Bank' },
+        { value: 'UCO_BANK', label: 'UCO Bank' },
+        { value: 'DCB_BANK', label: 'DCB Bank' }
+      ]
+    
+      const getBankName =(name:string)=>{
+    
+        const bank = bankName.find((obj)=>obj.value === name);
+    
+        if(bank){
+          return bank.label
+        }
+    
+        if(name == 'Cash'){
+          return 'Cash'
+        }
+    
+      } 
 
     const columns = [
         {
@@ -250,7 +292,7 @@ const AccountsCompo = () => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (text: any, record: any) => <span> {record.name}</span>
+            render: (text: any, record: any) => <span> {getBankName(record.name)}</span>
         },
         {
             title: 'Balance',
@@ -369,32 +411,33 @@ const AccountsCompo = () => {
                             placeholder="ex: sbi,pnb etc..."
                             // onChange={onChange}
                             // onSearch={onSearch}
-                            options={[
-                                { value: 'AXIS_BANK', label: 'Axis Bank' },
-                                { value: 'ICICI_BANK', label: 'ICICI Bank' },
-                                { value: 'HDFC_BANK', label: 'HDFC Bank' },
-                                { value: 'BANK_OF_BARODA', label: 'Bank of Baroda' },
-                                { value: 'INDUSIND_BANK', label: 'IndusInd Bank' },
-                                { value: 'PNB', label: 'Punjab National Bank' },
-                                { value: 'KOTAK_MAHINDRA_BANK', label: 'Kotak Mahindra Bank' },
-                                { value: 'SBI', label: 'State Bank of India' },
-                                { value: 'CANARA_BANK', label: 'Canara Bank' },
-                                { value: 'UNION_BANK_OF_INDIA', label: 'Union Bank of India' },
-                                { value: 'BANK_OF_INDIA', label: 'Bank Of India' },
-                                { value: 'YES_BANK', label: 'YES BANK' },
-                                { value: 'FEDERAL_BANK', label: 'Federal Bank' },
-                                { value: 'IDBI_BANK', label: 'IDBI Bank' },
-                                { value: 'INDIAN_OVERSEAS_BANK', label: 'Indian Overseas Bank' },
-                                { value: 'INDIAN_BANK', label: 'Indian Bank' },
-                                { value: 'IDFC_FIRST_BANK', label: 'IDFC FIRST Bank' },
-                                { value: 'JAMMU_AND_KASHMIR_BANK', label: 'Jammu & Kashmir Bank' },
-                                { value: 'RBL_BANK', label: 'RBL Bank' },
-                                { value: 'BANK_OF_MAHARASHTRA', label: 'Bank of Maharashtra' },
-                                { value: 'CITY_UNION_BANK', label: 'City Union Bank' },
-                                { value: 'PUNJAB_AND_SIND_BANK', label: 'Punjab and Sind Bank' },
-                                { value: 'UCO_BANK', label: 'UCO Bank' },
-                                { value: 'DCB_BANK', label: 'DCB Bank' }
-                            ]}
+                            // options={[
+                            //     { value: 'AXIS_BANK', label: 'Axis Bank' },
+                            //     { value: 'ICICI_BANK', label: 'ICICI Bank' },
+                            //     { value: 'HDFC_BANK', label: 'HDFC Bank' },
+                            //     { value: 'BANK_OF_BARODA', label: 'Bank of Baroda' },
+                            //     { value: 'INDUSIND_BANK', label: 'IndusInd Bank' },
+                            //     { value: 'PNB', label: 'Punjab National Bank' },
+                            //     { value: 'KOTAK_MAHINDRA_BANK', label: 'Kotak Mahindra Bank' },
+                            //     { value: 'SBI', label: 'State Bank of India' },
+                            //     { value: 'CANARA_BANK', label: 'Canara Bank' },
+                            //     { value: 'UNION_BANK_OF_INDIA', label: 'Union Bank of India' },
+                            //     { value: 'BANK_OF_INDIA', label: 'Bank Of India' },
+                            //     { value: 'YES_BANK', label: 'YES BANK' },
+                            //     { value: 'FEDERAL_BANK', label: 'Federal Bank' },
+                            //     { value: 'IDBI_BANK', label: 'IDBI Bank' },
+                            //     { value: 'INDIAN_OVERSEAS_BANK', label: 'Indian Overseas Bank' },
+                            //     { value: 'INDIAN_BANK', label: 'Indian Bank' },
+                            //     { value: 'IDFC_FIRST_BANK', label: 'IDFC FIRST Bank' },
+                            //     { value: 'JAMMU_AND_KASHMIR_BANK', label: 'Jammu & Kashmir Bank' },
+                            //     { value: 'RBL_BANK', label: 'RBL Bank' },
+                            //     { value: 'BANK_OF_MAHARASHTRA', label: 'Bank of Maharashtra' },
+                            //     { value: 'CITY_UNION_BANK', label: 'City Union Bank' },
+                            //     { value: 'PUNJAB_AND_SIND_BANK', label: 'Punjab and Sind Bank' },
+                            //     { value: 'UCO_BANK', label: 'UCO Bank' },
+                            //     { value: 'DCB_BANK', label: 'DCB Bank' }
+                            // ]}
+                            options={bankName}
                         />
                     </Form.Item>
 

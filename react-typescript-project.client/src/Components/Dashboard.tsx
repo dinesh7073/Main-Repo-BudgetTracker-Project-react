@@ -20,7 +20,7 @@ import { FaCoins, FaCreditCard } from 'react-icons/fa';
 import { MdAccountBalance, MdAccountBalanceWallet, MdSavings } from 'react-icons/md';
 import { GiReceiveMoney } from 'react-icons/gi';
 import ScrollContainer from 'react-indiana-drag-scroll';
-import * as echarts from 'echarts';
+
 
 // const formatter: StatisticProps['formatter'] = (value) => (
 //   <CountUp end={value as number} separator="," />
@@ -95,7 +95,7 @@ const Dashboard = () => {
 
   // useEffect(() => {
 
-    
+
 
   //   axios.get(`${REACT_APP_BASE_URL}AccountsController/${userDetails?.id}GetAccountsByUserId`).then((res) => {
 
@@ -107,24 +107,8 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    // TransactionAPI
-        axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
-      .then((res) => {
-        if (res.status === 200) {
 
-          const transformedRecords = transTransactionType(res.data);
-          setRecords(transformedRecords.map(record => ({
-            ...record,
-            amount: Number(record.amount),
-          })));
-          setTransactionData(transformedRecords)
-        }
-      })
-      .catch((err) => console.log("Error from server", err, UserId)
-      );
-
-
-      // BudgetAPI
+    // BudgetAPI
     axios.get(`${REACT_APP_BASE_URL}BudgetsController/${UserId}GetBudgetById`)
       .then((res) => {
         if (res.status === 200) {
@@ -146,10 +130,28 @@ const Dashboard = () => {
         }
       })
       .catch((err) => console.log("Error from server", err));
-  }, []);
+  }, [transactionData]);
 
-  // SavingsAPI
+
   useEffect(() => {
+
+    // TransactionAPI
+    axios.get(`${REACT_APP_BASE_URL}TransactionsController/${UserId}GetTransactionsByUserId`)
+      .then((res) => {
+        if (res.status === 200) {
+
+          const transformedRecords = transTransactionType(res.data);
+          setRecords(transformedRecords.map(record => ({
+            ...record,
+            amount: Number(record.amount),
+          })));
+          setTransactionData(transformedRecords)
+        }
+      })
+      .catch((err) => console.log("Error from server", err, UserId)
+      );
+
+    // SavingsAPI
     axios.get(`${REACT_APP_BASE_URL}SavingsController/${UserId}GetSavingsByUserId`)
       .then((res) => {
         if (res.status === 200) {
@@ -166,15 +168,15 @@ const Dashboard = () => {
       })
       .catch((err) => console.log("Error from server", err));
 
-      // AccountsAPI
+    // AccountsAPI
 
-      axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
-        setAccountData(response.data);
-      }).catch(() => setLoader(false))
+    axios.get(`${REACT_APP_BASE_URL}AccountsController/${UserId}GetAccountsByUserId`).then((response) => {
+      setAccountData(response.data);
+    }).catch(() => setLoader(false))
 
   }, [UserId]);
 
-  
+
   const getCategoryLabel = (category: number | null) => {
     switch (category) {
       case 1: return 'Salary';
@@ -194,11 +196,13 @@ const Dashboard = () => {
   }
 
   const categories = budgets.map(budget => getCategoryLabel(budget.category));
+
   const seriesData = budgets.map(budget => ({
     amount: budget.amount,
     amountSpent: budget.amountSpent,
     label: getCategoryLabel(budget.category)
   }));
+
   const filteredTransactions = records.filter(record => {
     const iscategoryTypeMatch = selectedCategories.length === 0 || selectedCategories.includes(Number(record.categoryType));
     const transactionDate = dayjs(record.date);
@@ -262,6 +266,7 @@ const Dashboard = () => {
   };
 
   const { pData, uData, xLabels } = getDataForTimeRange(timeRange);
+
   // const twoColors: ProgressProps['strokeColor'] = {
   //   '0%': '#ffffff',
   //   '20%': 'blue',
@@ -296,6 +301,7 @@ const Dashboard = () => {
       dayjs(record.date).isSameOrBefore(selectedDateRange[1], 'day')
     ))
   );
+
   const filteredIncome = records.filter(record =>
     record.transactionType === 1 &&
     (selectedCategories.length === 0 || selectedCategories.includes(Number(record.categoryType))) &&
@@ -324,6 +330,7 @@ const Dashboard = () => {
   };
 
   const pieChartData = aggregateExpensesByCategory(filteredExpenses);
+
   const getTotalExpenses = (expenses: TransactionType[]) => {
     return expenses.reduce((total, expense) => total + expense.amount, 0);
   };
@@ -332,23 +339,18 @@ const Dashboard = () => {
     return budget.reduce((total, budget) => total + budget.amount, 0)
   }
 
-  // return  
-
   const getTotalIncome = (income: TransactionType[]) => {
     return income.reduce((total, income) => total + income.amount, 0);
   };
 
-  // const getExpenseBudgetAmount = (budgetAmount: Budget[]) => {
-  //   budgetAmount
-  //     .filter(budget => budget.category === 2)
-  //     .reduce((acc, budget) => acc + budget.amount, 0);
-  //   return budgetAmount
-
-  // }
+  const getTotalAmountSpent = (budget: Budget[]) => {
+    return budget.reduce((total, budget) => total + budget.amountSpent, 0);
+  }
 
   const totalIncome = getTotalExpenses(filteredIncome);
   const totalExpenses = getTotalIncome(filteredExpenses);
   const totalBudget = getTotalBudget(budgets);
+  const totalAmountSpent = getTotalAmountSpent(budgets);
 
   const transformData = (goals: GoalData[]): GoalData[] => {
     return goals.map((goal) => ({
@@ -377,22 +379,23 @@ const Dashboard = () => {
     .sort((a, b) => dayjs(a.targetDate).isBefore(dayjs(b.targetDate)) ? 1 : -1)
     .slice(0, 2);
 
-  const Incomepercent = Math.round((totalExpenses / totalIncome) * 100);
+  const Incomepercent = Math.ceil((totalExpenses / totalIncome) * 100);
 
-  const Expensepercent = Math.round((totalExpenses / totalBudget) * 100);
+  const Expensepercent = Math.ceil((totalAmountSpent / totalBudget) * 100);
 
   const progressColor = (percent: number) => {
 
-    return percent <= 25 ? '#00C853' :
-      percent <= 50 ? '#FFEB3B' :
-        percent <= 75 ? '#FFA500' :
-          '#FF4D4F';
+    return percent <= 25 ? 'rgb(145, 204, 117)' :
+      percent <= 50 ? 'rgb(250, 200, 88)' :
+        percent <= 75 ? 'rgb(84, 112, 198)' :
+          'rgb(238, 102, 102)';
   }
 
   const pieData = pieChartData.map((v) => ({
     name: v.label,
     value: v.value
   }))
+
   const option = {
     tooltip: {
 
@@ -443,19 +446,19 @@ const Dashboard = () => {
       right: '5%',
       bottom: '2%',
       top: '14%',
-      containLabel: true,  // Ensures labels don't overflow
+      containLabel: true,
       show: false
     },
     responsive: true,
     maintainAspectRatio: false,
     legend: {
       data: ['Budget amount', 'Amount spent'],
-      top: '0%',       // Positions the legend at the top of the graph
-      orient: 'horizontal',   // Aligns the legend items horizontally
-      itemGap: 20,     // Adds spacing between the legend items
+      top: '0%',
+      orient: 'horizontal',
+      itemGap: 20,
       textStyle: {
-        fontSize: 13,  // Sets font size for legend items
-        color: '#333'  // Sets font color
+        fontSize: 13,
+        color: '#333'
       }
     },
     tooltip: {
@@ -465,21 +468,27 @@ const Dashboard = () => {
     },
     dataset: {
       source: [
-        ['category', 'Budget amount', 'Amount spent'],
+        ['categories', 'Budget amount', 'Amount spent'],
         ...seriesData.map(item => [item.label, item.amount, item.amountSpent])
       ]
     },
-    xAxis: [{ type: 'category' }],
+    xAxis: [{
+      type: 'category',
+      axisLabel: {
+
+        formatter: function(value:any) {
+          return value.length > 6 ? value.substring(0, 6) + '...' : value; 
+        }
+      }
+    }],
     yAxis: {},
-
     series: [{
-      type: 'bar',
-      
-
-    }, { type: 'bar', }]
+      type: 'bar'
+    }, {
+      type: 'bar'
+    }]
   };
-
-
+  
 
   const getAccountLabel = (type: number) => {
     switch (type) {
@@ -504,24 +513,73 @@ const Dashboard = () => {
     }
   }
 
+  const bankName = [
+    { value: 'AXIS_BANK', label: 'Axis Bank' },
+    { value: 'ICICI_BANK', label: 'ICICI Bank' },
+    { value: 'HDFC_BANK', label: 'HDFC Bank' },
+    { value: 'BANK_OF_BARODA', label: 'Bank of Baroda' },
+    { value: 'INDUSIND_BANK', label: 'IndusInd Bank' },
+    { value: 'PNB', label: 'Punjab National Bank' },
+    { value: 'KOTAK_MAHINDRA_BANK', label: 'Kotak Mahindra Bank' },
+    { value: 'SBI', label: 'State Bank of India' },
+    { value: 'CANARA_BANK', label: 'Canara Bank' },
+    { value: 'UNION_BANK_OF_INDIA', label: 'Union Bank of India' },
+    { value: 'BANK_OF_INDIA', label: 'Bank Of India' },
+    { value: 'YES_BANK', label: 'YES BANK' },
+    { value: 'FEDERAL_BANK', label: 'Federal Bank' },
+    { value: 'IDBI_BANK', label: 'IDBI Bank' },
+    { value: 'INDIAN_OVERSEAS_BANK', label: 'Indian Overseas Bank' },
+    { value: 'INDIAN_BANK', label: 'Indian Bank' },
+    { value: 'IDFC_FIRST_BANK', label: 'IDFC FIRST Bank' },
+    { value: 'JAMMU_AND_KASHMIR_BANK', label: 'Jammu & Kashmir Bank' },
+    { value: 'RBL_BANK', label: 'RBL Bank' },
+    { value: 'BANK_OF_MAHARASHTRA', label: 'Bank of Maharashtra' },
+    { value: 'CITY_UNION_BANK', label: 'City Union Bank' },
+    { value: 'PUNJAB_AND_SIND_BANK', label: 'Punjab and Sind Bank' },
+    { value: 'UCO_BANK', label: 'UCO Bank' },
+    { value: 'DCB_BANK', label: 'DCB Bank' }
+  ]
+
+  const getBankName = (name: string) => {
+
+    const bank = bankName.find((obj) => obj.value === name);
+
+    if (bank) {
+     
+      return  bank.label.length > 10 ? bank.label.substring(0, 10) + '...' : bank.label; 
+
+    }
+
+    if (name == 'Cash') {
+      return 'Cash'
+    }
+
+  }
+
   return (
     <>
       <div style={{ width: "100%", height: "100%", backgroundColor: "#f3f4fa", overflow: 'hidden' }}>
-        <Row gutter={[16, 24]} style={{ marginBottom: '10px' }}>
+        <Row gutter={[16, 24]} style={{ marginBottom: '12px' }}>
           <Col xs={24} sm={12} md={accountData.length == 1 ? 5 : 21}  >
-           
-            <ScrollContainer horizontal={true}  className='scroll-container' style={{ height: '80px', width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: ' 0' , margin:'0'}}>
+
+            <ScrollContainer horizontal={true} className='scroll-container' style={{  width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: '0', margin: '0' }}>
               <Row gutter={[16, 24]} wrap={false} >
 
                 {accountData.map((obj: Account, i: number) => (
 
-                  <Col xs={24} sm={12} md={6} key={i} style={{ flex: '0 0 auto', cursor:'pointer' }} className='my-1' >
+                  <Col xs={24} sm={12} md={6} key={i} style={{ flex: '0 0 auto', cursor: 'pointer' }}>
                     <Card style={{ height: '100%', width: '270px' }} className="scrollCard" >
                       <div className="d-flex flex-row py-1 px-2" style={{ gap: '25px' }}>
                         <p className="my-1">{getAccountIcon(obj.accountType)}</p>
                         <div className="lh-1">
-                          <h6>₹ {Utils.getFormattedNumber(obj.amount)}</h6>
-                          <span>{getAccountLabel(obj.accountType)}({obj.name})</span>
+                          <h6 className='mb-1'>₹ {Utils.getFormattedNumber(obj.amount)}</h6>
+                          {/* <span>{getAccountLabel(obj.accountType)}</span> */}
+                          <div className='d-flex p-0 m-0'>
+                            <Text>{getAccountLabel(obj.accountType)}</Text>
+                            <Text className='bank-name'>
+                              ({getBankName(obj.name)})
+                            </Text>
+                          </div>
 
                         </div>
                       </div>
@@ -534,7 +592,7 @@ const Dashboard = () => {
           </Col>
 
           <Col xs={24} sm={12} md={3}>
-            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop: '15px' }} onClick={() => navigate('/settings/account')} >
+            <Button style={{ width: '100%', height: '40px', border: '1px dashed', color: 'blue', background: 'none', marginTop: '20px' }} onClick={() => navigate('/settings/accounts')} >
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span className='align-items-center'><Plus /> Add Account</span>
               </div>
@@ -548,7 +606,7 @@ const Dashboard = () => {
         <Row gutter={[16, 24]} style={{ marginBottom: '0px' }}>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "94%", }}>
-              <p className='lh-1  '>
+              <p className='lh-1 card-title'>
                 <PieChartOutlined color="#3C3D37" className='me-2 ' />
                 Expenses Structure
               </p>
@@ -557,7 +615,7 @@ const Dashboard = () => {
 
                 <EChartsReact
                   option={option}
-                  style={{ width: '200px', height: '150px', marginRight: 'auto', marginLeft: 'auto', marginBottom: '1px' }}
+                  style={{ width: '200px', height: '150px', marginRight: 'auto', marginLeft: 'auto', marginBottom: '1px' , marginTop:'6px'}}
 
                 />
 
@@ -580,7 +638,7 @@ const Dashboard = () => {
           </Col>
           <Col xs={{ span: 10, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "94%", position: 'relative' }}>
-              <p style={{ position: 'absolute', top: '3%' }}>
+              <p style={{ position: 'absolute', top: '3%' }} className='card-title'>
                 <BiCoin className="recent-transactions-icon" color="#3C3D37" size={20} />
                 Budget
               </p>
@@ -604,7 +662,7 @@ const Dashboard = () => {
                   </div>
                   <p className='text-end' style={{ alignContent: 'end', fontSize: '13px', margin: '0px' }}>Spent <span style={{ fontWeight: 500 }}> ₹{`${Utils.getFormattedNumber(totalExpenses)}`}</span></p>
                   <Flex vertical gap="middle">
-                    <Progress percent={Incomepercent} format={(percent: any) => `${Math.round(percent)}%`} strokeColor={progressColor(Incomepercent)} />
+                    <Progress percent={Incomepercent} strokeColor={progressColor(Incomepercent)} />
                   </Flex>
                 </div>
               </div>
@@ -620,7 +678,7 @@ const Dashboard = () => {
                       <span style={{ fontSize: '18px', marginRight: '4px' }}> ₹ </span>
 
                       {/* <div style={{ display: 'flex', flexDirection: 'row', fontSize: '16px' }}> */}
-                      <Statistic value={Utils.getFormattedNumber(totalExpenses)} valueStyle={{ fontSize: '18px' }} />
+                      <Statistic value={Utils.getFormattedNumber(totalAmountSpent)} valueStyle={{ fontSize: '18px' }} />
                       {/* </div> */}
                     </div>
 
@@ -637,7 +695,7 @@ const Dashboard = () => {
           </Col>
           <Col xs={{ span: 5, offset: 0 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "94%", padding: '0px 5px', position: 'relative' }}>
-              <p style={{ position: 'absolute', top: '3%' }}>
+              <p style={{ position: 'absolute', top: '3%' }} className='card-title'>
                 <Goal style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon" color="#3C3D37" size={18} />
                 Recent Goals
               </p>
@@ -649,10 +707,10 @@ const Dashboard = () => {
                     const percent = (goal.savedAmount / goal.targetAmount) * 100;
                     const isComplete = goal.savedAmount >= goal.targetAmount;
                     const color =
-                      percent <= 20 ? '#ff4d4f' :
-                        percent <= 40 ? '#ffa940' :
-                          percent <= 70 ? 'blue' :
-                            '#52c41a';
+                      percent <= 20 ? 'rgb(238, 102, 102)' :
+                        percent <= 40 ? 'rgb(84, 112, 198)' :
+                          percent <= 70 ? 'rgb(250, 200, 88)' :
+                            'rgb(145, 204, 117)';
 
                     return (
                       <Card
@@ -701,7 +759,7 @@ const Dashboard = () => {
           </Col>
           <Col xs={{ span: 5 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "94%", padding: '0px 5px', position: 'relative' }}>
-              <p style={{ margin: 0, paddingBottom: "6px", position: 'absolute', top: '3%' }} >
+              <p style={{ margin: 0, paddingBottom: "6px", position: 'absolute', top: '3%' }}className='card-title' >
                 <ArrowLeftRight style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon " color="#3C3D37" size={20} />
                 Recent Transactions
               </p>
