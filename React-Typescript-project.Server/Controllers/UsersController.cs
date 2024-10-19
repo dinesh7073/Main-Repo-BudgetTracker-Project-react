@@ -45,11 +45,11 @@ namespace Budget_Tracker_Bend.Controllers
                 {
                     if (user.Id != null)
                     {
-                        user.Id = alreadyExists?.Id ?? user.Id; 
+                        user.Id = alreadyExists?.Id ?? user.Id;
                     }
                     //user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password, 13);
                     var savedUser = await _usersServices.SaveUserAsync(user);
-                    return Ok(savedUser); 
+                    return Ok(savedUser);
                 }
                 catch (Exception ex)
                 {
@@ -82,6 +82,70 @@ namespace Budget_Tracker_Bend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+        [HttpPost("SendOtp")]
+        public async Task<IActionResult> SendOtp(Users userobj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userobj.Email))
+                {
+                    return BadRequest("Email is required.");
+                }
+
+                var user = await _usersServices.GetUserByEmailAsync(userobj.Email);
+
+                if (user == null)
+                {
+                    return NotFound("User with the provided email does not exist.");
+                }
+
+                return Ok(new { UserId = user.Id, Message = "OTP sent successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] Users resetpassuser)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(resetpassuser.Id) || string.IsNullOrEmpty(resetpassuser.Id))
+                {
+                    return BadRequest("UserId and NewPassword are required.");
+                }
+                var user = await _usersServices.GetUserByIdAsync(resetpassuser.Id);
+                if (user.Password == resetpassuser.Password)
+                {
+                    return BadRequest("Previous password can't be use as new password, enter another password.");
+                }
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                // Check if new password matches the current password (commented out for now)
+                // var isSamePassword = BCrypt.Net.BCrypt.Verify(resetPasswordRequest.NewPassword, user.PasswordHash);
+                // if (isSamePassword)
+                // {
+                //     return BadRequest("Previous password can't be used as the new password. Please enter a different password.");
+                // }
+
+                user.Password = resetpassuser.Password;
+                await _usersServices.SaveUserAsync(user);
+
+                return Ok("Password has been successfully updated.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
 
         [HttpPost("RemoveUser")]

@@ -43,7 +43,6 @@ const Sidebar: React.FC = () => {
   } = theme.useToken();
 
   const location = useLocation();
-  const selectedKey = location.pathname;
   const navigate = useNavigate();
 
 
@@ -149,10 +148,10 @@ const Sidebar: React.FC = () => {
       onClick: () => navigate("/profile"),
     },
     {
-      key: "/settings",
+      key: location.pathname === "/settings/accounts" ? "/settings/accounts" : "/settings/categories",
       icon: <Settings style={{ color: 'rgb(105, 114, 122)' }} />,
       label: "Settings",
-      onClick: () => navigate("/settings"),
+      onClick: () => navigate("/settings/accounts"),
     },
     // ================== help compo on=====================
     {
@@ -163,6 +162,9 @@ const Sidebar: React.FC = () => {
     },
 
   ];
+
+  console.log('path', location.pathname);
+
 
 
   return (
@@ -183,7 +185,7 @@ const Sidebar: React.FC = () => {
             alt="" />
           {/* {collapsed ? "" : <hr style={{ color: "gray", margin: "0px" }} />} */}
           <Menu
-            selectedKeys={[selectedKey]}
+            selectedKeys={[location.pathname]}
             mode="inline"
             defaultSelectedKeys={["1"]}
             className=""

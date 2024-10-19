@@ -148,7 +148,18 @@ const TransactionList: React.FC = () => {
         { label: 'Other Income', value: 4 },
     ];
 
-    // const CustomExpense
+    const CustomExpenseCategory = categoryData
+        .filter(category => category.categoryType === 2)
+        .map(({ categoryName, categoryNumber }) => ({ label: categoryName, value: categoryNumber }));
+
+    const CustomIncomeCategory = categoryData
+        .filter(category => category.categoryType === 1)
+        .map(({ categoryName, categoryNumber }) => ({ label: categoryName, value: categoryNumber }));
+
+    const bothCustomCategory = [...CustomExpenseCategory, ...CustomIncomeCategory]
+    // console.log('exp', CustomExpenseCategory);
+    // console.log('income', CustomIncomeCategory);
+    // console.log('both', bothCustomCategory);
 
 
 
@@ -236,11 +247,17 @@ const TransactionList: React.FC = () => {
 
     }
     const getCategoryLabel = (category: number | null) => {
+
+        const foundCategory = bothCustomCategory.find(item => item.value === category);
+        if (foundCategory) {
+            return foundCategory.label;
+        }
         switch (category) {
             case 1: return 'Salary';
             case 2: return 'Investments';
             case 3: return 'Business';
             case 4: return 'Other Income';
+
             case 5: return 'Food,Drinks';
             case 6: return 'Clothes & Footwear';
             case 7: return 'Housing';
@@ -251,6 +268,7 @@ const TransactionList: React.FC = () => {
             case 12: return 'Entertainment';
         }
     }
+
     const getAccountName = (accountType: number | null) => {
         switch (accountType) {
             case 1: return "Cash";
@@ -441,11 +459,7 @@ const TransactionList: React.FC = () => {
             ellipsis: {
                 showTitle: false,
             },
-            // render: (label: string) => (
-            //     <Tooltip placement="topLeft" title={label}>
-            //         {label}
-            //     </Tooltip>
-            // ),
+            render: (text: any, label: any) => (label.label === '' ? '-' : label.label),
         },
         {
             width: '15%',
@@ -596,10 +610,10 @@ const TransactionList: React.FC = () => {
                                 >
                                     {
                                         (transactiontransactionType === 'All'
-                                            ? [...incomeCategories, ...expenseCategories]
+                                            ? [...incomeCategories, ...expenseCategories, ...bothCustomCategory]
                                             : transactiontransactionType === 'Income'
-                                                ? incomeCategories
-                                                : expenseCategories
+                                                ? [...incomeCategories, ...CustomIncomeCategory]
+                                                : [...expenseCategories, ...CustomExpenseCategory]
                                         ).map(categoryType => (
                                             <Option key={categoryType.value} value={categoryType.value}>{categoryType.label}</Option>
                                         ))
@@ -790,8 +804,9 @@ const TransactionList: React.FC = () => {
                                         className='w-100'
                                         labelInValue
                                     >
-                                        {(formData.transactionType === 2 ? expenseCategories : incomeCategories).map((categoryType) => (
+                                        {(formData.transactionType === 2 ? [...expenseCategories, ...CustomExpenseCategory] : [...incomeCategories, ...CustomIncomeCategory]).map((categoryType) => (
                                             <Option key={categoryType.value} value={categoryType.value}>
+
                                                 {getCategoryLabel(categoryType.value)}
                                             </Option>
                                         ))}
