@@ -101,7 +101,7 @@ const SignUpSection = () => {
 
     return (
         <div style={{ backgroundColor: '#EBF4F6' }}>
-            <div style={{ width: '100%', height: '100%' }} className='login-signup-main-container'>
+            <div style={{ width: '100%', height: '100%', backgroundColor: '#B1D9DB'  }} className='login-signup-main-container'>
                 <div style={{ width: '40%', backgroundColor: '#B1D9DB' }} className='formbackgroundimage'>
                     <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
                         {/* <span onClick={handleHomeNavigation}><HomeOutlined /></span> */}
@@ -134,7 +134,7 @@ const SignUpSection = () => {
                                 name='validateOnly'
                             >
                                 <h4 className=' pt-3' style={{ fontWeight: '600' }}>Create wallet account</h4>
-                                <p style={{ marginBottom: '35px', fontSize: '16px' }}>Sign up below to create your wallet account</p>
+                                <p style={{ marginBottom: '35px', fontSize: '16px' }}>Sign up below to create your  account</p>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '30px' }}>
                                     <Form.Item
                                         label="First name"

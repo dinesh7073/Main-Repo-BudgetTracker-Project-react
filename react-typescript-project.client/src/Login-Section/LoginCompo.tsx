@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { message, Form, Input, Button, Spin } from 'antd';
 import UserContext from '../UserContext';
 import axios from 'axios';
@@ -104,11 +104,10 @@ const LoginCompo = () => {
 
 
 
-
     return (
         <div style={{ backgroundColor: '#EBF4F6' }}>
-            <div style={{ width: '100%', height: '100%' }} className='login-signup-main-container'>
-                <div style={{ width: '40%', backgroundColor: '#B1D9DB' }} className='formbackgroundimage'>
+            <div style={{ width: '100%', height: '100%' , backgroundColor: '#B1D9DB' }} className='login-signup-main-container'>
+                <div style={{ width: '40%',}} className='formbackgroundimage'>
                     <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
                         {/* <span onClick={handleHomeNavigation}><HomeOutlined /></span> */}
                         <div style={{ width: '29%', padding: '10px 0px 10px 45px' }}>
@@ -126,6 +125,8 @@ const LoginCompo = () => {
 
                     </div>
                 </div>
+
+
                 <div style={{ width: '61%', backgroundColor: '#FFFFFF', borderTopLeftRadius: '55px', borderBottomLeftRadius: '55px' }}>
                     <div style={{ width: '100%', minHeight: '100vh' }}>
 
@@ -140,7 +141,7 @@ const LoginCompo = () => {
                                     className='mx-auto  rounded  px-5 py-4  my-4'
                                     style={{ width: "35vw", boxShadow: 'none' }}
                                 >
-                                    <h4 className=' p-2 '>Login</h4>
+                                    <h4 className=' p- '>Login</h4>
                                     <Form.Item
                                         label="Email"
                                         name="email"
@@ -173,7 +174,7 @@ const LoginCompo = () => {
 
                                     <Form.Item>
                                         
-                                        <Button block type="primary" htmlType="submit" style={{ backgroundColor: '#37B7C3', borderRadius: '15px' }}>
+                                        <Button block type='primary' htmlType="submit" style={{ backgroundColor:' #37B7C3', borderRadius: '15px' }}>
                                           
                                             Log in
                                         </Button>
