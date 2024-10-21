@@ -82,8 +82,6 @@ const Welcome = () => {
                         <Input
                             placeholder="Enter cash amount"
                             type='number'
-                            value={inputValue} 
-                            onChange={handleChange} 
                         />
                     </Form.Item>
 

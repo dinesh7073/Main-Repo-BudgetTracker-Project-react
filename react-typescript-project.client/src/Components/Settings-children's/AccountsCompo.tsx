@@ -1,5 +1,5 @@
-import React, { lazy, useContext, useEffect, useState } from 'react';
-import { Layout, Input, Button, Table, Typography, Space, Divider, Modal, Select, Switch, Form, Spin, notification, Row, Col, Segmented, message, Dropdown, Popconfirm } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { Layout, Input, Button, Table, Typography, Space, Divider, Modal, Select, Switch, Form, Spin, notification, Row, Col, Segmented, message, Dropdown, Popconfirm, Card, List } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined, SaveOutlined } from '@ant-design/icons';
 import { Plus, RotateCcw, Target } from 'lucide-react';
 import { color } from '@mui/system';
@@ -14,6 +14,9 @@ import { FaCreditCard } from "react-icons/fa6";
 import { MdAccountBalance } from "react-icons/md";
 import { GiReceiveMoney } from "react-icons/gi";
 import dayjs from 'dayjs';
+import EChartsReact from "echarts-for-react";
+
+
 const { Content } = Layout;
 const { Text } = Typography;
 
@@ -28,13 +31,15 @@ export interface AccountTypes {
 
 const AccountsCompo = () => {
     const [form] = Form.useForm();
-
+    const [expandedRowKey, setExpandedRowKey] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loader, setLoader] = useState(false);
     const [editingAccount, setEditingAccount] = useState<AccountTypes | null | any>(null);
     const [accounts, setAccounts] = useState<AccountTypes[]>([]);
     const { UserId } = useContext<any>(UserContext);
     const [transactionData, setTransactionData] = useState<FormData[]>([])
+    const [filteredTransaction, setFilteredTransaction] = useState<any>([]);
+
 
     const transformData = (records: FormData[]): FormData[] => {
         return records.map((transactions) => ({
@@ -207,7 +212,7 @@ const AccountsCompo = () => {
     ];
 
 
-    const getAccountLabel = (type: number) => {
+    const getAccountLabel = (type: number | null) => {
         switch (type) {
             case 1: return "Cash";
             case 2: return "Saving account";
@@ -255,25 +260,27 @@ const AccountsCompo = () => {
         { value: 'PUNJAB_AND_SIND_BANK', label: 'Punjab and Sind Bank' },
         { value: 'UCO_BANK', label: 'UCO Bank' },
         { value: 'DCB_BANK', label: 'DCB Bank' }
-      ]
-    
-      const getBankName =(name:string)=>{
-    
-        const bank = bankName.find((obj)=>obj.value === name);
-    
-        if(bank){
-          return bank.label
+    ]
+
+    const getBankName = (name: string) => {
+
+        const bank = bankName.find((obj) => obj.value === name);
+
+        if (bank) {
+            return bank.label
         }
-    
-        if(name == 'Cash'){
-          return 'Cash'
+
+        if (name == 'Cash') {
+            return 'Cash'
         }
-    
-      } 
+
+    }
+
+    const [bankNameInput, setBankNameInput] = useState<any>('');
 
     const columns = [
         {
-            title: 'Type',
+            title: 'Account Type',
             dataIndex: 'accountType',
             key: 'accountType',
             render: (text: any, accountType: any) => (
@@ -287,6 +294,7 @@ const AccountsCompo = () => {
                     </span>
                 </span>
             ),
+
         },
         {
             title: 'Name',
@@ -343,8 +351,138 @@ const AccountsCompo = () => {
         },
     ];
 
+    const onRowClick = (record: any) => {
+        console.log('Row clicked:', record);
+    };
 
-    const [bankNameInput, setBankNameInput] = useState<any>('');
+
+    const xData = (data: any) => {
+        const accountTransaction = transactionData
+            .filter((x) => x.accountType === data.accountType)
+            .map((obj) => ({
+                date: dayjs(obj.date)
+            }));
+
+
+        accountTransaction.sort((a, b) => {
+            return a.date.isBefore(b.date) ? -1 : 1;
+        })
+
+        return accountTransaction.map((obj) => obj.date.format('DD/MM'));
+    }
+
+    const yData = (data: any) => {
+        const accountTransaction = transactionData
+            .filter((x) => x.accountType === data.accountType && data.name )
+            .map((obj) => ({
+
+                amount: obj.amount,
+                date: dayjs(obj.date),
+                transactionType: obj.transactionType,
+                categoryType : obj.categoryType
+            }));
+
+
+        accountTransaction.sort((a, b) => {
+            return a.date.isBefore(b.date) ? -1 : 1;
+        });
+
+
+        return accountTransaction;
+    }
+
+    const getCategoryLabel = (category: number | null) => {
+
+        // const foundCategory = bothCustomCategory.find(item => item.value === category);
+        // if (foundCategory) {
+        //     return foundCategory.label;
+        // }
+        switch (category) {
+            case 1: return 'Salary';
+            case 2: return 'Investments';
+            case 3: return 'Business';
+            case 4: return 'Other Income';
+            case 5: return 'Food & Drinks';
+            case 6: return 'Clothes & Footwear';
+            case 7: return 'Housing';
+            case 8: return 'Vehicle';
+            case 9: return 'Transportation';
+            case 10: return 'Health Care';
+            case 11: return 'Communication & Devices';
+            case 12: return 'Entertainment';
+        }
+    }
+
+
+    const getOption = (data: any) => {
+    console.log(yData(data).map((obj) => getCategoryLabel(obj.categoryType)));
+        return{
+        xAxis: {
+            type: 'category',
+            data: xData(data)
+        },
+        yAxis: {
+            type: 'value',
+            // axisLabel: {
+            //     formatter: function (value: any) {
+            //         return value.toLocaleString();
+                // }
+            // }
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: function (params: any) {
+                const param = params[0]; 
+                const value = param.data; 
+                const transactiontype = value.transactionType; 
+                const formattedValue =  Utils.getFormattedNumber(value);
+                const color = transactiontype === 1 ? 'green' : 'red'; 
+    
+                return `
+                    <div>
+                        <span>Income</span><br />
+                        <span>Expense</span><br />
+                        <span style="color:${color}">${formattedValue}</span>
+                    </div>
+                `;
+            }
+        },
+        series: [{
+            // name: yData(data).map((obj) => getCategoryLabel(obj.categoryType)),
+            name:'category',
+            type: 'line',
+            data: yData(data).map((obj) => obj.amount),
+            symbol: 'none',
+            lineStyle: {
+                width: 2
+            },
+            emphasis: {
+                focus: 'series',
+                itemStyle: {
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    show: true
+                },
+                symbol: 'circle',
+                symbolSize: 8
+            }
+        }]
+    }};
+
+    const getAccountName = (accountType: number | null) => {
+        switch (accountType) {
+          case 1: return "Cash";
+          case 2: return "Saving Account";
+          case 3: return "General";
+          case 4: return "Credit Card";
+          case 5: return "Current Account";
+          default: return "Unknown";
+        }
+      };
+
+      const accountCash = accounts.map((obj)=>(obj.accountType===1))
 
     return (
 
@@ -366,20 +504,71 @@ const AccountsCompo = () => {
                     {/* </Space.Compact> */}
 
                 </Row>
-                <Divider />
 
-
-                <h6>Your accounts</h6>
+                {/* <h6 className='mt-3'>Your accounts</h6> */}
                 <Spin spinning={loader} size="large" />
+
                 <Table
+
                     columns={columns}
                     dataSource={accounts}
                     pagination={false}
-                    style={{ marginTop: '16px' }}
+                    style={{ marginTop: '18px' }}
                     scroll={{ y: 360 }}
-                    size='small'
-                    rowKey="key"
+                    size="small"
+                    rowKey="id"
+                    onRow={(record) => ({
+                        onClick: () => onRowClick(record),
+                    })}
+                    // expandIconColumnIndex={-1}
+                    expandable={{
+                        expandedRowRender: (record) => {
+
+                            const AccountData = transactionData.filter((obj)=>obj.accountType === record.accountType)
+
+                            return(
+                            <Card style={{ width: '1200px', height: '400px', boxShadow: ' 0 0 10px rgba(0, 0, 0, 0.1) ', marginLeft: 'auto', marginRight: 'auto', }}>
+                                <div className='d-flex flex-row px-3 my-2 justify-between ' style={{width:'800px'}}>
+                                <h5 style={{fontSize:'16px',fontWeight:500,}}>Account balance</h5>
+                                <h5 style={{fontSize:'16px',fontWeight:500}}>Balance : ₹{record.amount}</h5>
+                                </div>
+                                <div className='d-flex flex-row m-0 p-0'>
+                                    <div style={{ width: '850px' }}>
+                                        <EChartsReact
+                                            option={getOption(record)}
+                                            style={{ width: '100%', height: '350px',marginTop:'0' }}
+                                        />
+                                    </div>
+                                    <Card  className='recordCard'>
+                                        <h6>Records</h6>
+                                        <List
+                                            itemLayout="horizontal"
+                                            dataSource={AccountData}
+
+                                            renderItem={(transaction) => (
+                                                <List.Item>
+                                                    <List.Item.Meta
+                                                        title={<Text style={{ fontSize: '14px', fontWeight: 450 }} >{getCategoryLabel(transaction.categoryType)}</Text>}
+                                                        description={<p style={{ fontSize: '13px' }}>{getAccountName(transaction.accountType)} - {dayjs(transaction.date).format('DD-MM-YYYY')}</p>}
+                                                    />
+                                                    <Text type={transaction.transactionType === 1 ? 'success' : 'danger'} style={{ fontSize: '14px' }}>
+                                                        {transaction.transactionType === 1 ? '+' : '-'}₹{Utils.getFormattedNumber(transaction.amount)}
+                                                    </Text>
+                                                </List.Item>
+                                            )}
+                                        />
+                                    </Card>
+                                </div>
+                            </Card>
+                        )},
+                        expandedRowKeys: expandedRowKey ? [expandedRowKey] : [],
+                        onExpand: (expanded, record) => {
+                            console.log('Row expanded:', expanded, record);
+                            setExpandedRowKey(expanded ? record.id : null);
+                        },
+                    }}
                 />
+
             </Content>
 
 
@@ -405,38 +594,14 @@ const AccountsCompo = () => {
 
                         rules={[{ required: true, message: 'Please enter an account name' }]}
                     >
+                       
                         <Select
                             showSearch
                             optionFilterProp="label"
                             placeholder="ex: sbi,pnb etc..."
                             // onChange={onChange}
                             // onSearch={onSearch}
-                            // options={[
-                            //     { value: 'AXIS_BANK', label: 'Axis Bank' },
-                            //     { value: 'ICICI_BANK', label: 'ICICI Bank' },
-                            //     { value: 'HDFC_BANK', label: 'HDFC Bank' },
-                            //     { value: 'BANK_OF_BARODA', label: 'Bank of Baroda' },
-                            //     { value: 'INDUSIND_BANK', label: 'IndusInd Bank' },
-                            //     { value: 'PNB', label: 'Punjab National Bank' },
-                            //     { value: 'KOTAK_MAHINDRA_BANK', label: 'Kotak Mahindra Bank' },
-                            //     { value: 'SBI', label: 'State Bank of India' },
-                            //     { value: 'CANARA_BANK', label: 'Canara Bank' },
-                            //     { value: 'UNION_BANK_OF_INDIA', label: 'Union Bank of India' },
-                            //     { value: 'BANK_OF_INDIA', label: 'Bank Of India' },
-                            //     { value: 'YES_BANK', label: 'YES BANK' },
-                            //     { value: 'FEDERAL_BANK', label: 'Federal Bank' },
-                            //     { value: 'IDBI_BANK', label: 'IDBI Bank' },
-                            //     { value: 'INDIAN_OVERSEAS_BANK', label: 'Indian Overseas Bank' },
-                            //     { value: 'INDIAN_BANK', label: 'Indian Bank' },
-                            //     { value: 'IDFC_FIRST_BANK', label: 'IDFC FIRST Bank' },
-                            //     { value: 'JAMMU_AND_KASHMIR_BANK', label: 'Jammu & Kashmir Bank' },
-                            //     { value: 'RBL_BANK', label: 'RBL Bank' },
-                            //     { value: 'BANK_OF_MAHARASHTRA', label: 'Bank of Maharashtra' },
-                            //     { value: 'CITY_UNION_BANK', label: 'City Union Bank' },
-                            //     { value: 'PUNJAB_AND_SIND_BANK', label: 'Punjab and Sind Bank' },
-                            //     { value: 'UCO_BANK', label: 'UCO Bank' },
-                            //     { value: 'DCB_BANK', label: 'DCB Bank' }
-                            // ]}
+
                             options={bankName}
                         />
                     </Form.Item>
