@@ -431,6 +431,7 @@ const AccountsCompo = () => {
         },
         tooltip: {
             trigger: 'axis',
+            width:'500px',
             formatter: function (params: any) {
                 const param = params[0]; 
                 const value = param.data; 
@@ -452,7 +453,8 @@ const AccountsCompo = () => {
             name:'category',
             type: 'line',
             data: yData(data).map((obj) => obj.amount),
-            symbol: 'none',
+            symbol: 'true',
+            smooth:'true',
             lineStyle: {
                 width: 2
             },
@@ -462,9 +464,9 @@ const AccountsCompo = () => {
                     borderColor: '#fff',
                     borderWidth: 2
                 },
-                label: {
-                    show: true
-                },
+                // label: {
+                //     show: true
+                // },
                 symbol: 'circle',
                 symbolSize: 8
             }
