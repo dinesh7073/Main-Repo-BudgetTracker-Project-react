@@ -68,7 +68,7 @@ const Goal = () => {
             ...goal,
             targetAmount: Number(goal.targetAmount),
             savedAmount: Number(goal.savedAmount),
-            targetDate: dayjs(goal.targetDate)
+            // targetDate: dayjs(goal.targetDate)
           })));
           setLoader(false);
 
@@ -88,18 +88,18 @@ const Goal = () => {
   const handleEdit = (goal: GoalData) => {
     form.setFieldsValue({
       ...goal,
-      targetDate: goal.targetDate ? dayjs(goal.targetDate) : null
+      // targetDate: goal.targetDate ? dayjs(goal.targetDate) : null
     });
     setEditGoal(goal);
     setIsModalVisible(true);
   }
 
-  const handleDateRangeChange = (dates: [Dayjs, Dayjs] | any) => {
-    console.log(dates);
-    // console.log(dateStrings)
-    setSelectedDateRange(dates);
+  // const handleDateRangeChange = (dates: [Dayjs, Dayjs] | any) => {
+  //   console.log(dates);
+  //   // console.log(dateStrings)
+  //   setSelectedDateRange(dates);
 
-  };
+  // };
 
   const handleSubmit = (values: GoalData) => {
 
@@ -200,12 +200,12 @@ const Goal = () => {
       key: 'savedAmount',
       render: (text: string) => <span>{`₹ ${Utils.getFormattedNumber(text)}`}</span>
     },
-    {
-      title: 'Target date',
-      dataIndex: 'targetDate',
-      key: 'targetDate',
-      render: (targetDate: string) => dayjs(targetDate).format('DD-MM-YYYY')
-    },
+    // {
+    //   title: 'Target date',
+    //   dataIndex: 'targetDate',
+    //   key: 'targetDate',
+    //   render: (targetDate: string) => dayjs(targetDate).format('DD-MM-YYYY')
+    // },
     {
       title: 'Actions',
       dataIndex: 'action',
@@ -386,15 +386,15 @@ const Goal = () => {
         <Row gutter={24} className='d-flex flex-row  justify-between '>
 
 
-          <Col span={10} >
+          <Col span={16} >
             <Button className='p-2 text-center' type="primary" onClick={() => setIsModalVisible(true)}> <Plus size={19} />Add Goal</Button>
           </Col>
 
-          <Col span={6} style={{ width: '100%', display: 'flex' }}>
+          <Col span={8} style={{ width: '100%', display: 'flex' }}>
             <p className='py-1 align-content-center' style={{ width: '82px' }}>Search goal</p>
-            <Search placeholder="Search goal" style={{ width: 200 }} onSearch={() => handleSearch} />
+            <Search placeholder="Search goal" style={{ width: 220,padding:'1px' }} onSearch={handleSearch} />
           </Col>
-          <Col lg={{ span: 8 }} className='d-flex '  >
+          {/* <Col lg={{ span: 8 }} className='d-flex '  >
 
             <p className='align-content-center' style={{ width: '85px' }}> Sort by date </p>
 
@@ -405,7 +405,7 @@ const Goal = () => {
               style={{ height: '32px' }}
             />
 
-          </Col>
+          </Col> */}
         </Row>
 
         {loader ? (
@@ -503,7 +503,7 @@ const Goal = () => {
               />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               label="Target date"
               name="targetDate"
               rules={[{ required: true, message: 'Please select a date!' }]}
@@ -512,7 +512,7 @@ const Goal = () => {
                 format="DD-MM-YYYY"
                 style={{ width: '100%' }}
               />
-            </Form.Item>
+            </Form.Item> */}
             <div >
               <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                 {editGoal ? "Edit Goal" : "Add Goal"}

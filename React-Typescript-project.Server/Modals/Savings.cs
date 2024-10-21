@@ -22,8 +22,8 @@ namespace Budget_Tracker_Bend.Modals
         [BsonElement("savedAmount")]
         public decimal SavedAmount { get; set; }
 
-        [BsonElement("targetDate")]
-        public DateTime TargetDate { get; set; }
+        //[BsonElement("targetDate")]
+        //public DateTime TargetDate { get; set; }
 
 
     }
