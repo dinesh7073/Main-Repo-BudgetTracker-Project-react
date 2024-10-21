@@ -36,26 +36,29 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import UserContext from "../UserContext";
 import { IoFastFoodOutline } from "react-icons/io5";
 import axios from "axios";
 import "../CSS/Budget.css";
 import {
+  CalendarOutlined,
   DeleteOutlined,
+  DollarCircleOutlined,
   EditOutlined,
   HomeOutlined,
-  MoreOutlined, 
+  MoreOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
 import "../CSS/ThemeColors.css";
 import { REACT_APP_BASE_URL } from "./Common/Url";
 import { Utils } from "./Common/Utilities/Utils";
-
+import { CategoriesType } from "./Settings-children's/CategoriesCompo";
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-
+import ReactECharts from 'echarts-for-react'; import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
 interface Budget {
   id: string;
   userid: string;
@@ -94,6 +97,14 @@ const transformData = (records: FormData[]): FormData[] => {
     ...transactions,
   }));
 };
+
+
+
+
+const newcompo = () => {
+
+
+}
 const Budget = () => {
   const BudgetData: Budget = {
     id: "",
@@ -116,38 +127,49 @@ const Budget = () => {
   // const [pieChartData, setPieChartData] = useState<PieDataType[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
   // const [editingLimit, setEditingLimit] = useState(false);
+  const [categoryData, setCategoryData] = useState<CategoriesType[]>([]);
+  const [selectedBudget, setSelectedBudget] = useState<Budget | any>();
 
   const {
     userDetails,
     userWallet,
     setUserWallet,
     expensesLimit,
-    setexpensesLimit,
-    
   } = useContext<any>(UserContext);
 
+  const expenseCategories = [
+    { label: 'Food,Drinks', value: 5 },
+    { label: 'Clothes & Footwear', value: 6 },
+    { label: 'Housing', value: 7 },
+    { label: 'Vehicle', value: 8 },
+    { label: 'Transportation', value: 9 },
+    { label: 'Health Care', value: 10 },
+    { label: 'Communication, PC', value: 11 },
+    { label: 'Entertainment', value: 12 },
+  ];
+
+
+  const CustomExpenseCategory = categoryData
+    .filter(category => category.categoryType === 2)
+    .map(({ categoryName, categoryNumber }) => ({ label: categoryName, value: categoryNumber }));
+
   const getCategoryLabel = (category: number | null) => {
-    switch (category) {
-      case 5:
-        return "Food & Drinks";
-      case 6:
-        return "Clothes & Footwear";
-      case 7:
-        return "Housing";
-      case 8:
-        return "Vehicle";
-      case 9:
-        return "Transportation";
-      case 10:
-        return "Health Care";
-      case 11:
-        return "Communication & Devices";
-      case 12:
-        return "Entertainment";
-      case 13:
-        return "Income";
+
+    const foundCategory = CustomExpenseCategory.find(item => item.value === category);
+    if (foundCategory) {
+      return foundCategory.label;
     }
-  };
+    switch (category) {
+      case 5: return 'Food & Drinks';
+      case 6: return 'Clothes & Footwear';
+      case 7: return 'Housing';
+      case 8: return 'Vehicle';
+      case 9: return 'Transportation';
+      case 10: return 'Health Care';
+      case 11: return 'Communication & Devices';
+      case 12: return 'Entertainment';
+    }
+  }
 
   const getCategoryTypeIcon = (categoryType: number | null) => {
     switch (categoryType) {
@@ -189,6 +211,18 @@ const Budget = () => {
         }
       })
       .catch((err) => console.log("Error fetching transactions", err));
+
+
+    axios.get(`${REACT_APP_BASE_URL}CategoriesController/${UserId}GetCategoriesByUserId`).then((res) => {
+      setCategoryData(res.data);
+      setLoader(false);
+    }).catch((err) => {
+      setLoader(false);
+      notification.error({
+        message: 'Something went wrong! Please try again later'
+      })
+    });
+
   }, []);
 
   useEffect(() => {
@@ -200,7 +234,7 @@ const Budget = () => {
         if (res.status === 200) {
           setLoader(false);
           setBudgetExists(true);
-          
+
           let totalAmountSpent = 0;
 
           const transformedBudgets = res.data.map((budget: Budget) => {
@@ -258,36 +292,229 @@ const Budget = () => {
 
       .catch((err) => console.log("Error from server", err));
 
-      
+
   }, [transactionData]);
 
   useEffect(() => {
-    
-  budgets.forEach((budget: Budget) => {
 
-    if(budget.amountSpent == budget.amount){
-      notification.warning({
-        message: "Budget Completed",
-        description: `You have completed the budget for the category ${getCategoryLabel(
-          budget.category
-        )}.`,
-        placement: "topRight",
-      });
+    // budgets.forEach((budget: Budget) => {
 
+    //   if (budget.amountSpent == budget.amount) {
+    //     notification.warning({
+    //       message: "Budget Completed",
+    //       description: `You have completed the budget for the category ${getCategoryLabel(
+    //         budget.category
+    //       )}.`,
+    //       placement: "topRight",
+    //     });
+
+    //   }
+
+    //   if (budget.amountSpent > budget.amount) {
+    //     notification.warning({
+    //       message: "Budget Exceeded",
+    //       description: `You have exceeded your budget for the category ${getCategoryLabel(
+    //         budget.category
+    //       )}.`,
+    //       placement: "topRight",
+    //     });
+    //   }
+    // });
+  }, [budgets]);
+
+
+  const currentdate = new Date();
+  const getDailyAverage = (budget: number, days: number) => budget / days;
+
+
+  const getDailyRecommended = (selectBudget: any) => {
+    // debugger
+    let dailyRecom;
+
+    // let remainingAmount = selectBudget.amount - selectBudget.amountSpent;
+    // let remainingdays = new Date()  - selectBudget.endDate ;
+    // dailyRecom = remainingAmount / remainingdays;
+
+
+    return dailyRecom;
+  }
+
+  const [isAnalisModalVisible, setIsAnalisModalVisible] = useState(false);
+
+  const [chartOption, setChartOption] = useState({});
+
+
+  const showModal = (record: any) => {
+    setSelectedBudget(record);
+    setIsAnalisModalVisible(true);
+
+
+    // generateChartData(record); // Generate chart data immediately on row click
+  };
+
+  const generateChartData = (budget: any) => {
+
+
+
+    const startDate = dayjs(budget.startDate).startOf('day');
+    const endDate = dayjs(budget.endDate).endOf('day');
+    const totalDays = endDate.diff(startDate, 'day') + 1;
+
+    const dates = [];
+    const budgetData = [];
+    const spentData = new Array(totalDays).fill(0);
+
+    // Generate dates and budget data
+    for (let i = 0; i < totalDays; i++) {
+      const currentDate = startDate.add(i, 'day');
+      dates.push(currentDate.format('YYYY-MM-DD'));
+      budgetData.push(budget.amount);
     }
 
-    if (budget.amountSpent > budget.amount) {
-      notification.warning({
-        message: "Budget Exceeded",
-        description: `You have exceeded your budget for the category ${getCategoryLabel(
-          budget.category
-        )}.`,
-        placement: "topRight",
-      });
+    // Calculate spent data
+    transactionData.forEach(transaction => {
+      const transactionDate = dayjs(transaction.date);
+
+      // Check if the transaction falls within the budget date range
+      if (transactionDate.isBetween(startDate, endDate, null, '[]') && transaction.categoryType === budget.category) {
+        const dayIndex = transactionDate.diff(startDate, 'day');
+        if (dayIndex >= 0 && dayIndex < totalDays) {
+          spentData[dayIndex] += transaction.amount;
+        }
+      }
+    });
+
+    // Set chart options
+    setChartOption({
+      title: {
+        text: 'Budget vs Spent Over Time',
+        left: 'center',
+      },
+      tooltip: {
+        trigger: 'axis',
+      },
+      legend: {
+        data: ['Budget', 'Spent'],
+        bottom: 0,
+      },
+      xAxis: {
+        type: 'category',
+        data: dates,
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Amount (₹)',
+        nameLocation: 'middle',
+        nameGap: 50,
+      },
+      series: [
+        {
+          name: 'Budget',
+          type: 'line',
+          data: budgetData,
+          smooth: true,
+        },
+        {
+          name: 'Spent',
+          type: 'line',
+          data: spentData,
+          smooth: true,
+        },
+      ],
+    });
+  };
+
+  const UseMemo = useMemo(() => {
+
+
+
+    if (!selectedBudget) {
+      return
     }
-  });
-}, [budgets]);
-  
+
+
+    const startDate = dayjs(selectedBudget.startDate).startOf('day');
+    const endDate = dayjs(selectedBudget.endDate).endOf('day');
+    const totalDays = endDate.diff(startDate, 'day') + 1;
+
+    const dates = [];
+    const budgetData = [];
+    const spentData = new Array(totalDays).fill(0);
+
+    // Generate dates and budget data
+    for (let i = 0; i < totalDays; i++) {
+      const currentDate = startDate.add(i, 'day');
+      dates.push(currentDate.format('YYYY-MM-DD'));
+      budgetData.push(selectedBudget.amount);
+    }
+
+    // Calculate spent data
+    transactionData.forEach(transaction => {
+      const transactionDate = dayjs(transaction.date);
+
+      // Check if the transaction falls within the budget date range
+      if (transactionDate.isBetween(startDate, endDate, null, '[]') && transaction.categoryType === selectedBudget.category) {
+        const dayIndex = transactionDate.diff(startDate, 'day');
+        if (dayIndex >= 0 && dayIndex < totalDays) {
+          spentData[dayIndex] += transaction.amount;
+        }
+      }
+    });
+
+
+    return {
+      title: {
+        text: 'Budget vs Spent Over Time',
+        left: 'center',
+      },
+      tooltip: {
+        trigger: 'axis',
+      },
+      legend: {
+        data: ['Budget', 'Spent'],
+        bottom: 0,
+      },
+      xAxis: {
+        type: 'category',
+        data: dates,
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Amount (₹)',
+        nameLocation: 'middle',
+        nameGap: 50,
+      },
+      series: [
+        {
+          name: 'Budget',
+          type: 'line',
+          data: budgetData,
+          smooth: true,
+        },
+        {
+          name: 'Spent',
+          type: 'line',
+          data: spentData,
+          smooth: true,
+        },
+      ],
+    }
+
+
+  }, [selectedBudget])
+
+  // useEffect(() => {
+
+  //   if (selectedBudget) {
+
+  //     generateChartData(selectedBudget);
+
+
+  //   }
+  // }, [selectedBudget, isAnalisModalVisible]);
+
+
+
 
 
   const updateUserWallet = (records: FormData[]) => {
@@ -316,6 +543,7 @@ const Budget = () => {
     const Budgetdata: Budget = {
       ...values,
       userid: UserId,
+      category: values.category.value,
       startDate: formattedStartingDate,
       endDate: formattedEndingDate,
       amountSpent: budget.amountSpent,
@@ -326,7 +554,7 @@ const Budget = () => {
     }
 
     const existingBudget = budgets.find(
-      (budget) => budget.category === values.category
+      (budget: any) => budget.category.value === values.category.value
     );
 
     if (existingBudget) {
@@ -374,14 +602,19 @@ const Budget = () => {
   };
 
   const handleOpenModal = (budget?: Budget) => {
+
     if (budget) {
       setEditingBudget(budget);
       setBudget(budget);
       form.setFieldsValue({
-        category: budget.category,
+        category: {
+          label: getCategoryLabel(budget.category),
+          value: budget.category
+        },
         amount: budget.amount,
         dateRange: [dayjs(budget.startDate), dayjs(budget.endDate)],
       });
+
     } else {
       setEditingBudget(null);
       setBudget(BudgetData);
@@ -479,6 +712,7 @@ const Budget = () => {
       width: "6%",
       title: "S No",
       dataIndex: "sr.no",
+      key: 'sNo',
       render: (text: any, budget: any, index: any) => index + 1,
     },
 
@@ -521,14 +755,14 @@ const Budget = () => {
       ),
     },
     {
-      width: "13%",
+      width: "10%",
       title: "From",
       dataIndex: "startDate",
       key: "startDate",
       render: (date: string) => dayjs(date).format("DD-MM-YYYY"),
     },
     {
-      width: "13%",
+      width: "10%",
       title: "To",
       dataIndex: "endDate",
       key: "endDate",
@@ -536,8 +770,8 @@ const Budget = () => {
     },
     {
       title: "Used",
-      dataIndex: "completion",
-      key: "completion",
+      dataIndex: "used",
+      key: "used",
       render: (text: any, budget: any) => (
         <span>
           <Progress
@@ -597,6 +831,12 @@ const Budget = () => {
       ),
     },
   ];
+
+
+
+  const handleCancelmodal = () => {
+    setIsAnalisModalVisible(false);
+  };
 
   return (
     <>
@@ -885,6 +1125,12 @@ const Budget = () => {
                   columns={columns}
                   rowKey="id"
                   scroll={{ y: 445 }}
+                  onRow={(record) => ({
+                    onClick: () => showModal(record),
+                    className: 'table-row-hover',
+
+
+                  })}
                   pagination={false}
                   summary={(data: any) => {
                     let totalAmount = 0;
@@ -950,7 +1196,104 @@ const Budget = () => {
                 //     title:'gajf',
 
                 // }]}
+
                 />
+                <Modal
+                  title={`Budget Overview - ${getCategoryLabel(selectedBudget?.category)}`}
+                  visible={isAnalisModalVisible}
+                  onCancel={handleCancelmodal}
+                  footer={null}
+                  width={700}
+                  height={270}
+                // style={{ padding: '10px' }} 
+                >
+                  {selectedBudget && (
+                    <>
+                      <Row gutter={16} style={{ marginBottom: '12px' }}>
+                        <Col span={8}>
+                          <Card bodyStyle={{ padding: '12px' }}>
+                            <Statistic
+                              title={<span style={{ fontSize: '14px' }}>Budget Amount</span>}
+                              value={selectedBudget.amount}
+                              precision={2}
+                              prefix={"₹"}
+                              valueStyle={{ fontSize: '20px' }}
+                            />
+                          </Card>
+                        </Col>
+                        <Col span={8}>
+                          <Card bodyStyle={{ padding: '12px' }}>
+                            <Statistic
+                              title={<span style={{ fontSize: '14px' }}>Budget Spent</span>}
+                              value={selectedBudget.amountSpent}
+                              precision={2}
+                              prefix={"₹"}
+                              valueStyle={{ fontSize: '20px' }}
+                            />
+                          </Card>
+                        </Col>
+                        <Col span={8}>
+                          <Card bodyStyle={{ padding: '12px' }}>
+                            <Statistic
+                              title={<span style={{ fontSize: '14px' }}>Remaining Amount</span>}
+                              value={selectedBudget.amount - selectedBudget.amountSpent}
+                              precision={2}
+                              prefix={"₹"}
+                              valueStyle={{
+                                fontSize: '20px',
+                                color: selectedBudget.amount - selectedBudget.amountSpent < 0 ? '#cf1322' : '#3f8600',
+                              }}
+                            />
+                          </Card>
+                        </Col>
+                      </Row>
+
+                      <Row gutter={16} style={{ marginBottom: '12px' }}>
+                        <Col span={8}>
+                          <Card bodyStyle={{ padding: '12px' }}>
+                            <Statistic
+
+                              title={<span style={{ fontSize: '14px' }}>Budget Date <CalendarOutlined /></span>}
+                              value={`${dayjs(selectedBudget.startDate).format('DD-MM-YYYY')} to ${dayjs(selectedBudget.endDate).format('DD-MM-YYYY')}`}
+                              prefix={''}
+                              valueStyle={{ fontSize: '15px', fontWeight: '400' }}
+                            />
+                          </Card>
+                        </Col>
+                        <Col span={8}>
+                          <Card bodyStyle={{ padding: '12px' }}>
+                            <Statistic
+                              title={<span style={{ fontSize: '14px' }}>Daily Average</span>}
+                              value={getDailyAverage(selectedBudget.amount, 30)}
+                              precision={2}
+                              prefix={"₹"}
+                              valueStyle={{ fontSize: '20px' }}
+                            />
+                          </Card>
+                        </Col>
+                        <Col span={8}>
+                          <Card bodyStyle={{ padding: '12px' }}>
+                            <Statistic
+                              title={<span style={{ fontSize: '14px' }}>Daily Recommended</span>}
+                              value={getDailyRecommended(selectedBudget)}
+                              precision={2}
+                              prefix={"₹"}
+                              valueStyle={{ fontSize: '20px' }}
+                            />
+                          </Card>
+                        </Col>
+
+                      </Row>
+
+                      {/* Keep the chart as it is */}
+
+                      {/* {JSON.stringify({ chartOption, selectedBudget })} */}
+                      <ReactECharts option={UseMemo} style={{ height: '300px', marginTop: '20px', width: '700px' }} />
+
+                    </>
+                  )}
+                </Modal>
+
 
                 {/* <div className="d-flex flex-row mt-2 justify-content-between " style={{ height: '100%', width: '100%' }}>
 
@@ -1000,16 +1343,12 @@ const Budget = () => {
               label="Category"
               rules={[{ required: true, message: "Please select a category" }]}
             >
-              <Select placeholder="Select category">
-                <Option value={5}>Food & Beverages</Option>
-                <Option value={6}>Clothes & Footwear</Option>
-                <Option value={7}>Housing</Option>
-                <Option value={8}>Vehicle & Transportation</Option>
-                <Option value={9}>Transportation</Option>
-                <Option value={10}>Health Care</Option>
-                <Option value={11}>Communication & PC</Option>
-                <Option value={12}>Life & Entertainment</Option>
-                <Option value="Other">Other</Option>
+              <Select placeholder="Select category" labelInValue >
+                {([...expenseCategories, ...CustomExpenseCategory]).map((categoryType) => (
+                  <Option key={categoryType.value} value={categoryType.value}>
+                    {getCategoryLabel(categoryType.value)}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
 
@@ -1059,3 +1398,5 @@ const Budget = () => {
   );
 };
 export default Budget;
+
+

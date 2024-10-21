@@ -50,26 +50,28 @@ const ForgotpassCompo = () => {
             console.log("response", response.data.userId);
             setUserId(response.data.userId);
             setLoader(true);
-            // emailjs
-            //     .sendForm('service_0mfba1c', 'template_486kd9t', form1.current, {
-            //         publicKey: 'EkPpgjpV27mSertJH',
-            //     })
-            //     .then(
-            //         (res) => {
-            //             setLoader(false);
-            //             notification.success({
-            //                 message: "Success! An OTP has been sent to your email."
-            //             });
-            //             setForgotForm(false);
-            //             setOTPForm(true);
-            //         },
-            //         (error) => {
-            //             setLoader(false);
-            //             notification.error({
-            //                 message: "Failed to send email. Please try again.",
-            //             });
-            //         }
-            //     );
+
+            
+            emailjs
+                .sendForm('service_0mfba1c', 'template_486kd9t', form1.current, {
+                    publicKey: 'EkPpgjpV27mSertJH',
+                })
+                .then(
+                    (res) => {
+                        setLoader(false);
+                        notification.success({
+                            message: "Success! An OTP has been sent to your email."
+                        });
+                        setForgotForm(false);
+                        setOTPForm(true);
+                    },
+                    (error) => {
+                        setLoader(false);
+                        notification.error({
+                            message: "Failed to send email. Please try again.",
+                        });
+                    }
+                );
 
         }).catch((error) => {
             setLoader(false);

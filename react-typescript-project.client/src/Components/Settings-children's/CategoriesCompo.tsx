@@ -66,7 +66,6 @@ const CategoriesCompo = () => {
 
 
 
-
   const onFinish = (values: CategoriesType) => {
     debugger
 

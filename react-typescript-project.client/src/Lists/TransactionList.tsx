@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps, Tooltip, Skeleton, Spin, Dropdown, Space } from 'antd';
+import { Form, Input, Button, DatePicker, Radio, Select, notification, List, Modal, Popconfirm, Calendar, Breadcrumb, Statistic, StatisticProps, Row, Col, Table, Tag, Segmented, DatePickerProps, Tooltip, Skeleton, Spin, Dropdown, Space, Divider } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { Zap, ShoppingBag, Home, Car, Edit, Trash2, AlertCircle, Briefcase, DollarSign, HelpCircle, Laptop, RotateCcw, CirclePlus, CircleX, Plus } from 'lucide-react';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -8,7 +8,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import '../CSS/TransactionList.css';
 import axios from 'axios';
 import UserContext from '../UserContext';
-import { DeleteOutlined, EditOutlined, HomeOutlined, MoreOutlined, RedoOutlined, SaveOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, HomeOutlined, MoreOutlined, PlusOutlined, RedoOutlined, SaveOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/ThemeColors.css'
 import CountUp from 'react-countup';
@@ -79,6 +79,8 @@ const TransactionList: React.FC = () => {
     const [categoryData, setCategoryData] = useState<CategoriesType[]>([]);
     const navigate = useNavigate();
 
+
+    const [inputValue, setInputValue] = useState('');
     const UserId = userDetails?.id
 
     useEffect(() => {
@@ -411,11 +413,13 @@ const TransactionList: React.FC = () => {
 
         form.resetFields();
         setIsModalVisible(false);
+        setInputValue('')
     };
 
 
     const handleCancel = () => {
         setIsModalVisible(false);
+        setInputValue('')
     };
 
     const handleDelete = (id: string) => {
@@ -438,7 +442,7 @@ const TransactionList: React.FC = () => {
 
         {
             width: '5%',
-            title: 'S No',
+            title: 'Sr No',
             dataIndex: 'sr.no',
             render: (text: any, record: any, index: any) => (index + 1),
         },
@@ -452,25 +456,26 @@ const TransactionList: React.FC = () => {
 
         },
         {
+            width: '15%',
             title: 'Label',
             dataIndex: 'label',
             key: 'label',
             ellipsis: {
                 showTitle: false,
             },
-           
+
             render: (label: string) => (
-               
+
                 <div
-                style={{
-                  paddingLeft: label.length > 1 ? '0px' : '10px', 
-                }}
-              >
-                {label.length > 1 ? label : '-'}
-              </div>
-                
+                    style={{
+                        paddingLeft: label.length > 1 ? '0px' : '10px',
+                    }}
+                >
+                    {label.length > 1 ? label : '-'}
+                </div>
+
             ),
-           
+
         },
         {
             width: '15%',
@@ -542,6 +547,47 @@ const TransactionList: React.FC = () => {
         }
     ];
 
+
+    const handleAddCategory = (categoryName: any, transactionType: any) => {
+        let categoryNum = 0;
+        if (categoryData.length === 0) {
+            categoryNum = 14;
+        } else {
+            let lastdata = categoryData.length - 1;
+            let getlastdata = categoryData[lastdata]
+            categoryNum = getlastdata.categoryNumber + 1;
+        }
+        const userId = UserId;
+        const categoryNumber = categoryNum;
+        const apiURL = `${REACT_APP_BASE_URL}CategoriesController/${userId}CreateCategoriesAndUpdate`
+
+        const categorydata = { userId, categoryNumber, categoryName, categoryType: transactionType };
+
+        axios.post(apiURL, categorydata).then(
+            (response) => {
+                const updatedRecords = [...categoryData, response.data];
+                setCategoryData(updatedRecords);
+                notification.success({
+                    message: 'Category added successfully',
+                });
+            }
+        );
+        // Example logic to add the category
+        // const newCategory = {
+        //     name: categoryName,
+        //     type: transactionType === 2 ? 'expense' : 'income', // Handle transaction type
+        // };
+
+        // Update the respective categories based on the transactionType
+        // if (transactionType === 2) {
+        //     setCustomExpenseCategory((prev) => [...prev, newCategory]);
+        // } else {
+        //     setCustomIncomeCategory((prev) => [...prev, newCategory]);
+        // }
+
+        // Clear the input field after adding the category
+        setInputValue('');
+    };
 
 
     return (
@@ -814,6 +860,23 @@ const TransactionList: React.FC = () => {
                                         placeholder="Select category"
                                         className='w-100'
                                         labelInValue
+                                        dropdownRender={(menu) => (
+                                            <>
+                                                {menu}
+                                                <Divider style={{ margin: '8px 0' }} />
+                                                <Space style={{ padding: '0 8px 4px' }}>
+                                                    <Input
+                                                        placeholder="Please enter item"
+                                                        value={inputValue}
+                                                        onChange={(e) => setInputValue(e.target.value)}
+                                                        onKeyDown={(e) => e.stopPropagation()}
+                                                    />
+                                                    <Button type="text" icon={<PlusOutlined />} onClick={() => handleAddCategory(inputValue, formData.transactionType)}>
+
+                                                    </Button>
+                                                </Space>
+                                            </>
+                                        )}
                                     >
                                         {(formData.transactionType === 2 ? [...expenseCategories, ...CustomExpenseCategory] : [...incomeCategories, ...CustomIncomeCategory]).map((categoryType) => (
                                             <Option key={categoryType.value} value={categoryType.value}>

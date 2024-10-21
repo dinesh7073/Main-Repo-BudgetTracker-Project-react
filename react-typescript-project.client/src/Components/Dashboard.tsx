@@ -20,7 +20,7 @@ import { FaCoins, FaCreditCard } from 'react-icons/fa';
 import { MdAccountBalance, MdAccountBalanceWallet, MdSavings } from 'react-icons/md';
 import { GiReceiveMoney } from 'react-icons/gi';
 import ScrollContainer from 'react-indiana-drag-scroll';
-
+import { CategoriesType } from './Settings-children\'s/CategoriesCompo';
 
 // const formatter: StatisticProps['formatter'] = (value) => (
 //   <CountUp end={value as number} separator="," />
@@ -86,7 +86,7 @@ const Dashboard = () => {
   const [goals, setGoals] = useState<GoalData[]>([]);
   // const [isExpanded, setIsExpanded] = useState(false);
   const [accountData, setAccountData] = useState<Account[]>([]);
-
+  const [categoryData, setCategoryData] = useState<CategoriesType[]>([]);
   // const formatter: StatisticProps['formatter'] = (value) => (
   //   <CountUp end={value as number} separator="," />
   // );
@@ -174,10 +174,22 @@ const Dashboard = () => {
       setAccountData(response.data);
     }).catch(() => setLoader(false))
 
+    axios.get(`${REACT_APP_BASE_URL}CategoriesController/${UserId}GetCategoriesByUserId`).then((res) => {
+      setCategoryData(res.data);
+    }).catch((err) => {
+    });
+
   }, [UserId]);
 
-
+  const CustomExpenseCategory = categoryData
+    .filter(category => category.categoryType === 2)
+    .map(({ categoryName, categoryNumber }) => ({ label: categoryName, value: categoryNumber }));
   const getCategoryLabel = (category: number | null) => {
+
+    const foundCategory = CustomExpenseCategory.find(item => item.value === category);
+    if (foundCategory) {
+      return foundCategory.label;
+    }
     switch (category) {
       case 1: return 'Salary';
       case 2: return 'Investments';
@@ -476,8 +488,8 @@ const Dashboard = () => {
       type: 'category',
       axisLabel: {
 
-        formatter: function(value:any) {
-          return value.length > 6 ? value.substring(0, 6) + '...' : value; 
+        formatter: function (value: any) {
+          return value.length > 6 ? value.substring(0, 6) + '...' : value;
         }
       }
     }],
@@ -488,7 +500,7 @@ const Dashboard = () => {
       type: 'bar'
     }]
   };
-  
+
 
   const getAccountLabel = (type: number) => {
     switch (type) {
@@ -545,8 +557,8 @@ const Dashboard = () => {
     const bank = bankName.find((obj) => obj.value === name);
 
     if (bank) {
-     
-      return  bank.label.length > 10 ? bank.label.substring(0, 10) + '...' : bank.label; 
+
+      return bank.label.length > 10 ? bank.label.substring(0, 10) + '...' : bank.label;
 
     }
 
@@ -562,7 +574,7 @@ const Dashboard = () => {
         <Row gutter={[16, 24]} style={{ marginBottom: '12px' }}>
           <Col xs={24} sm={12} md={accountData.length == 1 ? 5 : 21}  >
 
-            <ScrollContainer horizontal={true} className='scroll-container' style={{  width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: '0', margin: '0' }}>
+            <ScrollContainer horizontal={true} className='scroll-container' style={{ width: '100%', overflowX: 'auto', whiteSpace: 'nowrap', padding: '0', margin: '0' }}>
               <Row gutter={[16, 24]} wrap={false} >
 
                 {accountData.map((obj: Account, i: number) => (
@@ -615,7 +627,7 @@ const Dashboard = () => {
 
                 <EChartsReact
                   option={option}
-                  style={{ width: '200px', height: '150px', marginRight: 'auto', marginLeft: 'auto', marginBottom: '1px' , marginTop:'6px'}}
+                  style={{ width: '200px', height: '150px', marginRight: 'auto', marginLeft: 'auto', marginBottom: '1px', marginTop: '6px' }}
 
                 />
 
@@ -759,7 +771,7 @@ const Dashboard = () => {
           </Col>
           <Col xs={{ span: 5 }} lg={{ span: 6 }}>
             <Card style={{ width: "100%", height: "94%", padding: '0px 5px', position: 'relative' }}>
-              <p style={{ margin: 0, paddingBottom: "6px", position: 'absolute', top: '3%' }}className='card-title' >
+              <p style={{ margin: 0, paddingBottom: "6px", position: 'absolute', top: '3%' }} className='card-title' >
                 <ArrowLeftRight style={{ color: 'rgb(105, 114, 122)' }} className="recent-transactions-icon " color="#3C3D37" size={20} />
                 Recent Transactions
               </p>

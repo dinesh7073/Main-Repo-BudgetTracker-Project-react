@@ -31,3 +31,13 @@
 :where(.css-dev-only-do-not-override-qnu6hi).ant-progress.ant-progress-status-success .ant-progress-text {
   color: #ff0000;
 }
+
+.table-row-hover {
+  cursor: pointer;
+  /* Changes cursor to pointer on hover */
+}
+
+.table-row-hover:hover {
+  background-color: #f5f5f5;
+  /* Optional: Change background color on hover */
+}
